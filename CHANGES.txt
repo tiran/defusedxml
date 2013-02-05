@@ -1,0 +1,7 @@
+Changelog
+=========
+
+safexml 0.1
+-----------
+
+*Release date: ??-???-2012*
