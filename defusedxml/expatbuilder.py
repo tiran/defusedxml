@@ -1,9 +1,9 @@
-# safexml
+# defusedxml
 #
 # Copyright (c) 2013 by Christian Heimes <christian@cheimes.de>
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
-"""Safe xml.dom.expatbuilder
+"""Defused xml.dom.expatbuilder
 """
 from __future__ import print_function, absolute_import, division
 
@@ -14,7 +14,7 @@ from .exceptions import DTDForbidden, EntityForbidden
 from .compat import PY3
 
 
-class SafeExpatBuilder(_ExpatBuilder):
+class DefusedExpatBuilder(_ExpatBuilder):
     def __init__(self, options=None, forbid_dtd=False, forbid_entities=True):
         if PY3:
             super().__init__(options)
@@ -48,14 +48,14 @@ class SafeExpatBuilder(_ExpatBuilder):
             parser.ExternalEntityRefHandler = self.external_entity_ref_handler
 
 
-class SafeExpatBuilderNS(_Namespaces, SafeExpatBuilder):
+class DefusedExpatBuilderNS(_Namespaces, DefusedExpatBuilder):
     """Document builder that supports namespaces."""
 
     def reset(self):
         if PY3:
             super().reset(self)
         else:
-            SafeExpatBuilder.reset(self)
+            DefusedExpatBuilder.reset(self)
         self._initNamespaces()
 
 
@@ -65,9 +65,9 @@ def parse(file, namespaces=True):
     'file' may be either a file name or an open file object.
     """
     if namespaces:
-        builder = SafeExpatBuilderNS()
+        builder = DefusedExpatBuilderNS()
     else:
-        builder = SafeExpatBuilder()
+        builder = DefusedExpatBuilder()
 
     if isinstance(file, str):
         fp = open(file, 'rb')
@@ -85,7 +85,7 @@ def parseString(string, namespaces=True):
     Document node.
     """
     if namespaces:
-        builder = SafeExpatBuilderNS()
+        builder = DefusedExpatBuilderNS()
     else:
-        builder = SafeExpatBuilder()
+        builder = DefusedExpatBuilder()
     return builder.parseString(string)

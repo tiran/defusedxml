@@ -10,14 +10,14 @@ with open("CHANGES.txt") as f:
     long_description.append(f.read())
 
 setup(
-    name="safexml",
+    name="defusedxml",
     version="0.1",
-    packages=["safexml"],
+    packages=["defusedxml"],
     author="Christian Heimes",
     author_email="christian@python.org",
     maintainer="Christian Heimes",
     maintainer_email="christian@python.org",
-    url="https://bitbucket.org/tiran/safexml",
+    url="https://bitbucket.org/tiran/defusedxml",
     keywords="xml bomb DoS",
     platforms="all",
     license="PSFL",

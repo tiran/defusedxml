@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-from safexml import cElementTree, ElementTree, expatreader, minidom, pulldom, sax
+from defusedxml import cElementTree, ElementTree, expatreader, minidom, pulldom, sax
 
 class TestSafeElementTree(unittest.TestCase):
     pass
