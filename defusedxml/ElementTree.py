@@ -6,15 +6,46 @@
 """Defused xml.etree.ElementTree facade
 """
 from __future__ import print_function, absolute_import, division
+from .common import DTDForbidden, EntityForbidden, PY3, PY26
 
 import sys
-from xml.etree.ElementTree import XMLParser as _XMLParser
+if PY3:
+    import importlib
+    _XMLParser, _iterparse, _IterParseIterator = None, None, None
+else:
+    from xml.etree.ElementTree import XMLParser as _XMLParser
+    from xml.etree.ElementTree import iterparse as _iterparse
+    _IterParseIterator = None
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
-from xml.etree.ElementTree import iterparse as _iterparse
-from xml.etree.ElementTree import __all__
 
-from .common import DTDForbidden, EntityForbidden, PY3, PY26
+
+def _get_python_classes():
+    """Python 3.3 hides the pure Python code but defusedxml requires it
+
+    The code is based on test.support.import_fresh_module
+    """
+    global _XMLParser, _iterparse, _IterParseIterator
+    pymodname = "xml.etree.ElementTree"
+    cmodname = "_elementtree"
+
+    pymod = sys.modules.pop(pymodname, None)
+    cmod = sys.modules.pop(cmodname, None)
+
+    sys.modules[cmodname] = None
+    pure_pymod = importlib.import_module(pymodname)
+    if cmod is not None:
+        sys.modules[cmodname] = cmod
+    else:
+        sys.modules.pop(cmodname)
+    sys.modules[pymodname] = pymod
+
+    _XMLParser = pure_pymod.XMLParser
+    _iterparse = pure_pymod.iterparse
+    _IterParseIterator = pure_pymod._IterParseIterator
+
+if PY3:
+    _get_python_classes()
 
 
 __origin__ = "xml.etree.ElementTree"
@@ -32,11 +63,15 @@ class DefusedXMLParser(_XMLParser):
             _XMLParser.__init__(self, html, target, encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
+        if PY3:
+            parser = self.parser
+        else:
+            parser = self._parser
         if self.forbid_dtd:
-            self._parser.StartDoctypeDeclHandler = self.start_doctype_decl
+            parser.StartDoctypeDeclHandler = self.start_doctype_decl
         if self.forbid_entities:
-            self._parser.EntityDeclHandler = self.entity_decl
-            self._parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+            parser.EntityDeclHandler = self.entity_decl
+            parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
 
     def start_doctype_decl(self, name, sysid, pubid, has_internal_subset):
         raise DTDForbidden(name, sysid, pubid)
@@ -61,12 +96,22 @@ def parse(source, parser=None, forbid_dtd=False, forbid_entities=True):
                                   forbid_entities=forbid_entities)
     return _parse(source, parser)
 
-
-def iterparse(source, events=None, parser=None, forbid_dtd=False,
-              forbid_entities=True):
-    if parser is None:
-        parser = DefusedXMLParser(target=_TreeBuilder())
-    return _iterparse(source, events, parser)
+if PY3:
+    def iterparse(source, events=None, parser=None, forbid_dtd=False,
+                  forbid_entities=True):
+        close_source = False
+        if not hasattr(source, "read"):
+            source = open(source, "rb")
+            close_source = True
+        if not parser:
+            parser = DefusedXMLParser(target=_TreeBuilder())
+        return _IterParseIterator(source, events, parser, close_source)
+else:
+    def iterparse(source, events=None, parser=None, forbid_dtd=False,
+                  forbid_entities=True):
+        if parser is None:
+            parser = DefusedXMLParser(target=_TreeBuilder())
+        return _iterparse(source, events, parser)
 
 
 def fromstring(text, forbid_dtd=False, forbid_entities=True):
