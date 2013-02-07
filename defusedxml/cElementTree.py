@@ -7,7 +7,8 @@ from __future__ import print_function, absolute_import, division
 
 from xml.etree.cElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.cElementTree import parse as _parse
-from xml.etree.cElementTree import iterparse as _iterparse
+# iterparse from ElementTree!
+from xml.etree.ElementTree import iterparse as _iterparse
 
 from .ElementTree import DefusedXMLParser
 

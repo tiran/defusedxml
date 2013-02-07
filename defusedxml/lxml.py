@@ -123,4 +123,4 @@ XML = fromstring
 
 
 def iterparse(*args, **kwargs):
-    raise NotSupportedError("defused interparse not available")
+    raise NotSupportedError("defused lxml.etree.iterparse not available")

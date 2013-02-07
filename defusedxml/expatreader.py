@@ -36,6 +36,10 @@ class DefusedExpatParser(_ExpatParser):
         # expat 1.2
         raise EntityForbidden(name)
 
+    def external_entity_ref_handler(self, context, base, systemId, publicId):
+        print(context, base, systemId, publicId)
+        raise EntityForbidden(systemId, publicId)
+
     def reset(self):
         if PY3:
             super().reset()
@@ -47,6 +51,7 @@ class DefusedExpatParser(_ExpatParser):
         if self.forbid_entities:
             self._parser.EntityDeclHandler = self.entity_decl
             self._parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+            self._parser.ExternalEntityRefHandler = self.external_entity_ref_handler
 
 
 def create_parser(*args, **kwargs):
