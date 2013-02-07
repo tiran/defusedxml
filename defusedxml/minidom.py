@@ -5,25 +5,28 @@
 # See http://www.python.org/psf/license for licensing details.
 
 from xml.dom.minidom import _do_pulldom_parse
+from . import expatbuilder as _expatbuilder
+from . import pulldom as _pulldom
 
 __origin__ = "xml.dom.minidom"
 
-def parse(file, parser=None, bufsize=None):
+def parse(file, parser=None, bufsize=None, forbid_dtd=False, forbid_entities=True):
     """Parse a file into a DOM by filename or file object."""
     if parser is None and not bufsize:
-        from . import expatbuilder
-        return expatbuilder.parse(file)
+        return _expatbuilder.parse(file, forbid_dtd=forbid_dtd,
+                                   forbid_entities=forbid_entities)
     else:
-        from . import pulldom
-        return _do_pulldom_parse(pulldom.parse, (file,),
-            {'parser': parser, 'bufsize': bufsize})
+        return _do_pulldom_parse(_pulldom.parse, (file,),
+            {'parser': parser, 'bufsize': bufsize,
+             'forbid_dtd': forbid_dtd, 'forbid_entities': forbid_entities})
 
-def parseString(string, parser=None):
+def parseString(string, parser=None, forbid_dtd=False,
+                forbid_entities=True):
     """Parse a file into a DOM from a string."""
     if parser is None:
-        from xml.dom import expatbuilder
-        return expatbuilder.parseString(string)
+        return _expatbuilder.parseString(string, forbid_dtd=forbid_dtd,
+                                        forbid_entities=forbid_entities)
     else:
-        from . import pulldom
-        return _do_pulldom_parse(pulldom.parseString, (string,),
-                                 {'parser': parser})
+        return _do_pulldom_parse(_pulldom.parseString, (string,),
+                                 {'parser': parser, 'forbid_dtd': forbid_dtd,
+                                  'forbid_entities': forbid_entities})

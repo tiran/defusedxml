@@ -20,8 +20,10 @@ class DTDForbidden(DefusedXmlException):
 class EntityForbidden(DefusedXmlException):
     pass
 
+
 class NotSupportedError(DefusedXmlException):
     pass
+
 
 def _wire_module(srcmod, dstmodname):
     assert srcmod is sys.modules[srcmod.__name__]
