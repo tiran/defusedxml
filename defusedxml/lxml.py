@@ -106,7 +106,7 @@ def check_dtd(elementtree, forbid_dtd=False, forbid_entities=True):
 def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
-    elementtree = _etree.parse(source, parser, base_url)
+    elementtree = _etree.parse(source, parser, base_url=base_url)
     check_dtd(elementtree, forbid_dtd, forbid_entities)
     return elementtree
 
@@ -114,9 +114,10 @@ def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=
 def fromstring(text, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
-    elementtree = _etree.fromstring(text, parser, base_url)
+    rootelement = _etree.fromstring(text, parser, base_url=base_url)
+    elementtree = rootelement.getroottree()
     check_dtd(elementtree, forbid_dtd, forbid_entities)
-    return elementtree
+    return rootelement
 
 XML = fromstring
 
