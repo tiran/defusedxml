@@ -59,14 +59,11 @@ class DefusedExpatBuilderNS(_Namespaces, DefusedExpatBuilder):
     """Document builder that supports namespaces."""
 
     def install(self, parser):
-        if PY3:
-            super().install(parser)
-        else:
-            # Python 2.x
-            DefusedExpatBuilder.install(self, parser)
-            if self._options.namespace_declarations:
-                parser.StartNamespaceDeclHandler = (
-                    self.start_namespace_decl_handler)
+        # Python 3.x code doesn't use super() :(
+        DefusedExpatBuilder.install(self, parser)
+        if self._options.namespace_declarations:
+            parser.StartNamespaceDeclHandler = (
+                self.start_namespace_decl_handler)
 
     def reset(self):
         if PY3:
