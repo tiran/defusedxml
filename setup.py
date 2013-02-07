@@ -2,6 +2,7 @@
 import sys
 import os
 from distutils.core import setup, Command
+import subprocess
 
 class PyTest(Command):
     user_options = []
@@ -10,7 +11,6 @@ class PyTest(Command):
     def finalize_options(self):
         pass
     def run(self):
-        import sys,subprocess
         errno = subprocess.call([sys.executable, "tests.py"])
         raise SystemExit(errno)
 
@@ -30,7 +30,7 @@ setup(
     author_email="christian@python.org",
     maintainer="Christian Heimes",
     maintainer_email="christian@python.org",
-    url="https://bitbucket.org/tiran/defusedxml",
+    url="https://bitbucket.org/PSF/defusedxml",
     keywords="xml bomb DoS",
     platforms="all",
     license="PSFL",
