@@ -1,7 +1,19 @@
 #!/usr/bin/env python
 import sys
 import os
-from distutils.core import setup
+from distutils.core import setup, Command
+
+class PyTest(Command):
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        import sys,subprocess
+        errno = subprocess.call([sys.executable, "tests.py"])
+        raise SystemExit(errno)
+
 
 long_description = []
 with open("README.txt") as f:
@@ -12,6 +24,7 @@ with open("CHANGES.txt") as f:
 setup(
     name="defusedxml",
     version="0.1",
+    cmdclass={"test": PyTest},
     packages=["defusedxml"],
     author="Christian Heimes",
     author_email="christian@python.org",

@@ -7,6 +7,7 @@
 import sys
 
 PY3 = sys.version_info[0] == 3
+PY26 = sys.version_info[:2] == (2, 6)
 
 
 class DefusedXmlException(ValueError):
