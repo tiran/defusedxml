@@ -5,7 +5,7 @@
 # See http://www.python.org/psf/license for licensing details.
 
 from xml.dom import minidom
-
+from .common import _wire_module
 
 def parse(file, bufsize=None):
     pass
@@ -13,3 +13,5 @@ def parse(file, bufsize=None):
 def parseString(string, parser=None):
     pass
 
+
+_wire_module(minidom, __name__)

@@ -8,7 +8,7 @@ from __future__ import print_function, absolute_import, division
 import threading
 from lxml import etree
 
-from .exceptions import DTDForbidden, EntityForbidden, NotSupportedError
+from .common import DTDForbidden, EntityForbidden, NotSupportedError
 
 LXML3 = etree.LXML_VERSION[0] >= 3
 

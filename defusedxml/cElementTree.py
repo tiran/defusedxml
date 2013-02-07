@@ -6,9 +6,9 @@
 from __future__ import print_function, absolute_import, division
 
 from xml.etree import cElementTree as ET
-from .ElementTree import DefusedXMLParser, _wire
+from .ElementTree import DefusedXMLParser
+from .common import _wire_module
 
-__all__ = tuple(ET) + ("DefusedXMLParser,")
 
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
@@ -35,4 +35,4 @@ def XML(text, forbid_dtd=False, forbid_entities=True):
 fromstring = XML
 
 
-_wire(__name__, ET)
+_wire_module(ET, __name__)
