@@ -1,9 +1,9 @@
-# safexml
+# defusedxml
 #
 # Copyright (c) 2013 by Christian Heimes <christian@cheimes.de>
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
-"""Safe xml.sax.expatreader
+"""Defused xml.sax.expatreader
 """
 from __future__ import print_function, absolute_import, division
 
@@ -13,7 +13,7 @@ from .exceptions import DTDForbidden, EntityForbidden
 from .compat import PY3
 
 
-class SafeExpatParser(_ExpatParser):
+class DefusedExpatParser(_ExpatParser):
     def __init__(self, forbid_dtd=False, forbid_entities=True,
                  *args, **kwargs):
         if PY3:
@@ -49,4 +49,4 @@ class SafeExpatParser(_ExpatParser):
 
 
 def create_parser(*args, **kwargs):
-    return SafeExpatParser(*args, **kwargs)
+    return DefusedExpatParser(*args, **kwargs)

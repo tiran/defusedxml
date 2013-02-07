@@ -1,4 +1,4 @@
-# safexml
+# defusedxml
 #
 # Copyright (c) 2013 by Christian Heimes <christian@cheimes.de>
 # Licensed to PSF under a Contributor Agreement.
