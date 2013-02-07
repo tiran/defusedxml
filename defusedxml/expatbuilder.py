@@ -21,7 +21,7 @@ class DefusedExpatBuilder(_ExpatBuilder):
             super().__init__(options)
         else:
             # Python 2.x old style class
-            _ExpatBuilder.__init__(options)
+            _ExpatBuilder.__init__(self, options)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
 
