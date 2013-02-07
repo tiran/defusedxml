@@ -25,6 +25,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 class BaseTests(unittest.TestCase):
     module = None
 
+    if PY3:
+        content_binary = False
+    else:
+        content_binary = True
+
+
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
     xml_quadratic = os.path.join(HERE, "xmltestdata", "quadratic.xml")
@@ -48,12 +54,10 @@ class BaseTests(unittest.TestCase):
                 self.iterparse = self.module.iterparse
 
     def get_content(self, xmlfile):
-        if PY3:
-            mode = "r"
-        else:
-            mode = "rb"
+        mode = "rb" if self.content_binary else "r"
         with io.open(xmlfile, mode) as f:
-            return f.read()
+            data = f.read()
+        return data
 
     def test_simple_parse(self):
         self.parse(self.xml_simple)
@@ -133,6 +137,8 @@ class TestDefusedPulldom(BaseTests):
 
 class TestDefusedSax(BaseTests):
     module = sax
+
+    content_binary = True
 
     iterparse = None
 
