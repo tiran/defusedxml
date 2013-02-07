@@ -12,6 +12,8 @@ from xml.dom.expatbuilder import Namespaces as _Namespaces
 
 from .common import DTDForbidden, EntityForbidden, PY3
 
+__origin__ = "xml.dom.expatbuilder"
+
 
 class DefusedExpatBuilder(_ExpatBuilder):
     def __init__(self, options=None, forbid_dtd=False, forbid_entities=True):

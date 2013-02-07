@@ -11,6 +11,8 @@ from xml.sax.expatreader import ExpatParser as _ExpatParser
 
 from .common import DTDForbidden, EntityForbidden, PY3
 
+__origin__ = "xml.sax.expatreader"
+
 
 class DefusedExpatParser(_ExpatParser):
     def __init__(self, forbid_dtd=False, forbid_entities=True,

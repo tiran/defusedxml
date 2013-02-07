@@ -8,21 +8,25 @@
 from __future__ import print_function, absolute_import, division
 
 import sys
-from xml.etree import ElementTree as ET
+from xml.etree.ElementTree import XMLParser as _XMLParser
+from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
+from xml.etree.ElementTree import parse as _parse
+from xml.etree.ElementTree import iterparse as _iterparse
+from xml.etree.ElementTree import __all__
 
 from .common import DTDForbidden, EntityForbidden, PY3, _wire_module
 
-__all__ = tuple(ET.__all__) + ("DefusedXMLParser",)
 
+__origin__ = "xml.etree.ElementTree"
 
-class DefusedXMLParser(ET.XMLParser):
+class DefusedXMLParser(_XMLParser):
     def __init__(self, html=0, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True):
         if PY3:
             super().__init__(html, target, encoding)
         else:
             # Python 2.x old style class
-            ET.XMLParser.__init__(self, html, target, encoding)
+            _XMLParser.__init__(self, html, target, encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         if self.forbid_dtd:
@@ -47,25 +51,26 @@ class DefusedXMLParser(ET.XMLParser):
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
 
-def parse(source, forbid_dtd=False, forbid_entities=True):
-    parser = DefusedXMLParser(target=ET.TreeBuilder(),
-                              forbid_dtd=forbid_dtd,
-                              forbid_entities=forbid_entities)
-    return ET.parse(source, parser)
+def parse(source, parser=None, forbid_dtd=False, forbid_entities=True):
+    if parser is None:
+        parser = DefusedXMLParser(target=_TreeBuilder(),
+                                  forbid_dtd=forbid_dtd,
+                                  forbid_entities=forbid_entities)
+    return _parse(source, parser)
 
 
-def iterparse(source, events=None, forbid_dtd=False, forbid_entities=True):
-    parser = DefusedXMLParser(target=ET.TreeBuilder())
-    return ET.iterparse(source, events, parser)
+def iterparse(source, events=None, parser=None, forbid_dtd=False,
+              forbid_entities=True):
+    if parser is None:
+        parser = DefusedXMLParser(target=_TreeBuilder())
+    return _iterparse(source, events, parser)
 
 
-def XML(text, forbid_dtd=False, forbid_entities=True):
-    parser = DefusedXMLParser(target=ET.TreeBuilder(),
+def fromstring(text, forbid_dtd=False, forbid_entities=True):
+    parser = DefusedXMLParser(target=_TreeBuilder(),
                               forbid_dtd=forbid_dtd,
                               forbid_entities=forbid_entities)
     parser.feed(text)
     return parser.close()
 
-fromstring = XML
-
-_wire_module(ET, __name__)
+XML = fromstring

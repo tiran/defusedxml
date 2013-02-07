@@ -6,19 +6,21 @@
 from __future__ import print_function, absolute_import, division
 
 import threading
-from lxml import etree
+from lxml import etree as _etree
 
 from .common import DTDForbidden, EntityForbidden, NotSupportedError
 
-LXML3 = etree.LXML_VERSION[0] >= 3
+LXML3 = _etree.LXML_VERSION[0] >= 3
+
+__origin__ = "lxml.etree"
 
 
-class RestrictedElement(etree.ElementBase):
+class RestrictedElement(_etree.ElementBase):
     """A restricted Element class that filters out instances of some classes
     """
     __slots__ = ()
     # blacklist = (etree._Entity, etree._ProcessingInstruction, etree._Comment)
-    blacklist = etree._Entity
+    blacklist = _etree._Entity
 
     def _filter(self, iterator):
         blacklist = self.blacklist
@@ -61,9 +63,9 @@ class GlobalParserTLS(threading.local):
     element_class = RestrictedElement
 
     def createDefaultParser(self):
-        parser = etree.XMLParser(**self.parser_config)
+        parser = _etree.XMLParser(**self.parser_config)
         if self.element_class is not None:
-            lookup = etree.ElementDefaultClassLookup(element=RestrictedElement)
+            lookup = _etree.ElementDefaultClassLookup(element=RestrictedElement)
             parser.set_element_class_lookup(lookup)
         return parser
 
@@ -101,16 +103,18 @@ def check_dtd(elementtree, forbid_dtd=False, forbid_entities=True):
                 raise EntityForbidden(entity.name)
 
 
-def parse(source, base_url=None, forbid_dtd=False, forbid_entities=True):
-    parser = getDefaultParser()
-    elementtree = etree.parse(source, parser, base_url)
+def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
+    if parser is None:
+        parser = getDefaultParser()
+    elementtree = _etree.parse(source, parser, base_url)
     check_dtd(elementtree, forbid_dtd, forbid_entities)
     return elementtree
 
 
-def fromstring(text, base_url=None, forbid_dtd=False, forbid_entities=True):
-    parser = getDefaultParser()
-    elementtree = etree.fromstring(text, parser, base_url)
+def fromstring(text, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
+    if parser is None:
+        parser = getDefaultParser()
+    elementtree = _etree.fromstring(text, parser, base_url)
     check_dtd(elementtree, forbid_dtd, forbid_entities)
     return elementtree
 
