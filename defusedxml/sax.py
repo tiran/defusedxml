@@ -6,18 +6,19 @@
 """Defused xml.sax
 """
 
+from xml import sax
 from xml.sax.xmlreader import InputSource
-from xml.sax.handler import ContentHandler, ErrorHandler
-from xml.sax._exceptions import SAXException, SAXNotRecognizedException, \
-                                SAXParseException, SAXNotSupportedException, \
-                                SAXReaderNotAvailable
+from xml.sax.handler import ErrorHandler
+
 from . import expatreader
+from .common import _wire_module
 
 def parse(source, handler, errorHandler=ErrorHandler()):
     parser = make_parser()
     parser.setContentHandler(handler)
     parser.setErrorHandler(errorHandler)
     parser.parse(source)
+
 
 def parseString(string, handler, errorHandler=ErrorHandler()):
     from io import BytesIO
@@ -34,3 +35,6 @@ def parseString(string, handler, errorHandler=ErrorHandler()):
 
 def make_parser():
     return expatreader.create_parser()
+
+
+_wire_module(sax, __name__)

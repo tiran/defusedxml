@@ -10,8 +10,7 @@ from __future__ import print_function, absolute_import, division
 from xml.dom.expatbuilder import ExpatBuilder as _ExpatBuilder
 from xml.dom.expatbuilder import Namespaces as _Namespaces
 
-from .exceptions import DTDForbidden, EntityForbidden
-from .compat import PY3
+from .common import DTDForbidden, EntityForbidden, PY3
 
 
 class DefusedExpatBuilder(_ExpatBuilder):

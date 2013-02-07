@@ -9,8 +9,7 @@ from __future__ import print_function, absolute_import, division
 
 from xml.sax.expatreader import ExpatParser as _ExpatParser
 
-from .exceptions import DTDForbidden, EntityForbidden
-from .compat import PY3
+from .common import DTDForbidden, EntityForbidden, PY3
 
 
 class DefusedExpatParser(_ExpatParser):

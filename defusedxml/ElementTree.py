@@ -10,10 +10,9 @@ from __future__ import print_function, absolute_import, division
 import sys
 from xml.etree import ElementTree as ET
 
-from .exceptions import DTDForbidden, EntityForbidden
-from .compat import PY3
+from .common import DTDForbidden, EntityForbidden, PY3, _wire_module
 
-__all__ = tuple(ET) + ("DefusedXMLParser,")
+__all__ = tuple(ET.__all__) + ("DefusedXMLParser",)
 
 
 class DefusedXMLParser(ET.XMLParser):
@@ -69,13 +68,4 @@ def XML(text, forbid_dtd=False, forbid_entities=True):
 
 fromstring = XML
 
-
-def _wire(modname, etmod):
-    thismod = sys.modules[modname]
-    for name in etmod.__all__:
-        if hasattr(thismod, name):
-            continue
-        value = getattr(etmod, name)
-        setattr(thismod, name, value)
-
-_wire(__name__, ET)
+_wire_module(ET, __name__)
