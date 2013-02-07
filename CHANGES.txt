@@ -2,6 +2,6 @@ Changelog
 =========
 
 defusedxml 0.1
------------
+--------------
 
-*Release date: ??-???-2012*
+*Release date: ??-Feb-2013*
