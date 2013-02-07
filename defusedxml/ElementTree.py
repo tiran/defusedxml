@@ -14,7 +14,7 @@ from xml.etree.ElementTree import parse as _parse
 from xml.etree.ElementTree import iterparse as _iterparse
 from xml.etree.ElementTree import __all__
 
-from .common import DTDForbidden, EntityForbidden, PY3, _wire_module
+from .common import DTDForbidden, EntityForbidden, PY3, PY26
 
 
 __origin__ = "xml.etree.ElementTree"
@@ -24,6 +24,9 @@ class DefusedXMLParser(_XMLParser):
                  forbid_dtd=False, forbid_entities=True):
         if PY3:
             super().__init__(html, target, encoding)
+        elif PY26:
+            # Python 2.x old style class
+            _XMLParser.__init__(self, html, target)
         else:
             # Python 2.x old style class
             _XMLParser.__init__(self, html, target, encoding)

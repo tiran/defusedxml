@@ -27,14 +27,8 @@ fulltest:
 	$(MAKE) clean
 	@set -e; \
 	for python in $(PYTHONS); do \
-		echo "\n*** $$python without HMAC ***"; \
-		$$python $(SETUPFLAGS) setup.py -q test; \
-	done
-	$(MAKE) clean
-	@set -e; \
-	for python in $(PYTHONS); do \
-		echo "\n*** $$python with HMAC ***"; \
-		$$python $(SETUPFLAGS) setup.py -q build_ext -DSHA3_HMAC_SUPPORT test; \
+		echo "*** $$python ***"; \
+		$$python $(SETUPFLAGS) setup.py build test; \
 	done
 	$(MAKE) clean
 

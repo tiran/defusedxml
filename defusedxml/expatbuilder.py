@@ -70,7 +70,7 @@ class DefusedExpatBuilderNS(_Namespaces, DefusedExpatBuilder):
 
     def reset(self):
         if PY3:
-            super().reset(self)
+            super().reset()
         else:
             DefusedExpatBuilder.reset(self)
         self._initNamespaces()

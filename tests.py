@@ -3,12 +3,13 @@ import os
 import sys
 import unittest
 import io
-from StringIO import StringIO
+#from StringIO import StringIO
 
 from xml.sax.saxutils import XMLGenerator
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax
 from defusedxml import DTDForbidden, EntityForbidden, NotSupportedError
+from defusedxml.common import PY3, PY26
 
 
 try:
@@ -39,12 +40,19 @@ class BaseTests(unittest.TestCase):
                 self.parseString = self.module.fromstring
             else:
                 self.parseString = self.module.parseString
+        if PY26:
+            # TODO
+            self.iterparse = None
         if not hasattr(self, "iterparse"):
             if hasattr(self.module, "iterparse"):
                 self.iterparse = self.module.iterparse
 
     def get_content(self, xmlfile):
-        with io.open(xmlfile, "rb") as f:
+        if PY3:
+            mode = "r"
+        else:
+            mode = "rb"
+        with io.open(xmlfile, mode) as f:
             return f.read()
 
     def test_simple_parse(self):
@@ -129,12 +137,18 @@ class TestDefusedSax(BaseTests):
     iterparse = None
 
     def parse(self, xmlfile, **kwargs):
-        result = StringIO()
+        if PY3:
+            result = io.StringIO()
+        else:
+            result = io.BytesIO()
         handler = XMLGenerator(result)
         self.module.parse(xmlfile, handler, **kwargs)
 
     def parseString(self, xmlstring, **kwargs):
-        result = StringIO()
+        if PY3:
+            result = io.StringIO()
+        else:
+            result = io.BytesIO()
         handler = XMLGenerator(result)
         self.module.parseString(xmlstring, handler, **kwargs)
 
