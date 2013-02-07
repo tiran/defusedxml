@@ -4,7 +4,20 @@
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
 
-from xml.dom import pulldom
-from .common import _wire_module
+from xml.dom.pulldom import parse as _parse
+from xml.dom.pulldom import parseString as _parseString
+from .sax import make_parser
 
-_wire_module(pulldom, __name__)
+__origin__ = "xml.dom.pulldom"
+
+
+def parse(stream_or_string, parser=None, bufsize=None):
+    if parser is None:
+        parser = make_parser()
+    return _parse(stream_or_string, parser, bufsize)
+
+
+def parseString(string, parser=None):
+    if parser is None:
+        parser = make_parser()
+    return _parseString(string, parser)
