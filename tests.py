@@ -46,6 +46,7 @@ class BaseTests(unittest.TestCase):
     xml_simple = os.path.join(HERE, "xmltestdata", "simple.xml")
     xml_simple_ns = os.path.join(HERE, "xmltestdata", "simple-ns.xml")
     xml_bomb = os.path.join(HERE, "xmltestdata", "xmlbomb.xml")
+    xml_bomb2 = os.path.join(HERE, "xmltestdata", "xmlbomb2.xml")
 
     def setUp(self):
         if not hasattr(self, "parse"):
@@ -205,6 +206,46 @@ class TestDefusedLxml(BaseTests):
 
     def test_external_ref(self):
         pass
+
+    def test_restricted_element1(self):
+        tree = self.module.parse(self.xml_bomb, forbid_dtd=False,
+                                 forbid_entities=False)
+        root = tree.getroot()
+        self.assertEqual(root.text, None)
+
+        self.assertEqual(list(root), [])
+        self.assertEqual(root.getchildren(), [])
+        self.assertEqual(list(root.iter()), [root])
+        self.assertEqual(list(root.iterchildren()), [])
+        self.assertEqual(list(root.iterdescendants()), [])
+        self.assertEqual(list(root.itersiblings()), [])
+        self.assertEqual(list(root.getiterator()), [root])
+        self.assertEqual(root.getnext(), None)
+
+
+    def test_restricted_element2(self):
+        tree = self.module.parse(self.xml_bomb2, forbid_dtd=False,
+                                 forbid_entities=False)
+        root = tree.getroot()
+        bomb, tag = root
+        self.assertEqual(root.text, "text")
+
+        self.assertEqual(list(root), [bomb, tag])
+        self.assertEqual(root.getchildren(), [bomb, tag])
+        self.assertEqual(list(root.iter()), [root, bomb, tag])
+        self.assertEqual(list(root.iterchildren()), [bomb, tag])
+        self.assertEqual(list(root.iterdescendants()), [bomb, tag])
+        self.assertEqual(list(root.itersiblings()), [])
+        self.assertEqual(list(root.getiterator()), [root, bomb, tag])
+        self.assertEqual(root.getnext(), None)
+        self.assertEqual(root.getprevious(), None)
+
+        self.assertEqual(list(bomb.itersiblings()), [tag])
+        self.assertEqual(bomb.getnext(), tag)
+        self.assertEqual(bomb.getprevious(), None)
+        self.assertEqual(tag.getnext(), None)
+        self.assertEqual(tag.getprevious(), bomb)
+
 
 
 def test_main():
