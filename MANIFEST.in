@@ -1,0 +1,7 @@
+include setup.py
+include README.txt CHANGES.txt LICENSE
+include MANIFEST.in
+include setup.py Makefile
+include tests.py
+recursive-include xmltestdata *.xml
+
