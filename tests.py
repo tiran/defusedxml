@@ -248,7 +248,6 @@ class TestDefusedLxml(BaseTests):
         self.assertEqual(tag.getprevious(), bomb)
 
 
-
 def test_main():
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(TestDefusedcElementTree))
