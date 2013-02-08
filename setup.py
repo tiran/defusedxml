@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function, absolute_import, division
+from __future__ import absolute_import
 import sys
 from distutils.core import setup, Command
 import subprocess

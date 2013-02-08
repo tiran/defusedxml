@@ -14,4 +14,4 @@ syntax: glob
 *.pyo
 *.pyd
 *~
-
+__pycache__
