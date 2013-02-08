@@ -8,7 +8,7 @@ from __future__ import print_function, absolute_import, division
 import threading
 from lxml import etree as _etree
 
-from .common import DTDForbidden, EntityForbidden, NotSupportedError
+from .common import DTDForbidden, EntitiesForbidden, NotSupportedError
 
 LXML3 = _etree.LXML_VERSION[0] >= 3
 
@@ -100,7 +100,7 @@ def check_dtd(elementtree, forbid_dtd=False, forbid_entities=True):
             if dtd is None:
                 continue
             for entity in dtd.iterentities():
-                raise EntityForbidden(entity.name)
+                raise EntitiesForbidden(entity.name)
 
 
 def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):

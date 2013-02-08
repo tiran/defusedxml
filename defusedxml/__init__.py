@@ -4,8 +4,8 @@
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
 
-from .common import (DefusedXmlException, DTDForbidden, EntityForbidden,
-                     NotSupportedError)
+from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
+                     ExternalEntitiesForbidden, NotSupportedError)
 
 from . import cElementTree
 from . import ElementTree
