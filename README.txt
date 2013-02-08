@@ -5,6 +5,9 @@ defusedxml
 defuxedxml contains various workarounds and fixes for denial of service
 attacks on Python's XML parsers.
 
+.. contents:: Table of Contents
+   :depth: 2
+
 
 Attack vectors
 ==============
@@ -14,8 +17,15 @@ billion laughs / exponential entity expansion
 
 `Billion Laughs`_
 
-.. include:: xmltestdata/xmlbomb.xml
-   :literal:
+::
+
+    <!DOCTYPE xmlbomb [
+    <!ENTITY a "1234567890" >
+    <!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;">
+    <!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;">
+    <!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;">
+    ]>
+    <bomb>&c;</bomb>
 
 
 quadratic blowup entity expansion
@@ -34,15 +44,26 @@ quadratic blowup entity expansion
 external entity expansion
 -------------------------
 
-.. include:: xmltestdata/external.xml
-   :literal:
+::
+
+    <!DOCTYPE external [
+    <!ENTITY ee SYSTEM "http://www.python.org/">
+    ]>
+    <root>&ee;</root>
 
 
 DTD external fetch
 ------------------
 
-.. include:: xmltestdata/dtd.xml
-   :literal:
+::
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html>
+        <head/>
+        <body>text</body>
+    </html>
 
 
 decompression bomb
@@ -51,27 +72,27 @@ decompression bomb
 `ZIP bomb`_
 
 
-Overview
---------
+Library overview
+================
 
 .. csv-table::
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
    :widths: 15, 10, 10, 15, 10, 10, 13
 
-   "billion laughs", "True", "True", "True", "True", "False ¹", "untested"
+   "billion laughs", "True", "True", "True", "True", "False (1)", "untested"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion", "True", "False", "True", "True", "False ¹", "untested"
-   "DTD external fetch", "True", "False", "False", "True", "False ¹", "untested"
-   "gzip bomb", "False", "False", "False", "False", "partly ²", "untested"
+   "external entity expansion", "True", "False", "True", "True", "False (1)", "untested"
+   "DTD external fetch", "True", "False", "False", "True", "False (1)", "untested"
+   "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
    "xslt", "False", "False", "False", "False", "True", "unknown"
    "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2"
    "handler", "expatreader", "XMLParser", "expatbuilder / pulldom", "sax", "", ""
 
-1) Lxml is protected against billion laughs attacks and doesn't do network
-lookups by default.
-2) libxml2 and lxml are not directly vulnerable to gzip decompression bombs
-but they don't protect you against them either.
+1. Lxml is protected against billion laughs attacks and doesn't do network
+   lookups by default.
+2. libxml2 and lxml are not directly vulnerable to gzip decompression bombs
+   but they don't protect you against them either.
 
 
 Other things to consider
@@ -163,6 +184,7 @@ License
 Copyright (c) 2013 by Christian Heimes <christian@python.org>
 
 Licensed to PSF under a Contributor Agreement.
+
 See http://www.python.org/psf/license for licensing details.
 
 
