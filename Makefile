@@ -43,6 +43,11 @@ distclean: clean
 	@find . \( -name '~*' -or -name '*.orig' -or -name '*.bak' -or \
 	          -name 'core*' \) -and -type f  -delete
 
+whitespace:
+	@find \( -name '*.rst' -or -name '*.py' -or -name '*.xml' \) | \
+	    xargs sed -i 's/[ \t]*$$//'
+
+
 sdist: README.html
 	$(PYTHON) setup.py sdist --formats gztar,zip
 
