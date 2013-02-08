@@ -195,6 +195,7 @@ class TestDefusedSax(BaseTests):
 class TestDefusedLxml(BaseTests):
     module = lxml
 
+    content_binary = True
     iterparse = None
 
     if not LXML3:
