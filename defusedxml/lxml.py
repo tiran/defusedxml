@@ -103,7 +103,8 @@ def check_dtd(elementtree, forbid_dtd=False, forbid_entities=True):
                 raise EntitiesForbidden(entity.name)
 
 
-def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
+def parse(source, parser=None, base_url=None, forbid_dtd=False,
+          forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
     elementtree = _etree.parse(source, parser, base_url=base_url)
@@ -111,7 +112,8 @@ def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=
     return elementtree
 
 
-def fromstring(text, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
+def fromstring(text, parser=None, base_url=None, forbid_dtd=False,
+               forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
     rootelement = _etree.fromstring(text, parser, base_url=base_url)

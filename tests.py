@@ -3,7 +3,6 @@ import os
 import sys
 import unittest
 import io
-#from StringIO import StringIO
 
 from xml.sax.saxutils import XMLGenerator
 
@@ -31,6 +30,7 @@ os.environ["ftp_proxy"] = os.environ["http_proxy"]
 
 
 class BaseTests(unittest.TestCase):
+
     module = None
 
     if PY3:
@@ -39,7 +39,6 @@ class BaseTests(unittest.TestCase):
         content_binary = True
 
     dtd_external_ref = False
-
 
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
@@ -118,13 +117,14 @@ class BaseTests(unittest.TestCase):
 
     def test_dtd_with_external_ref(self):
         if self.dtd_external_ref:
-            self.assertRaises(ExternalEntitiesForbidden, self.parse, self.xml_dtd)
+            self.assertRaises(ExternalEntitiesForbidden, self.parse,
+                              self.xml_dtd)
         else:
             self.parse(self.xml_dtd)
 
     def test_external_ref(self):
-        self.assertRaises(ExternalEntitiesForbidden, self.parse, self.xml_external,
-                          forbid_entities=False)
+        self.assertRaises(ExternalEntitiesForbidden, self.parse,
+                          self.xml_external, forbid_entities=False)
 
 
 class TestDefusedcElementTree(BaseTests):
