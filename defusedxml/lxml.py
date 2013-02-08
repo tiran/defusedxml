@@ -45,9 +45,17 @@ class RestrictedElement(_etree.ElementBase):
         iterator = super(RestrictedElement, self).iterdescendants(tag=tag, *tags)
         return self._filter(iterator)
 
+    def itersiblings(self, tag=None, preceding=False):
+        iterator = super(RestrictedElement, self).itersiblings(tag=tag, preceding=preceding)
+        return self._filter(iterator)
+
     def getchildren(self):
         iterator = super(RestrictedElement, self).__iter__()
         return list(self._filter(iterator))
+
+    def getiterator(self, tag=None):
+        iterator = super(RestrictedElement, self).getiterator(tag)
+        return self._filter(iterator)
 
 
 class GlobalParserTLS(threading.local):
@@ -64,8 +72,9 @@ class GlobalParserTLS(threading.local):
 
     def createDefaultParser(self):
         parser = _etree.XMLParser(**self.parser_config)
+        element_class = self.element_class
         if self.element_class is not None:
-            lookup = _etree.ElementDefaultClassLookup(element=RestrictedElement)
+            lookup = _etree.ElementDefaultClassLookup(element=element_class)
             parser.set_element_class_lookup(lookup)
         return parser
 
