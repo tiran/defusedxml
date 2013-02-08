@@ -23,7 +23,7 @@ with open("CHANGES.txt") as f:
 
 setup(
     name="defusedxml",
-    version="0.1",
+    version="0.2dev",
     cmdclass={"test": PyTest},
     packages=["defusedxml"],
     author="Christian Heimes",
