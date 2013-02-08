@@ -8,7 +8,8 @@ import io
 from xml.sax.saxutils import XMLGenerator
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax
-from defusedxml import DTDForbidden, EntityForbidden, NotSupportedError
+from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
+                        ExternalEntitiesForbidden, NotSupportedError)
 from defusedxml.common import PY3, PY26
 
 
@@ -72,16 +73,16 @@ class BaseTests(unittest.TestCase):
             self.iterparse(self.xml_simple_ns)
 
     def test_entities_forbidden(self):
-        self.assertRaises(EntityForbidden, self.parse, self.xml_bomb)
-        self.assertRaises(EntityForbidden, self.parse, self.xml_quadratic)
-        self.assertRaises(EntityForbidden, self.parse, self.xml_external)
+        self.assertRaises(EntitiesForbidden, self.parse, self.xml_bomb)
+        self.assertRaises(EntitiesForbidden, self.parse, self.xml_quadratic)
+        self.assertRaises(EntitiesForbidden, self.parse, self.xml_external)
 
         #self.parse(self.xml_dtd)
-        self.assertRaises(EntityForbidden, self.parseString,
+        self.assertRaises(EntitiesForbidden, self.parseString,
                           self.get_content(self.xml_bomb))
-        self.assertRaises(EntityForbidden, self.parseString,
+        self.assertRaises(EntitiesForbidden, self.parseString,
                           self.get_content(self.xml_quadratic))
-        self.assertRaises(EntityForbidden, self.parseString,
+        self.assertRaises(EntitiesForbidden, self.parseString,
                           self.get_content(self.xml_external))
 
     def test_dtd_forbidden(self):

@@ -6,9 +6,9 @@
 """Defused xml.etree.ElementTree facade
 """
 from __future__ import print_function, absolute_import, division
-from .common import DTDForbidden, EntityForbidden, PY3, PY26
 
 import sys
+from .common import PY3
 if PY3:
     import importlib
     _XMLParser, _iterparse, _IterParseIterator = None, None, None
@@ -18,6 +18,10 @@ else:
     _IterParseIterator = None
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
+
+
+from .common import (DTDForbidden, EntitiesForbidden,
+                     ExternalEntitiesForbidden, PY26)
 
 
 def _get_python_classes():
@@ -72,17 +76,21 @@ class DefusedXMLParser(_XMLParser):
         if self.forbid_entities:
             parser.EntityDeclHandler = self.entity_decl
             parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+            parser.ExternalEntityRefHandler = self.external_entity_ref_handler
 
     def start_doctype_decl(self, name, sysid, pubid, has_internal_subset):
         raise DTDForbidden(name, sysid, pubid)
 
     def entity_decl(self, entityName, is_parameter_entity, value, base,
                     systemId, publicId, notationName):
-        raise EntityForbidden(entityName)
+        raise EntitiesForbidden(entityName)
 
     def unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
         # expat 1.2
-        raise EntityForbidden(name)
+        raise EntitiesForbidden(name)
+
+    def external_entity_ref_handler(self, context, base, systemId, publicId):
+        raise ExternalEntitiesForbidden(systemId, publicId)
 
 
 # aliases

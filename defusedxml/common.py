@@ -18,7 +18,11 @@ class DTDForbidden(DefusedXmlException):
     pass
 
 
-class EntityForbidden(DefusedXmlException):
+class EntitiesForbidden(DefusedXmlException):
+    pass
+
+
+class ExternalEntitiesForbidden(DefusedXmlException):
     pass
 
 

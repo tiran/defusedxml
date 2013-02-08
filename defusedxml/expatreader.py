@@ -9,7 +9,8 @@ from __future__ import print_function, absolute_import, division
 
 from xml.sax.expatreader import ExpatParser as _ExpatParser
 
-from .common import DTDForbidden, EntityForbidden, PY3
+from .common import (DTDForbidden, EntitiesForbidden,
+                     ExternalEntitiesForbidden, PY3)
 
 __origin__ = "xml.sax.expatreader"
 
@@ -30,15 +31,14 @@ class DefusedExpatParser(_ExpatParser):
 
     def entity_decl(self, entityName, is_parameter_entity, value, base,
                     systemId, publicId, notationName):
-        raise EntityForbidden(entityName)
+        raise EntitiesForbidden(entityName)
 
     def unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
         # expat 1.2
-        raise EntityForbidden(name)
+        raise EntitiesForbidden(name)
 
     def external_entity_ref_handler(self, context, base, systemId, publicId):
-        print(context, base, systemId, publicId)
-        raise EntityForbidden(systemId, publicId)
+        raise ExternalEntitiesForbidden(systemId, publicId)
 
     def reset(self):
         if PY3:

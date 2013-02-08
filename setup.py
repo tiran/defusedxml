@@ -1,6 +1,6 @@
 #!/usr/bin/env python
+from __future__ import print_function, absolute_import, division
 import sys
-import os
 from distutils.core import setup, Command
 import subprocess
 
