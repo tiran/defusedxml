@@ -53,6 +53,7 @@ class DefusedExpatBuilder(_ExpatBuilder):
             #if self._options.entities:
             parser.EntityDeclHandler = self.entity_decl
             parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+        if hasattr(parser.ExternalEntityRefHandler, "__call__"):
             parser.ExternalEntityRefHandler = self.external_entity_ref_handler
 
 

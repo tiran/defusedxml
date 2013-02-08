@@ -16,6 +16,7 @@ __origin__ = "xml.sax.expatreader"
 
 
 class DefusedExpatParser(_ExpatParser):
+
     def __init__(self, forbid_dtd=False, forbid_entities=True,
                  *args, **kwargs):
         if PY3:
@@ -46,12 +47,14 @@ class DefusedExpatParser(_ExpatParser):
         else:
             # Python 2.x old style class
             _ExpatParser.reset(self)
+        parser = self._parser
         if self.forbid_dtd:
-            self._parser.StartDoctypeDeclHandler = self.start_doctype_decl
+            parser.StartDoctypeDeclHandler = self.start_doctype_decl
         if self.forbid_entities:
-            self._parser.EntityDeclHandler = self.entity_decl
-            self._parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
-            self._parser.ExternalEntityRefHandler = self.external_entity_ref_handler
+            parser.EntityDeclHandler = self.entity_decl
+            parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+        if hasattr(parser.ExternalEntityRefHandler, "__call__"):
+            parser.ExternalEntityRefHandler = self.external_entity_ref_handler
 
 
 def create_parser(*args, **kwargs):
