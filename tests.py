@@ -122,15 +122,27 @@ class BaseTests(unittest.TestCase):
         else:
             self.parse(self.xml_dtd)
 
+    def test_external_ref(self):
+        self.assertRaises(ExternalEntitiesForbidden, self.parse, self.xml_external,
+                          forbid_entities=False)
 
 
 class TestDefusedcElementTree(BaseTests):
     module = cElementTree
 
+    def test_external_ref(self):
+        # etree doesn't do external ref lookup
+        self.assertRaises(ElementTree.ParseError, self.parse,
+                          self.xml_external, forbid_entities=False)
+
 
 class TestDefusedElementTree(BaseTests):
     module = ElementTree
 
+    def test_external_ref(self):
+        # etree doesn't do external ref lookup
+        self.assertRaises(ElementTree.ParseError, self.parse,
+                          self.xml_external, forbid_entities=False)
 
 
 class TestDefusedMinidom(BaseTests):
@@ -190,6 +202,9 @@ class TestDefusedLxml(BaseTests):
 
         def test_dtd_with_external_ref(self):
             self.assertRaises(NotSupportedError, self.parse, self.xml_dtd)
+
+    def test_external_ref(self):
+        pass
 
 
 def test_main():
