@@ -11,7 +11,7 @@ from xml.dom.expatbuilder import ExpatBuilder as _ExpatBuilder
 from xml.dom.expatbuilder import Namespaces as _Namespaces
 
 from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalEntitiesForbidden, PY3)
+                     ExternalEntitiesForbidden)
 
 __origin__ = "xml.dom.expatbuilder"
 

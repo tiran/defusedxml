@@ -11,7 +11,7 @@ from xml.etree.cElementTree import parse as _parse
 from xml.etree.ElementTree import iterparse as _iterparse
 
 from .ElementTree import DefusedXMLParser, _IterParseIterator
-from .common import PY3, _generate_etree_functions
+from .common import _generate_etree_functions
 
 __origin__ = "xml.etree.cElementTree"
 

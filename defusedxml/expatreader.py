@@ -10,7 +10,7 @@ from __future__ import print_function, absolute_import, division
 from xml.sax.expatreader import ExpatParser as _ExpatParser
 
 from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalEntitiesForbidden, PY3)
+                     ExternalEntitiesForbidden)
 
 __origin__ = "xml.sax.expatreader"
 
