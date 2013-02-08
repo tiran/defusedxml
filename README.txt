@@ -2,12 +2,16 @@
 defusedxml
 ==========
 
+defuxedxml contains various workarounds and fixes for denial of service
+attacks on Python's XML parsers.
 
-Attacks
-=======
+Attack vectors
+==============
 
 billion laughs / exponential entity expansion
 ---------------------------------------------
+
+`Billion Laughs`_
 
 .. include:: xmltestdata/xmlbomb.xml
    :literal:
@@ -15,6 +19,8 @@ billion laughs / exponential entity expansion
 
 quadratic blowup entity expansion
 ---------------------------------
+
+`XML DoS and Defenses (MSDN)`_
 
 ::
 
@@ -37,19 +43,73 @@ DTD external fetch
    :literal:
 
 
+Overview
+--------
+
 .. csv-table::
-   :header: "kind",             "sax",  "etree",  "minidom", "pulldom", "lxml"
-   :widths: 15, 10, 10, 13, 10, 10
+   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
+   :widths: 15, 10, 10, 15, 10, 10, 13
 
-   "billion laughs",            "True", "True",   "True",    "True",    "False *"
-   "quadratic blowup",          "True", "True",   "True",    "True",    "True"
-   "external entity expansion", "True", "False",  "True",    "True",    "False *"
-   "DTD external fetch",        "True", "False",  "False",   "True",    "False *"
-   "C library",                 "expat", "expat", "expat",   "expat",   "libxml2"
-   "handler",                   "expatreader", "XMLParser", "expatbuilder / pulldom", "sax", ""
+   "billion laughs", "True", "True", "True", "True", "False *", "untested"
+   "quadratic blowup", "True", "True", "True", "True", "True", "untested"
+   "external entity expansion", "True", "False", "True", "True", "False *", "untested"
+   "DTD external fetch", "True", "False", "False", "True", "False *", "untested"
+   "gzip bomb", "False", "False", "False", "False", "untested", "untested"
+   "xpath", "False", "False", "False", "False", "True", "untested"
+   "xslt", "False", "False", "False", "False", "True", "unknown"
+   "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2"
+   "handler", "expatreader", "XMLParser", "expatbuilder / pulldom", "sax", "", ""
 
-\*) By default lxml is protected against billion laughs attacks and doesn't
-do network lookups.
+\*) Lxml is protected against billion laughs attacks and doesn't do network
+lookups by default.
+
+
+Other things to consider
+========================
+
+Best practices
+--------------
+
+* Don't allow DTDs
+* Don't expand entities
+* Don't resolve externals
+* Limit parse depth
+* Limit total input size
+* Don't use XPath expression from untrusted sources
+* Don't use XSLT code from untrusted sources
+
+(based on Brad Hill's `Attacking XML Security`_)
+
+
+decompression bomb
+------------------
+
+`ZIP bomb`_
+
+
+XSL Transformation
+------------------
+
+You should keep in mind that XSLT is a Turing complete language. Never
+process XSLT code from unknown or untrusted source. XSLT processors may
+allow you to interact with external resources in ways you can't even imagine.
+
+Example from `Attacking XML Security`_ for Xalan-J::
+
+    <xsl:stylesheet version="1.0"
+     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+     xmlns:rt="http://xml.apache.org/xalan/java/java.lang.Runtime"
+     xmlns:ob="http://xml.apache.org/xalan/java/java.lang.Object"
+     exclude-result-prefixes= "rt,ob">
+     <xsl:template match="/">
+       <xsl:variable name="runtimeObject" select="rt:getRuntime()"/>
+       <xsl:variable name="command"
+         select="rt:exec($runtimeObject, &apos;c:\Windows\system32\cmd.exe&apos;)"/>
+       <xsl:variable name="commandAsString" select="ob:toString($command)"/>
+       <xsl:value-of select="$commandAsString"/>
+     </xsl:template>
+    </xsl:stylesheet>
+
 
 TODO
 ====
@@ -59,3 +119,16 @@ TODO
  * implement monkey patching of stdlib modules
  * test lxml default element class overwrite
  * document which module / library is vulnerable to which kind of attack
+
+
+.. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
+.. _Billion Laughs: http://en.wikipedia.org/wiki/Billion_laughs
+.. _XML DoS and Defenses (MSDN): http://msdn.microsoft.com/en-us/magazine/ee335713.aspx
+.. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
+
+
+Author
+======
+
+Christian Heimes <christian@python.org>
+
