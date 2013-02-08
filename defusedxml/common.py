@@ -43,8 +43,11 @@ def _wire_module(srcmod, dstmodname):
         value = getattr(srcmod, name)
         setattr(dstmod, name, value)
 
+
 def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
             _IterParseIterator, _parse, _iterparse):
+    """Factory for functions needed by etree, dependent on whether
+    cElementTree or ElementTree is used."""
     def parse(source, parser=None, forbid_dtd=False, forbid_entities=True):
         if parser is None:
             parser = DefusedXMLParser(target=_TreeBuilder(),
