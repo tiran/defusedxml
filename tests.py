@@ -23,6 +23,13 @@ except ImportError:
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# prevent web access
+# based on Debian's rules, Port 9 is discard
+os.environ["http_proxy"] = "http://127.0.9.1:9"
+os.environ["https_proxy"] = os.environ["http_proxy"]
+os.environ["ftp_proxy"] = os.environ["http_proxy"]
+
+
 class BaseTests(unittest.TestCase):
     module = None
 
@@ -30,6 +37,8 @@ class BaseTests(unittest.TestCase):
         content_binary = False
     else:
         content_binary = True
+
+    dtd_external_ref = False
 
 
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
@@ -77,7 +86,6 @@ class BaseTests(unittest.TestCase):
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_quadratic)
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_external)
 
-        #self.parse(self.xml_dtd)
         self.assertRaises(EntitiesForbidden, self.parseString,
                           self.get_content(self.xml_bomb))
         self.assertRaises(EntitiesForbidden, self.parseString,
@@ -108,6 +116,13 @@ class BaseTests(unittest.TestCase):
                           self.get_content(self.xml_dtd),
                           forbid_dtd=True)
 
+    def test_dtd_with_external_ref(self):
+        if self.dtd_external_ref:
+            self.assertRaises(ExternalEntitiesForbidden, self.parse, self.xml_dtd)
+        else:
+            self.parse(self.xml_dtd)
+
+
 
 class TestDefusedcElementTree(BaseTests):
     module = cElementTree
@@ -115,6 +130,7 @@ class TestDefusedcElementTree(BaseTests):
 
 class TestDefusedElementTree(BaseTests):
     module = ElementTree
+
 
 
 class TestDefusedMinidom(BaseTests):
@@ -126,6 +142,7 @@ class TestDefusedMinidom(BaseTests):
 class TestDefusedPulldom(BaseTests):
     module = pulldom
 
+    dtd_external_ref = True
     iterparse = None
 
     def parse(self, xmlfile, **kwargs):
@@ -136,10 +153,12 @@ class TestDefusedPulldom(BaseTests):
         dom = self.module.parseString(xmlstring, **kwargs)
         list(dom)
 
+
 class TestDefusedSax(BaseTests):
     module = sax
 
     content_binary = True
+    dtd_external_ref = True
 
     iterparse = None
 
@@ -168,6 +187,9 @@ class TestDefusedLxml(BaseTests):
     if not LXML3:
         def test_entities_forbidden(self):
             self.assertRaises(NotSupportedError, self.parse, self.xml_bomb)
+
+        def test_dtd_with_external_ref(self):
+            self.assertRaises(NotSupportedError, self.parse, self.xml_dtd)
 
 
 def test_main():
