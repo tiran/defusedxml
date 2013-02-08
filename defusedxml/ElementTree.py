@@ -8,20 +8,27 @@
 from __future__ import print_function, absolute_import, division
 
 import sys
-from .common import PY3
+from .common import PY3, PY26
 if PY3:
     import importlib
-    _XMLParser, _iterparse, _IterParseIterator = None, None, None
+    _XMLParser = None
+    _iterparse = None
+    _IterParseIterator = None
+    ParseError = None
 else:
     from xml.etree.ElementTree import XMLParser as _XMLParser
     from xml.etree.ElementTree import iterparse as _iterparse
+    if PY26:
+        from xml.parsers.expat import ExpatError as ParseError
+    else:
+        from xml.etree.ElementTree import ParseError
     _IterParseIterator = None
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
 
 
 from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalEntitiesForbidden, PY26)
+                     ExternalEntitiesForbidden)
 
 
 def _get_python_classes():
@@ -29,7 +36,7 @@ def _get_python_classes():
 
     The code is based on test.support.import_fresh_module
     """
-    global _XMLParser, _iterparse, _IterParseIterator
+    global _XMLParser, _iterparse, _IterParseIterator, ParseError
     pymodname = "xml.etree.ElementTree"
     cmodname = "_elementtree"
 
@@ -47,6 +54,7 @@ def _get_python_classes():
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
     _IterParseIterator = pure_pymod._IterParseIterator
+    ParseError = pure_pymod.ParseError
 
 if PY3:
     _get_python_classes()
