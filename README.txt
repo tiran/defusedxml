@@ -5,6 +5,7 @@ defusedxml
 defuxedxml contains various workarounds and fixes for denial of service
 attacks on Python's XML parsers.
 
+
 Attack vectors
 ==============
 
@@ -36,11 +37,18 @@ external entity expansion
 .. include:: xmltestdata/external.xml
    :literal:
 
+
 DTD external fetch
 ------------------
 
 .. include:: xmltestdata/dtd.xml
    :literal:
+
+
+decompression bomb
+------------------
+
+`ZIP bomb`_
 
 
 Overview
@@ -50,18 +58,20 @@ Overview
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
    :widths: 15, 10, 10, 15, 10, 10, 13
 
-   "billion laughs", "True", "True", "True", "True", "False *", "untested"
+   "billion laughs", "True", "True", "True", "True", "False ¹", "untested"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion", "True", "False", "True", "True", "False *", "untested"
-   "DTD external fetch", "True", "False", "False", "True", "False *", "untested"
-   "gzip bomb", "False", "False", "False", "False", "untested", "untested"
+   "external entity expansion", "True", "False", "True", "True", "False ¹", "untested"
+   "DTD external fetch", "True", "False", "False", "True", "False ¹", "untested"
+   "gzip bomb", "False", "False", "False", "False", "partly ²", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
    "xslt", "False", "False", "False", "False", "True", "unknown"
    "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2"
    "handler", "expatreader", "XMLParser", "expatbuilder / pulldom", "sax", "", ""
 
-\*) Lxml is protected against billion laughs attacks and doesn't do network
+1) Lxml is protected against billion laughs attacks and doesn't do network
 lookups by default.
+2) libxml2 and lxml are not directly vulnerable to gzip decompression bombs
+but they don't protect you against them either.
 
 
 Other things to consider
@@ -81,10 +91,27 @@ Best practices
 (based on Brad Hill's `Attacking XML Security`_)
 
 
-decompression bomb
+Processing Instruction
+----------------------
+
+`PI`_'s like::
+
+  <?xml-stylesheet type="text/xsl" href="style.xsl"?>
+
+may impose more threats for XML processing.
+
+
+Other DTD features
 ------------------
 
-`ZIP bomb`_
+`DTD`_ has more features like ``<!NOTATION>``. I haven't researched how
+these features may be a security threat.
+
+
+XPath
+-----
+
+XPath statements may introduce DoS vulnerabilities.
 
 
 XSL Transformation
@@ -111,6 +138,7 @@ Example from `Attacking XML Security`_ for Xalan-J::
     </xsl:stylesheet>
 
 
+
 TODO
 ====
 
@@ -125,6 +153,8 @@ TODO
 .. _Billion Laughs: http://en.wikipedia.org/wiki/Billion_laughs
 .. _XML DoS and Defenses (MSDN): http://msdn.microsoft.com/en-us/magazine/ee335713.aspx
 .. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
+.. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
+.. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
 
 
 Author
