@@ -28,13 +28,13 @@ from xml.etree.ElementTree import parse as _parse
 
 
 from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalEntitiesForbidden)
+                     ExternalEntitiesForbidden, _generate_etree_functions)
 
 
 def _get_python_classes():
-    """Python 3.3 hides the pure Python code but defusedxml requires it
+    """Python 3.3 hides the pure Python code but defusedxml requires it.
 
-    The code is based on test.support.import_fresh_module
+    The code is based on test.support.import_fresh_module().
     """
     global _XMLParser, _iterparse, _IterParseIterator, ParseError
     pymodname = "xml.etree.ElementTree"
@@ -104,37 +104,6 @@ class DefusedXMLParser(_XMLParser):
 # aliases
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
-
-def parse(source, parser=None, forbid_dtd=False, forbid_entities=True):
-    if parser is None:
-        parser = DefusedXMLParser(target=_TreeBuilder(),
-                                  forbid_dtd=forbid_dtd,
-                                  forbid_entities=forbid_entities)
-    return _parse(source, parser)
-
-if PY3:
-    def iterparse(source, events=None, parser=None, forbid_dtd=False,
-                  forbid_entities=True):
-        close_source = False
-        if not hasattr(source, "read"):
-            source = open(source, "rb")
-            close_source = True
-        if not parser:
-            parser = DefusedXMLParser(target=_TreeBuilder())
-        return _IterParseIterator(source, events, parser, close_source)
-else:
-    def iterparse(source, events=None, parser=None, forbid_dtd=False,
-                  forbid_entities=True):
-        if parser is None:
-            parser = DefusedXMLParser(target=_TreeBuilder())
-        return _iterparse(source, events, parser)
-
-
-def fromstring(text, forbid_dtd=False, forbid_entities=True):
-    parser = DefusedXMLParser(target=_TreeBuilder(),
-                              forbid_dtd=forbid_dtd,
-                              forbid_entities=forbid_entities)
-    parser.feed(text)
-    return parser.close()
-
+parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
+        _TreeBuilder, _IterParseIterator, _parse, _iterparse)
 XML = fromstring
