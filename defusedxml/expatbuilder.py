@@ -18,11 +18,7 @@ __origin__ = "xml.dom.expatbuilder"
 
 class DefusedExpatBuilder(_ExpatBuilder):
     def __init__(self, options=None, forbid_dtd=False, forbid_entities=True):
-        if PY3:
-            super().__init__(options)
-        else:
-            # Python 2.x old style class
-            _ExpatBuilder.__init__(self, options)
+        _ExpatBuilder.__init__(self, options)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
 
@@ -41,11 +37,7 @@ class DefusedExpatBuilder(_ExpatBuilder):
         raise ExternalEntitiesForbidden(systemId, publicId)
 
     def install(self, parser):
-        if PY3:
-            super().install(parser)
-        else:
-            # Python 2.x old style class
-            _ExpatBuilder.install(self, parser)
+        _ExpatBuilder.install(self, parser)
 
         if self.forbid_dtd:
             parser.StartDoctypeDeclHandler = self.start_doctype_decl
@@ -61,17 +53,13 @@ class DefusedExpatBuilderNS(_Namespaces, DefusedExpatBuilder):
     """Document builder that supports namespaces."""
 
     def install(self, parser):
-        # Python 3.x code doesn't use super() :(
         DefusedExpatBuilder.install(self, parser)
         if self._options.namespace_declarations:
             parser.StartNamespaceDeclHandler = (
                 self.start_namespace_decl_handler)
 
     def reset(self):
-        if PY3:
-            super().reset()
-        else:
-            DefusedExpatBuilder.reset(self)
+        DefusedExpatBuilder.reset(self)
         self._initNamespaces()
 
 
@@ -104,9 +92,9 @@ def parseString(string, namespaces=True, forbid_dtd=False,
     Document node.
     """
     if namespaces:
-        builder = DefusedExpatBuilderNS(forbid_dtd=forbid_dtd,
-                                        forbid_entities=forbid_entities)
+        build_builder = DefusedExpatBuilderNS
     else:
-        builder = DefusedExpatBuilder(forbid_dtd=forbid_dtd,
-                                      forbid_entities=forbid_entities)
+        build_builder = DefusedExpatBuilder
+    builder = build_builder(forbid_dtd=forbid_dtd,
+                            forbid_entities=forbid_entities)
     return builder.parseString(string)
