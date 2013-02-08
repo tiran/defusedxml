@@ -4,4 +4,6 @@ Changelog
 defusedxml 0.1
 --------------
 
-*Release date: ??-Feb-2013*
+*Release date: 08-Feb-2013*
+
+- Initial and internal release for PSRT review

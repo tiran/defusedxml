@@ -168,6 +168,8 @@ TODO
  * implement monkey patching of stdlib modules
  * test lxml default element class overwrite
  * document which module / library is vulnerable to which kind of attack
+ * handle iterparse on Python 2.6
+ * documentation, documentation, documentation ...
 
 
 .. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
