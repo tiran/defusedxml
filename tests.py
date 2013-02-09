@@ -8,7 +8,7 @@ from xml.sax.saxutils import XMLGenerator
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax
 from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
-                        ExternalEntitiesForbidden, NotSupportedError)
+                        ExternalReferenceForbidden, NotSupportedError)
 from defusedxml.common import PY3, PY26
 
 
@@ -118,14 +118,19 @@ class BaseTests(unittest.TestCase):
 
     def test_dtd_with_external_ref(self):
         if self.dtd_external_ref:
-            self.assertRaises(ExternalEntitiesForbidden, self.parse,
+            self.assertRaises(ExternalReferenceForbidden, self.parse,
                               self.xml_dtd)
         else:
             self.parse(self.xml_dtd)
 
     def test_external_ref(self):
-        self.assertRaises(ExternalEntitiesForbidden, self.parse,
+        self.assertRaises(ExternalReferenceForbidden, self.parse,
                           self.xml_external, forbid_entities=False)
+
+    def test_allow_expansion(self):
+        self.parse(self.xml_bomb2, forbid_entities=False)
+        self.parseString(self.get_content(self.xml_bomb2),
+                         forbid_entities=False)
 
 
 class TestDefusedcElementTree(BaseTests):
@@ -190,6 +195,30 @@ class TestDefusedSax(BaseTests):
             result = io.BytesIO()
         handler = XMLGenerator(result)
         self.module.parseString(xmlstring, handler, **kwargs)
+
+    def test_exceptions(self):
+        if PY26:
+            # Python 2.6 unittest doesn't support with self.assertRaises()
+            return
+
+        with self.assertRaises(EntitiesForbidden) as ctx:
+            self.parse(self.xml_bomb)
+        msg = "EntitiesForbidden(name='a', system_id=None, public_id=None)"
+        self.assertEqual(str(ctx.exception), msg)
+        self.assertEqual(repr(ctx.exception), msg)
+
+        with self.assertRaises(ExternalReferenceForbidden) as ctx:
+            self.parse(self.xml_external, forbid_entities=False)
+        msg = ("ExternalReferenceForbidden"
+               "(system_id='http://www.python.org/', public_id=None)")
+        self.assertEqual(str(ctx.exception), msg)
+        self.assertEqual(repr(ctx.exception), msg)
+
+        with self.assertRaises(DTDForbidden) as ctx:
+            self.parse(self.xml_bomb, forbid_dtd=True)
+        msg = "DTDForbidden(name='xmlbomb', system_id=None, public_id=None)"
+        self.assertEqual(str(ctx.exception), msg)
+        self.assertEqual(repr(ctx.exception), msg)
 
 
 class TestDefusedLxml(BaseTests):
