@@ -11,23 +11,61 @@ PY26 = sys.version_info[:2] == (2, 6)
 
 
 class DefusedXmlException(ValueError):
-    pass
+    """Base exception
+    """
+    def __repr__(self):
+        return str(self)
 
 
 class DTDForbidden(DefusedXmlException):
-    pass
+    """Document type definition is forbidden
+    """
+    def __init__(self, name, sysid, pubid):
+        super(DTDForbidden, self).__init__()
+        self.name = name
+        self.sysid = sysid
+        self.pubid = pubid
+
+    def __str__(self):
+        tpl = "DTDForbidden(name='{}', system_id={!r}, public_id={!r})"
+        return tpl.format(self.name, self.sysid, self.pubid)
 
 
 class EntitiesForbidden(DefusedXmlException):
-    pass
+    """Entity definition is forbidden
+    """
+    def __init__(self, name, value, base, sysid, pubid, notation_name):
+        super(EntitiesForbidden, self).__init__()
+        self.name = name
+        self.value = value
+        self.base = base
+        self.sysid = sysid
+        self.pubid = pubid
+        self.notation_name = notation_name
+
+    def __str__(self):
+        tpl = "EntitiesForbidden(name='{}', system_id={!r}, public_id={!r})"
+        return tpl.format(self.name, self.sysid, self.pubid)
 
 
-class ExternalEntitiesForbidden(DefusedXmlException):
-    pass
+class ExternalReferenceForbidden(DefusedXmlException):
+    """Resolving an external reference is forbidden
+    """
+    def __init__(self, context, base, sysid, pubid):
+        super(ExternalReferenceForbidden, self).__init__()
+        self.context = context
+        self.base = base
+        self.sysid = sysid
+        self.pubid = pubid
+
+    def __str__(self):
+        tpl = "ExternalReferenceForbidden(system_id='{}', public_id={})"
+        return tpl.format(self.sysid, self.pubid)
 
 
 class NotSupportedError(DefusedXmlException):
-    pass
+    """The operation is not supported
+    """
 
 
 def _wire_module(srcmod, dstmodname):
