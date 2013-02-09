@@ -7,6 +7,7 @@ defusedxml 0.2
 *Release date: ??-Feb-2013*
 
 - Renamed ExternalEntitiesForbidden to ExternalReferenceForbidden
+- Renamed defusedxml.lxml.check_dtd() to check_docinfo()
 - Unified argument names in callbacks
 - Added arguments and formatted representation to exceptions
 - More tests
