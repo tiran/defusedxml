@@ -5,7 +5,7 @@
 # See http://www.python.org/psf/license for licensing details.
 """Defused xml.sax.expatreader
 """
-from __future__ import print_function, absolute_import, division
+from __future__ import print_function, absolute_import
 
 from xml.sax.expatreader import ExpatParser as _ExpatParser
 
