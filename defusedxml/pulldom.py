@@ -3,6 +3,9 @@
 # Copyright (c) 2013 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
+"""Defused xml.dom.pulldom
+"""
+from __future__ import print_function, absolute_import
 
 from xml.dom.pulldom import parse as _parse
 from xml.dom.pulldom import parseString as _parseString

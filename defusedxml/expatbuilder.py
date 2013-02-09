@@ -5,7 +5,7 @@
 # See http://www.python.org/psf/license for licensing details.
 """Defused xml.dom.expatbuilder
 """
-from __future__ import print_function, absolute_import, division
+from __future__ import print_function, absolute_import
 
 from xml.dom.expatbuilder import ExpatBuilder as _ExpatBuilder
 from xml.dom.expatbuilder import Namespaces as _Namespaces

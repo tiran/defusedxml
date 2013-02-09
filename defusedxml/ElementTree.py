@@ -5,16 +5,12 @@
 # See http://www.python.org/psf/license for licensing details.
 """Defused xml.etree.ElementTree facade
 """
-from __future__ import print_function, absolute_import, division
+from __future__ import print_function, absolute_import
 
 import sys
 from .common import PY3, PY26
 if PY3:
     import importlib
-    _XMLParser = None
-    _iterparse = None
-    _IterParseIterator = None
-    ParseError = None
 else:
     from xml.etree.ElementTree import XMLParser as _XMLParser
     from xml.etree.ElementTree import iterparse as _iterparse
@@ -26,10 +22,10 @@ else:
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
 
-
 from .common import (DTDForbidden, EntitiesForbidden,
                      ExternalReferenceForbidden, _generate_etree_functions)
 
+__origin__ = "xml.etree.ElementTree"
 
 def _get_python_classes():
     """Python 3.3 hides the pure Python code but defusedxml requires it.
@@ -59,8 +55,6 @@ def _get_python_classes():
 if PY3:
     _get_python_classes()
 
-
-__origin__ = "xml.etree.ElementTree"
 
 class DefusedXMLParser(_XMLParser):
     def __init__(self, html=0, target=None, encoding=None,
@@ -92,6 +86,7 @@ class DefusedXMLParser(_XMLParser):
 
     def entity_decl(self, name, is_parameter_entity, value, base,
                     sysid, pubid, notation_name):
+
         raise EntitiesForbidden(name, value, base, sysid, pubid, notation_name)
 
     def unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
