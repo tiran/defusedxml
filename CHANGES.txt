@@ -6,6 +6,10 @@ defusedxml 0.2
 
 *Release date: ??-Feb-2013*
 
+- Renamed ExternalEntitiesForbidden to ExternalReferenceForbidden
+- Unified argument names in callbacks
+- Added arguments and formatted representation to exceptions
+- More tests
 
 defusedxml 0.1
 --------------
