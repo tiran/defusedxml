@@ -81,7 +81,7 @@ Library overview
 
    "billion laughs", "True", "True", "True", "True", "False (1)", "untested"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion", "True", "False", "True", "True", "False (1)", "untested"
+   "external entity expansion", "True", "False (error)", "False (ignore)", "True", "False (1)", "untested"
    "DTD external fetch", "True", "False", "False", "True", "False (1)", "untested"
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
