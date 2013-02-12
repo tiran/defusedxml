@@ -30,7 +30,6 @@ os.environ["ftp_proxy"] = os.environ["http_proxy"]
 
 
 class BaseTests(unittest.TestCase):
-
     module = None
 
     if PY3:
@@ -40,28 +39,16 @@ class BaseTests(unittest.TestCase):
 
     dtd_external_ref = False
 
+    external_ref_exception = ExternalReferenceForbidden
+
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
+    xml_external_file = os.path.join(HERE, "xmltestdata", "external_file.xml")
     xml_quadratic = os.path.join(HERE, "xmltestdata", "quadratic.xml")
     xml_simple = os.path.join(HERE, "xmltestdata", "simple.xml")
     xml_simple_ns = os.path.join(HERE, "xmltestdata", "simple-ns.xml")
     xml_bomb = os.path.join(HERE, "xmltestdata", "xmlbomb.xml")
     xml_bomb2 = os.path.join(HERE, "xmltestdata", "xmlbomb2.xml")
-
-    def setUp(self):
-        if not hasattr(self, "parse"):
-            self.parse = self.module.parse
-        if not hasattr(self, "parseString"):
-            if hasattr(self.module, "fromstring"):
-                self.parseString = self.module.fromstring
-            else:
-                self.parseString = self.module.parseString
-        if PY26:
-            # TODO
-            self.iterparse = None
-        if not hasattr(self, "iterparse"):
-            if hasattr(self.module, "iterparse"):
-                self.iterparse = self.module.iterparse
 
     def get_content(self, xmlfile):
         mode = "rb" if self.content_binary else "r"
@@ -118,14 +105,20 @@ class BaseTests(unittest.TestCase):
 
     def test_dtd_with_external_ref(self):
         if self.dtd_external_ref:
-            self.assertRaises(ExternalReferenceForbidden, self.parse,
+            self.assertRaises(self.external_ref_exception, self.parse,
                               self.xml_dtd)
         else:
             self.parse(self.xml_dtd)
 
     def test_external_ref(self):
-        self.assertRaises(ExternalReferenceForbidden, self.parse,
+        self.assertRaises(self.external_ref_exception, self.parse,
                           self.xml_external, forbid_entities=False)
+
+    def test_external_file_ref(self):
+        content = self.get_content(self.xml_external_file)
+        content = content.replace("/PATH/TO", HERE)
+        self.assertRaises(self.external_ref_exception, self.parseString,
+                          content, forbid_entities=False)
 
     def test_allow_expansion(self):
         self.parse(self.xml_bomb2, forbid_entities=False)
@@ -133,28 +126,40 @@ class BaseTests(unittest.TestCase):
                          forbid_entities=False)
 
 
-class TestDefusedcElementTree(BaseTests):
-    module = cElementTree
-
-    def test_external_ref(self):
-        # etree doesn't do external ref lookup
-        self.assertRaises(ElementTree.ParseError, self.parse,
-                          self.xml_external, forbid_entities=False)
-
-
 class TestDefusedElementTree(BaseTests):
     module = ElementTree
 
-    def test_external_ref(self):
-        # etree doesn't do external ref lookup
-        self.assertRaises(ElementTree.ParseError, self.parse,
-                          self.xml_external, forbid_entities=False)
+    # etree doesn't do external ref lookup
+    external_ref_exception = ElementTree.ParseError
+
+    def parse(self, xmlfile, **kwargs):
+        tree = self.module.parse(xmlfile, **kwargs)
+        return self.module.tostring(tree.getroot())
+
+    def parseString(self, xmlstring, **kwargs):
+        tree = self.module.fromstring(xmlstring, **kwargs)
+        return self.module.tostring(tree)
+
+    def iterparse(self, source, events=None):
+        return self.module.iterparse(source, events)
+
+
+class TestDefusedcElementTree(TestDefusedElementTree):
+    module = cElementTree
 
 
 class TestDefusedMinidom(BaseTests):
     module = minidom
 
     iterparse = None
+
+    def parse(self, xmlfile, **kwargs):
+        doc = self.module.parse(xmlfile, **kwargs)
+        return doc.toxml()
+
+    def parseString(self, xmlstring, **kwargs):
+        doc = self.module.parseString(xmlstring, **kwargs)
+        return doc.toxml()
 
 
 class TestDefusedPulldom(BaseTests):
@@ -164,12 +169,12 @@ class TestDefusedPulldom(BaseTests):
     iterparse = None
 
     def parse(self, xmlfile, **kwargs):
-        dom = self.module.parse(xmlfile, **kwargs)
-        list(dom)
+        events = self.module.parse(xmlfile, **kwargs)
+        return list(events)
 
     def parseString(self, xmlstring, **kwargs):
-        dom = self.module.parseString(xmlstring, **kwargs)
-        list(dom)
+        events = self.module.parseString(xmlstring, **kwargs)
+        return list(events)
 
 
 class TestDefusedSax(BaseTests):
@@ -187,6 +192,7 @@ class TestDefusedSax(BaseTests):
             result = io.BytesIO()
         handler = XMLGenerator(result)
         self.module.parse(xmlfile, handler, **kwargs)
+        return result.getvalue()
 
     def parseString(self, xmlstring, **kwargs):
         if PY3:
@@ -195,6 +201,7 @@ class TestDefusedSax(BaseTests):
             result = io.BytesIO()
         handler = XMLGenerator(result)
         self.module.parseString(xmlstring, handler, **kwargs)
+        return result.getvalue()
 
     def test_exceptions(self):
         if PY26:
@@ -227,6 +234,14 @@ class TestDefusedLxml(BaseTests):
     content_binary = True
     iterparse = None
 
+    def parse(self, xmlfile, **kwargs):
+        tree = self.module.parse(xmlfile, **kwargs)
+        return self.module.tostring(tree)
+
+    def parseString(self, xmlstring, **kwargs):
+        tree = self.module.fromstring(xmlstring, **kwargs)
+        return self.module.tostring(tree)
+
     if not LXML3:
         def test_entities_forbidden(self):
             self.assertRaises(NotSupportedError, self.parse, self.xml_bomb)
@@ -235,6 +250,9 @@ class TestDefusedLxml(BaseTests):
             self.assertRaises(NotSupportedError, self.parse, self.xml_dtd)
 
     def test_external_ref(self):
+        pass
+
+    def test_external_file_ref(self):
         pass
 
     def test_restricted_element1(self):
@@ -251,7 +269,6 @@ class TestDefusedLxml(BaseTests):
         self.assertEqual(list(root.itersiblings()), [])
         self.assertEqual(list(root.getiterator()), [root])
         self.assertEqual(root.getnext(), None)
-
 
     def test_restricted_element2(self):
         tree = self.module.parse(self.xml_bomb2, forbid_dtd=False,
