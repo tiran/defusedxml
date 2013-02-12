@@ -42,12 +42,15 @@ billion laughs / exponential entity expansion
 
 A `Billion Laughs`_ attacks -- also known as exponential entity expansion --
 uses multiple levels of nested entities. The original example uses 9 levels
-of 10 expansions each to expand the string ``lol`` to a string of
+of 10 expansions in each  level to expand the string ``lol`` to a string of
 3 * 10 :sup:`9` Bytes, hence the name billion laughs. The resulting string
 occupies 3 GB (2.79 GiB) memory, intermediate strings require additional
 memory. Because most parsers don't cache intermediate step every
 expansion is repeated over and over again. It increases the CPU load even
 more.
+
+A XML document of just a few hundred bytes can disrupt all services on a
+machine within seconds.
 
 Example XML::
 
@@ -63,12 +66,23 @@ Example XML::
 quadratic blowup entity expansion
 ---------------------------------
 
-`XML DoS and Defenses (MSDN)`_
+A quadratic blowup attack it similar to a `Billion Laughs`_ attack. It abuses
+entity expansion, too. Instead of nested entities it repeats one large entity
+with a couple of ten thousand chars over and over again. The attack isn't as
+efficient as the exponential case but it avoids to trigger countermeasures of
+parsers against heavily nested entities. Some parsers limit the depths and
+breadths of a single entity but not the total amount of expanded text
+throughout an entire XML document.
+
+A medium sized XML document with a couple of hundred kilobytes can require a
+couple of hundred MB to several GB of memory. When the attack is combined
+with some levels of nested expansion an attacker is able to achieve a higher
+ratio.
 
 ::
 
     <!DOCTYPE bomb [
-    <!ENTITY a "xxxxxxx... repeat">
+    <!ENTITY a "xxxxxxx... a couple of ten thousand chars">
     ]>
     <bomb>&a;&a;&a;... repeat</bomb>
 
@@ -76,16 +90,54 @@ quadratic blowup entity expansion
 external entity expansion (remote)
 ----------------------------------
 
-::
+Entity declarations can contain more than just text for replacement. They can
+also point to external resources by public identifiers or system identifiers.
+System identifiers are standard URIs. When the URI is an URL (e.g. a http://
+locator) some parsers download the resource from the remote location and
+embed them into the XML document verbatim.
+
+Simple example of a parsed external entity::
 
     <!DOCTYPE external [
-    <!ENTITY ee SYSTEM "http://www.python.org/">
+    <!ENTITY ee SYSTEM "http://www.python.org/some.xml">
     ]>
     <root>&ee;</root>
+
+The case of parsed external entities works only for valid XML content. The
+standard also supports unparsed external entities with ``NData declaration``.
+
+External entity expansion opens the door to plenty of exploits. An attacker
+can abuse a vulnerable XML library and application to rebound and forward
+network requests with the IP address of the server. It highly depends
+on the parser and the application what kind of exploit is possible. For
+example:
+
+* An attacker can circumvent firewalls and gain access to restricted
+  resources. After all the requests are made from an internal and trustworthy
+  IP address not from the outside.
+* An attacker can abuse a service to attack, spy on or DoS your servers but
+  also third party services. The attack is disguised with the IP address of
+  the server and the attacker is able to utilize the high bandwidth of a big
+  machine.
+* An attacker can exhaust additional resources on the machine, e.g. with
+  requests to a service that doesn't respond or responds with very large
+  files.
+* An attacker could send mails from inside your network if the URL handler
+  supports smtp:// URIs.
 
 
 external entity expansion (local file)
 --------------------------------------
+
+External entities with references to local file are a sub case of external
+entity expansion. It's listed as an extra attack because it deserves extra
+attention. Some XML libraries such as lxml disable network access by default
+but still allow entity expansion with local file access by default. Local
+files are either referenced with a file:// URL or by path (either relative
+or absolute).
+
+An attacker may be able to access and download all files that can be read by
+the application process. This may include critical configuration files, too.
 
 ::
 
@@ -94,8 +146,13 @@ external entity expansion (local file)
     ]>
     <root>&ee;</root>
 
-DTD external fetch
-------------------
+DTD retrieval
+-------------
+
+This case is similar to external entity expansion, too. Some XML libraries
+like Python's xml.dom.pulldown retrieve document type definitions from remote
+or local locations. Several attack scenarios from the external entity case
+apply to this issue as well.
 
 ::
 
@@ -127,6 +184,15 @@ decompression bomb
 
 `ZIP bomb`_
 
+1 GiB zeros ~ 1 MB gzipped
+
+
+::
+
+    $ dd if=/dev/zero bs=1M count=1024 | gzip > zeros.gz
+    $ ls -sh zeros.gz
+    1020K zeros.gz
+
 
 Library overview
 ================
@@ -139,7 +205,7 @@ Library overview
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
    "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested"
    "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested"
-   "DTD external fetch", "True", "False", "False", "True", "False (1)", "untested"
+   "DTD retrieval", "True", "False", "False", "True", "False (1)", "untested"
    "attribute blowup", "unknown", "unknown", "unknown", "unknown", "unknown", "untested"
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
@@ -247,11 +313,17 @@ Contributors
 Brett Cannon <brett@python.org>
   review and code cleanup
 
-s<e>mantics GmbH (http://www.semantics.de)
-   I like to thank my employer s<e>mantics for
-   letting me work on the issue during working hours as part of Semantics's
-   open source initiative.
+semantics GmbH (http://www.semantics.de/)
+   I like to thank my employer s<e>mantics for letting me work on the issue
+   during working hours as part of semantics's open source initiative.
 
+
+References
+==========
+
+* `XML DoS and Defenses (MSDN)`_
+* `Billion Laughs`_ on Wikipedia
+* `ZIP bomb`_ on Wikipedia
 
 .. _defusedxml package: https://bitbucket.org/tiran/defusedxml
 .. _defusedexpat package: https://bitbucket.org/tiran/defusedexpat
