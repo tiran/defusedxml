@@ -11,9 +11,8 @@ libary instead of the standard `expat parser`_.
 .. contents:: Table of Contents
    :depth: 2
 
-
-Attack vectors
-==============
+Synopsis
+========
 
 The results of an attack on vulnerable XML library can be fairly dramatic.
 With just a few hundred Bytes of XML data an attacker can occupy several
@@ -30,13 +29,27 @@ they know about ``<!DOCTYPE>`` from experience with HTML but they are not
 aware that a document type definition (DTD) can generate a HTTP request
 or load a file from the file system.
 
+The issues are known for a long time -- billion laughs was first reported in
+2003. Nevertheless some XML libraries are still vulnerable and even heavy
+users of XML are surprised by these features.
+
+
+Attack vectors
+==============
 
 billion laughs / exponential entity expansion
 ---------------------------------------------
 
-`Billion Laughs`_
+A `Billion Laughs`_ attacks -- also known as exponential entity expansion --
+uses multiple levels of nested entities. The original example uses 9 levels
+of 10 expasnions each to expand the string "lol" to a string of
+3 * 10 :sup:`9` Bytes, hence the name billion laughs. The resulting string
+occupies 3 GB (2.79 GiB) memory, intermediate strings require additional
+memory. Because most parsers don't cache intermediate step every
+expansion is repeated over and over again. It increases the CPU load even
+more.
 
-::
+Example XML::
 
     <!DOCTYPE xmlbomb [
     <!ENTITY a "1234567890" >
@@ -44,7 +57,7 @@ billion laughs / exponential entity expansion
     <!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;">
     <!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;">
     ]>
-    <bomb>&c;</bomb>
+    <bomb>&d;</bomb>
 
 
 quadratic blowup entity expansion
@@ -95,6 +108,20 @@ DTD external fetch
     </html>
 
 
+attribute blowup
+----------------
+
+A XML parsers may use a algorithm with quadratic runtime O(n :sup:`2`) to
+handle attributes and namespaces. If it uses hash maps (dictionaries) to
+store attributes and namespaces the implementation may be vulnerable to
+hash collision attacks, thus reducing the performance to O(n :sup:`2`) again.
+In either case an attacker is able to forge a denial of service attack with
+a XML document that contains thousands upon thousands of attributes in
+a single node.
+
+I haven't researched yet if expat, pyexpat or libxml2 are vulnerable.
+
+
 decompression bomb
 ------------------
 
@@ -106,23 +133,27 @@ Library overview
 
 .. csv-table::
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
-   :widths: 20, 10, 10, 15, 10, 10, 13
+   :widths: 25, 10, 10, 10, 10, 10, 13
 
    "billion laughs", "True", "True", "True", "True", "False (1)", "untested"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion (remote)", "True", "False (error)", "False (ignore)", "True", "False (1)", "untested"
-   "external entity expansion (local file)", "True", "False (error)", "False (ignore)", "True", "True", "untested"
+   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested"
+   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested"
    "DTD external fetch", "True", "False", "False", "True", "False (1)", "untested"
+   "attribute blowup", "unknown", "unknown", "unknown", "unknown", "unknown", "untested"
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
-   "xslt", "False", "False", "False", "False", "True", "unknown"
+   "xslt", "False", "False", "False", "False", "True", "untested"
    "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2"
-   "handler", "expatreader", "XMLParser", "expatbuilder / pulldom", "sax", "", ""
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
    lookups by default.
 2. libxml2 and lxml are not directly vulnerable to gzip decompression bombs
    but they don't protect you against them either.
+3. xml.etree doesn't expand entities and raises a ParserError when an entity
+   occurs.
+4. minidom doesn't expand entities and simply returns the unexpanded entity
+   verbatim.
 
 
 Other things to consider
@@ -193,13 +224,12 @@ Example from `Attacking XML Security`_ for Xalan-J::
 TODO
 ====
 
- * DOM: Use xml.dom.xmlbuilder options for entity handling
- * SAX: take feature_external_ges and feature_external_pes (?) into account
- * implement monkey patching of stdlib modules
- * test lxml default element class overwrite
- * document which module / library is vulnerable to which kind of attack
- * handle iterparse on Python 2.6
- * documentation, documentation, documentation ...
+* DOM: Use xml.dom.xmlbuilder options for entity handling
+* SAX: take feature_external_ges and feature_external_pes (?) into account
+* implement monkey patching of stdlib modules
+* document which module / library is vulnerable to which kind of attack
+* handle iterparse on Python 2.6
+* documentation, documentation, documentation ...
 
 
 License
