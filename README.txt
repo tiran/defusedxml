@@ -228,7 +228,6 @@ TODO
 * SAX: take feature_external_ges and feature_external_pes (?) into account
 * implement monkey patching of stdlib modules
 * document which module / library is vulnerable to which kind of attack
-* handle iterparse on Python 2.6
 * documentation, documentation, documentation ...
 
 
