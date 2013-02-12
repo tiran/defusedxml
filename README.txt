@@ -247,9 +247,10 @@ Contributors
 Brett Cannon <brett@python.org>
   review and code cleanup
 
-I like to thank my employer Semantics GmbH (http://www.semantics.de) for
-letting me work on the issue during working hours as part of Semantics's
-open source initiative.
+s<e>mantics GmbH (http://www.semantics.de)
+   I like to thank my employer s<e>mantics for
+   letting me work on the issue during working hours as part of Semantics's
+   open source initiative.
 
 
 .. _defusedxml package: https://bitbucket.org/tiran/defusedxml
