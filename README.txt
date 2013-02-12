@@ -14,23 +14,23 @@ libary instead of the standard `expat parser`_.
 Synopsis
 ========
 
-The results of an attack on vulnerable XML library can be fairly dramatic.
-With just a few hundred Bytes of XML data an attacker can occupy several
-**Gigabyte** of memory within **seconds**. An attacker can also keep
-CPUs busy for a long time with small to medium size request. Under some
-conditions circumstances it is even possible to access local files on your
-server, to circumvent firewall or to abuse services to rebound attacks to
+The results of an attack on a vulnerable XML library can be fairly dramatic.
+With just a few hundred bytes of XML data an attacker can occupy several
+**gigabytes** of memory within **seconds**. An attacker can also keep
+CPUs busy for a long time with a small to medium size request. Under some
+circumstances it is even possible to access local files on your
+server, to circumvent a firewall, or to abuse services to rebound attacks to
 third parties.
 
-The attacks use and abuse less common features of XML and XML parsers. The
+The attacks use and abuse less common features of XML and its parsers. The
 majority of developers are unacquainted with features such as processing
 instructions and entity expansions that XML inherited from SGML. At best
 they know about ``<!DOCTYPE>`` from experience with HTML but they are not
-aware that a document type definition (DTD) can generate a HTTP request
+aware that a document type definition (DTD) can generate an HTTP request
 or load a file from the file system.
 
-The issues are known for a long time -- billion laughs was first reported in
-2003. Nevertheless some XML libraries are still vulnerable and even heavy
+The issues have been known for a long time -- billion laughs was first reported
+in 2003. Nevertheless some XML libraries are still vulnerable and even heavy
 users of XML are surprised by these features.
 
 
@@ -40,16 +40,16 @@ Attack vectors
 billion laughs / exponential entity expansion
 ---------------------------------------------
 
-A `Billion Laughs`_ attacks -- also known as exponential entity expansion --
+The `Billion Laughs`_ attack -- also known as exponential entity expansion --
 uses multiple levels of nested entities. The original example uses 9 levels
-of 10 expansions in each  level to expand the string ``lol`` to a string of
-3 * 10 :sup:`9` Bytes, hence the name billion laughs. The resulting string
-occupies 3 GB (2.79 GiB) memory, intermediate strings require additional
-memory. Because most parsers don't cache intermediate step every
-expansion is repeated over and over again. It increases the CPU load even
+of 10 expansions in each level to expand the string ``lol`` to a string of
+3 * 10 :sup:`9` bytes, hence the name "billion laughs". The resulting string
+occupies 3 GB (2.79 GiB) of memory; intermediate strings require additional
+memory. Because most parsers don't cache the intermediate step for every
+expansion it is repeated over and over again. It increases the CPU load even
 more.
 
-A XML document of just a few hundred bytes can disrupt all services on a
+An XML document of just a few hundred bytes can disrupt all services on a
 machine within seconds.
 
 Example XML::
@@ -66,18 +66,18 @@ Example XML::
 quadratic blowup entity expansion
 ---------------------------------
 
-A quadratic blowup attack it similar to a `Billion Laughs`_ attack. It abuses
+A quadratic blowup attack is similar to a `Billion Laughs`_ attack; it abuses
 entity expansion, too. Instead of nested entities it repeats one large entity
 with a couple of ten thousand chars over and over again. The attack isn't as
-efficient as the exponential case but it avoids to trigger countermeasures of
-parsers against heavily nested entities. Some parsers limit the depths and
-breadths of a single entity but not the total amount of expanded text
+efficient as the exponential case but it avoids triggering countermeasures of
+parsers against heavily nested entities. Some parsers limit the depth and
+breadth of a single entity but not the total amount of expanded text
 throughout an entire XML document.
 
-A medium sized XML document with a couple of hundred kilobytes can require a
+A medium-sized XML document with a couple of hundred kilobytes can require a
 couple of hundred MB to several GB of memory. When the attack is combined
-with some levels of nested expansion an attacker is able to achieve a higher
-ratio.
+with some level of nested expansion an attacker is able to achieve a higher
+ratio of success.
 
 ::
 
@@ -92,7 +92,7 @@ external entity expansion (remote)
 
 Entity declarations can contain more than just text for replacement. They can
 also point to external resources by public identifiers or system identifiers.
-System identifiers are standard URIs. When the URI is an URL (e.g. a
+System identifiers are standard URIs. When the URI is a URL (e.g. a
 ``http://`` locator) some parsers download the resource from the remote
 location and embed them into the XML document verbatim.
 
@@ -104,7 +104,8 @@ Simple example of a parsed external entity::
     <root>&ee;</root>
 
 The case of parsed external entities works only for valid XML content. The
-standard also supports unparsed external entities with ``NData declaration``.
+XML standard also supports unparsed external entities with a
+``NData declaration``.
 
 External entity expansion opens the door to plenty of exploits. An attacker
 can abuse a vulnerable XML library and application to rebound and forward
@@ -113,8 +114,8 @@ on the parser and the application what kind of exploit is possible. For
 example:
 
 * An attacker can circumvent firewalls and gain access to restricted
-  resources. After all the requests are made from an internal and trustworthy
-  IP address not from the outside.
+  resources as all the requests are made from an internal and trustworthy
+  IP address, not from the outside.
 * An attacker can abuse a service to attack, spy on or DoS your servers but
   also third party services. The attack is disguised with the IP address of
   the server and the attacker is able to utilize the high bandwidth of a big
@@ -122,18 +123,18 @@ example:
 * An attacker can exhaust additional resources on the machine, e.g. with
   requests to a service that doesn't respond or responds with very large
   files.
-* An attacker could send mails from inside your network if the URL handler
+* An attacker could send mail from inside your network if the URL handler
   supports ``smtp://`` URIs.
 
 
 external entity expansion (local file)
 --------------------------------------
 
-External entities with references to local file are a sub case of external
+External entities with references to local files are a sub-case of external
 entity expansion. It's listed as an extra attack because it deserves extra
 attention. Some XML libraries such as lxml disable network access by default
 but still allow entity expansion with local file access by default. Local
-files are either referenced with a ``file://`` URL or by path (either
+files are either referenced with a ``file://`` URL or by a file path (either
 relative or absolute).
 
 An attacker may be able to access and download all files that can be read by
@@ -168,12 +169,12 @@ apply to this issue as well.
 attribute blowup
 ----------------
 
-A XML parsers may use a algorithm with quadratic runtime O(n :sup:`2`) to
+XML parsers may use an algorithm with quadratic runtime O(n :sup:`2`) to
 handle attributes and namespaces. If it uses hash tables (dictionaries) to
 store attributes and namespaces the implementation may be vulnerable to
 hash collision attacks, thus reducing the performance to O(n :sup:`2`) again.
 In either case an attacker is able to forge a denial of service attack with
-a XML document that contains thousands upon thousands of attributes in
+an XML document that contains thousands upon thousands of attributes in
 a single node.
 
 I haven't researched yet if expat, pyexpat or libxml2 are vulnerable.
