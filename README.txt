@@ -286,6 +286,45 @@ Example from `Attacking XML Security`_ for Xalan-J::
     </xsl:stylesheet>
 
 
+Other languages / frameworks
+=============================
+
+Perl
+----
+
+Perl's XML::Simple is vulnerable to quadratic entity expansion and external
+entity expansion (both local and remote)
+
+
+Ruby
+----
+
+Ruby's REXML document parser is vulnerable to entity expansion attacks
+(both quadratic and exponential) but it doesn't do external entity
+expansion by default. In order to counteract entity expansion you have to
+disable the feature::
+
+  REXML::Document.entity_expansion_limit = 0
+
+
+PHP
+---
+
+PHP's SimpleXML API is vulnerable to quadratic entity expansion and loads
+entites from local and remote resources.
+
+
+C# / .NET / Mono
+----------------
+
+not tested yet
+
+
+Java
+----
+
+not tested yet
+
 
 TODO
 ====
