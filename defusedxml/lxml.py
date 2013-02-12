@@ -18,6 +18,8 @@ LXML3 = _etree.LXML_VERSION[0] >= 3
 
 __origin__ = "lxml.etree"
 
+tostring = _etree.tostring
+
 
 class RestrictedElement(_etree.ElementBase):
     """A restricted Element class that filters out instances of some classes

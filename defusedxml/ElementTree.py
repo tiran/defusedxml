@@ -21,6 +21,7 @@ else:
     _IterParseIterator = None
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
+from xml.etree.ElementTree import tostring
 
 from .common import (DTDForbidden, EntitiesForbidden,
                      ExternalReferenceForbidden, _generate_etree_functions)
@@ -74,26 +75,28 @@ class DefusedXMLParser(_XMLParser):
         else:
             parser = self._parser
         if self.forbid_dtd:
-            parser.StartDoctypeDeclHandler = self.start_doctype_decl
+            parser.StartDoctypeDeclHandler = self.defused_start_doctype_decl
         if self.forbid_entities:
-            parser.EntityDeclHandler = self.entity_decl
-            parser.UnparsedEntityDeclHandler = self.unparsed_entity_decl
+            parser.EntityDeclHandler = self.defused_entity_decl
+            parser.UnparsedEntityDeclHandler = self.defused_unparsed_entity_decl
         if hasattr(parser.ExternalEntityRefHandler, "__call__"):
-            parser.ExternalEntityRefHandler = self.external_entity_ref_handler
+            parser.ExternalEntityRefHandler = self.defused_external_entity_ref_handler
 
-    def start_doctype_decl(self, name, sysid, pubid, has_internal_subset):
+    def defused_start_doctype_decl(self, name, sysid, pubid,
+                                   has_internal_subset):
         raise DTDForbidden(name, sysid, pubid)
 
-    def entity_decl(self, name, is_parameter_entity, value, base,
-                    sysid, pubid, notation_name):
-
+    def defused_entity_decl(self, name, is_parameter_entity, value, base,
+                            sysid, pubid, notation_name):
         raise EntitiesForbidden(name, value, base, sysid, pubid, notation_name)
 
-    def unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
+    def defused_unparsed_entity_decl(self, name, base, sysid, pubid,
+                                     notation_name):
         # expat 1.2
         raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)
 
-    def external_entity_ref_handler(self, context, base, sysid, pubid):
+    def defused_external_entity_ref_handler(self, context, base, sysid,
+                                            pubid):
         raise ExternalReferenceForbidden(context, base, sysid, pubid)
 
 
