@@ -92,9 +92,9 @@ external entity expansion (remote)
 
 Entity declarations can contain more than just text for replacement. They can
 also point to external resources by public identifiers or system identifiers.
-System identifiers are standard URIs. When the URI is an URL (e.g. a http://
-locator) some parsers download the resource from the remote location and
-embed them into the XML document verbatim.
+System identifiers are standard URIs. When the URI is an URL (e.g. a
+``http://`` locator) some parsers download the resource from the remote
+location and embed them into the XML document verbatim.
 
 Simple example of a parsed external entity::
 
@@ -123,7 +123,7 @@ example:
   requests to a service that doesn't respond or responds with very large
   files.
 * An attacker could send mails from inside your network if the URL handler
-  supports smtp:// URIs.
+  supports ``smtp://`` URIs.
 
 
 external entity expansion (local file)
@@ -133,8 +133,8 @@ External entities with references to local file are a sub case of external
 entity expansion. It's listed as an extra attack because it deserves extra
 attention. Some XML libraries such as lxml disable network access by default
 but still allow entity expansion with local file access by default. Local
-files are either referenced with a file:// URL or by path (either relative
-or absolute).
+files are either referenced with a ``file://`` URL or by path (either
+relative or absolute).
 
 An attacker may be able to access and download all files that can be read by
 the application process. This may include critical configuration files, too.
@@ -169,7 +169,7 @@ attribute blowup
 ----------------
 
 A XML parsers may use a algorithm with quadratic runtime O(n :sup:`2`) to
-handle attributes and namespaces. If it uses hash maps (dictionaries) to
+handle attributes and namespaces. If it uses hash tables (dictionaries) to
 store attributes and namespaces the implementation may be vulnerable to
 hash collision attacks, thus reducing the performance to O(n :sup:`2`) again.
 In either case an attacker is able to forge a denial of service attack with
