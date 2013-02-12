@@ -116,7 +116,11 @@ class BaseTests(unittest.TestCase):
 
     def test_external_file_ref(self):
         content = self.get_content(self.xml_external_file)
-        content = content.replace("/PATH/TO", HERE)
+        if isinstance(content, bytes):
+            here = HERE.encode(sys.getfilesystemencoding())
+            content = content.replace(b"/PATH/TO", here)
+        else:
+            content = content.replace("/PATH/TO", HERE)
         self.assertRaises(self.external_ref_exception, self.parseString,
                           content, forbid_entities=False)
 
