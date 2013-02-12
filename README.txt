@@ -2,8 +2,11 @@
 defusedxml
 ==========
 
-defuxedxml contains various workarounds and fixes for denial of service
-attacks on Python's XML parsers.
+The `defusedxml package`_ contains several Python-only workarounds and fixes
+for denial of service vulnerabilities in Python's XML libraries. The
+`defusedexpat package`_ comes with binary extensions and a `modified expat`_
+libary instead of the standard `expat parser`_.
+
 
 .. contents:: Table of Contents
    :depth: 2
@@ -11,6 +14,22 @@ attacks on Python's XML parsers.
 
 Attack vectors
 ==============
+
+The results of an attack on vulnerable XML library can be fairly dramatic.
+With just a few hundred Bytes of XML data an attacker can occupy several
+**Gigabyte** of memory within **seconds**. An attacker can also keep
+CPUs busy for a long time with small to medium size request. Under some
+conditions circumstances it is even possible to access local files on your
+server, to circumvent firewall or to abuse services to rebound attacks to
+third parties.
+
+The attacks use and abuse less common features of XML and XML parsers. The
+majority of developers are unacquainted with features such as processing
+instructions and entity expansions that XML inherited from SGML. At best
+they know about ``<!DOCTYPE>`` from experience with HTML but they are not
+aware that a document type definition (DTD) can generate a HTTP request
+or load a file from the file system.
+
 
 billion laughs / exponential entity expansion
 ---------------------------------------------
@@ -41,8 +60,8 @@ quadratic blowup entity expansion
     <bomb>&a;&a;&a;... repeat</bomb>
 
 
-external entity expansion
--------------------------
+external entity expansion (remote)
+----------------------------------
 
 ::
 
@@ -51,6 +70,16 @@ external entity expansion
     ]>
     <root>&ee;</root>
 
+
+external entity expansion (local file)
+--------------------------------------
+
+::
+
+    <!DOCTYPE external [
+    <!ENTITY ee SYSTEM "file:///PATH/TO/simple.xml">
+    ]>
+    <root>&ee;</root>
 
 DTD external fetch
 ------------------
@@ -77,11 +106,12 @@ Library overview
 
 .. csv-table::
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
-   :widths: 15, 10, 10, 15, 10, 10, 13
+   :widths: 20, 10, 10, 15, 10, 10, 13
 
    "billion laughs", "True", "True", "True", "True", "False (1)", "untested"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion", "True", "False (error)", "False (ignore)", "True", "False (1)", "untested"
+   "external entity expansion (remote)", "True", "False (error)", "False (ignore)", "True", "False (1)", "untested"
+   "external entity expansion (local file)", "True", "False (error)", "False (ignore)", "True", "True", "untested"
    "DTD external fetch", "True", "False", "False", "True", "False (1)", "untested"
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
@@ -172,14 +202,6 @@ TODO
  * documentation, documentation, documentation ...
 
 
-.. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
-.. _Billion Laughs: http://en.wikipedia.org/wiki/Billion_laughs
-.. _XML DoS and Defenses (MSDN): http://msdn.microsoft.com/en-us/magazine/ee335713.aspx
-.. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
-.. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
-.. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
-
-
 License
 =======
 
@@ -195,3 +217,16 @@ Contributors
 
 Brett Cannon <brett@python.org>
   review and code cleanup
+
+
+.. _defusedxml package: https://bitbucket.org/tiran/defusedxml
+.. _defusedexpat package: https://bitbucket.org/tiran/defusedexpat
+.. _modified expat: https://bitbucket.org/tiran/expat
+.. _expat parser: http://expat.sourceforge.net/
+.. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
+.. _Billion Laughs: http://en.wikipedia.org/wiki/Billion_laughs
+.. _XML DoS and Defenses (MSDN): http://msdn.microsoft.com/en-us/magazine/ee335713.aspx
+.. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
+.. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
+.. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
+
