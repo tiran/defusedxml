@@ -42,7 +42,7 @@ billion laughs / exponential entity expansion
 
 A `Billion Laughs`_ attacks -- also known as exponential entity expansion --
 uses multiple levels of nested entities. The original example uses 9 levels
-of 10 expasnions each to expand the string "lol" to a string of
+of 10 expansions each to expand the string ``lol`` to a string of
 3 * 10 :sup:`9` Bytes, hence the name billion laughs. The resulting string
 occupies 3 GB (2.79 GiB) memory, intermediate strings require additional
 memory. Because most parsers don't cache intermediate step every
@@ -247,6 +247,10 @@ Contributors
 
 Brett Cannon <brett@python.org>
   review and code cleanup
+
+I like to thank my employer Semantics GmbH (http://www.semantics.de) for
+letting me work on the issue during working hours as part of Semantics's
+open source initiative.
 
 
 .. _defusedxml package: https://bitbucket.org/tiran/defusedxml
