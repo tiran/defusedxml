@@ -3,13 +3,14 @@ import os
 import sys
 import unittest
 import io
+import re
 
 from xml.sax.saxutils import XMLGenerator
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax
 from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
                         ExternalReferenceForbidden, NotSupportedError)
-from defusedxml.common import PY3, PY26
+from defusedxml.common import PY3, PY26, PY31
 
 
 try:
@@ -27,6 +28,39 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 os.environ["http_proxy"] = "http://127.0.9.1:9"
 os.environ["https_proxy"] = os.environ["http_proxy"]
 os.environ["ftp_proxy"] = os.environ["http_proxy"]
+
+if PY26 or PY31:
+    class _AssertRaisesContext(object):
+        def __init__(self, expected, test_case, expected_regexp=None):
+            self.expected = expected
+            self.failureException = test_case.failureException
+            self.expected_regexp = expected_regexp
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, tb):
+            if exc_type is None:
+                try:
+                    exc_name = self.expected.__name__
+                except AttributeError:
+                    exc_name = str(self.expected)
+                raise self.failureException(
+                    "{0} not raised".format(exc_name))
+            if not issubclass(exc_type, self.expected):
+                # let unexpected exceptions pass through
+                return False
+            self.exception = exc_value # store for later retrieval
+            if self.expected_regexp is None:
+                return True
+
+            expected_regexp = self.expected_regexp
+            if isinstance(expected_regexp, basestring):
+                expected_regexp = re.compile(expected_regexp)
+            if not expected_regexp.search(str(exc_value)):
+                raise self.failureException('"%s" does not match "%s"' %
+                         (expected_regexp.pattern, str(exc_value)))
+            return True
 
 
 class BaseTests(unittest.TestCase):
@@ -49,6 +83,21 @@ class BaseTests(unittest.TestCase):
     xml_simple_ns = os.path.join(HERE, "xmltestdata", "simple-ns.xml")
     xml_bomb = os.path.join(HERE, "xmltestdata", "xmlbomb.xml")
     xml_bomb2 = os.path.join(HERE, "xmltestdata", "xmlbomb2.xml")
+
+    if PY26 or PY31:
+        # old Python versions don't have these useful test methods
+        def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
+            context = _AssertRaisesContext(excClass, self)
+            if callableObj is None:
+                return context
+            with context:
+                callableObj(*args, **kwargs)
+
+        def assertIn(self, member, container, msg=None):
+            if member not in container:
+                standardMsg = '%s not found in %s' % (repr(member),
+                                                      repr(container))
+                self.fail(self._formatMessage(msg, standardMsg))
 
     def get_content(self, xmlfile):
         mode = "rb" if self.content_binary else "r"
@@ -221,7 +270,7 @@ class TestDefusedSax(BaseTests):
         with self.assertRaises(ExternalReferenceForbidden) as ctx:
             self.parse(self.xml_external, forbid_entities=False)
         msg = ("ExternalReferenceForbidden"
-               "(system_id='http://www.python.org/', public_id=None)")
+               "(system_id='http://www.w3schools.com/xml/note.xml', public_id=None)")
         self.assertEqual(str(ctx.exception), msg)
         self.assertEqual(repr(ctx.exception), msg)
 
@@ -297,6 +346,28 @@ class TestDefusedLxml(BaseTests):
         self.assertEqual(tag.getnext(), None)
         self.assertEqual(tag.getprevious(), bomb)
 
+    def test_xpath_injection(self):
+        # show XPath injection vulnerability
+        xml = """<root><tag id="one" /><tag id="two"/></root>"""
+        expr = "one' or @id='two"
+        root = lxml.fromstring(xml)
+
+        # insecure way
+        xp = "tag[@id='%s']" % expr
+        elements = root.xpath(xp)
+        self.assertEqual(len(elements), 2)
+        self.assertEqual(elements, list(root))
+
+        # proper and safe way
+        xp = "tag[@id=$idname]"
+        elements = root.xpath(xp, idname=expr)
+        self.assertEqual(len(elements), 0)
+        self.assertEqual(elements, [])
+
+        elements = root.xpath(xp, idname="one")
+        self.assertEqual(len(elements), 1)
+        self.assertEqual(elements, list(root)[:1])
+
 
 def test_main():
     suite = unittest.TestSuite()
@@ -311,5 +382,5 @@ def test_main():
 
 if __name__ == "__main__":
     suite = test_main()
-    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    result = unittest.TextTestRunner(verbosity=1).run(suite)
     sys.exit(not result.wasSuccessful())
