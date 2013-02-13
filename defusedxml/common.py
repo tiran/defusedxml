@@ -9,6 +9,7 @@ import sys
 
 PY3 = sys.version_info[0] == 3
 PY26 = sys.version_info[:2] == (2, 6)
+PY31 = sys.version_info[:2] == (3, 1)
 
 
 class DefusedXmlException(ValueError):
@@ -95,7 +96,26 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
                                       forbid_entities=forbid_entities)
         return _parse(source, parser)
 
-    if PY3:
+    if PY26 or PY31:
+        def unbound(f):
+                return getattr(f, "__func__", f)
+        def iterparse(source, events=None, forbid_dtd=False,
+                      forbid_entities=True):
+            it = _iterparse(source, events)
+            parser = it._parser._parser
+            if forbid_dtd:
+                parser.StartDoctypeDeclHandler = \
+                    unbound(DefusedXMLParser.defused_start_doctype_decl)
+            if forbid_entities:
+                parser.EntityDeclHandler = \
+                    unbound(DefusedXMLParser.defused_entity_decl)
+                parser.UnparsedEntityDeclHandler = \
+                    unbound(DefusedXMLParser.defused_unparsed_entity_decl)
+            if hasattr(parser.ExternalEntityRefHandler, "__call__"):
+                parser.ExternalEntityRefHandler = \
+                    unbound(DefusedXMLParser.defused_external_entity_ref_handler)
+            return it
+    elif PY3:
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
                       forbid_entities=True):
             close_source = False
@@ -105,23 +125,6 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
             if not parser:
                 parser = DefusedXMLParser(target=_TreeBuilder())
             return _IterParseIterator(source, events, parser, close_source)
-    elif PY26:
-        def iterparse(source, events=None, forbid_dtd=False,
-                      forbid_entities=True):
-            it = _iterparse(source, events)
-            parser = it._parser._parser
-            if forbid_dtd:
-                parser.StartDoctypeDeclHandler = \
-                    DefusedXMLParser.defused_start_doctype_decl.__func__
-            if forbid_entities:
-                parser.EntityDeclHandler = \
-                    DefusedXMLParser.defused_entity_decl.__func__
-                parser.UnparsedEntityDeclHandler = \
-                    DefusedXMLParser.defused_unparsed_entity_decl.__func__
-            if hasattr(parser.ExternalEntityRefHandler, "__call__"):
-                parser.ExternalEntityRefHandler = \
-                    DefusedXMLParser.defused_external_entity_ref_handler.__func__
-            return it
     else:
         # Python 2.7
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
