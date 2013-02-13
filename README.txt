@@ -352,12 +352,16 @@ disable the feature::
 
   REXML::Document.entity_expansion_limit = 0
 
+libxml-ruby and hpricot don't expand entities in their default configuration.
+
 
 PHP
 ---
 
 PHP's SimpleXML API is vulnerable to quadratic entity expansion and loads
-entites from local and remote resources.
+entites from local and remote resources. The option ``LIBXML_NONET`` disables
+network access but still allows local file access. ``LIBXML_NOENT`` seems to
+have no effect on entity expansion in PHP 5.4.6.
 
 
 C# / .NET / Mono
@@ -397,8 +401,8 @@ Licensed to PSF under a Contributor Agreement.
 See http://www.python.org/psf/license for licensing details.
 
 
-Contributors
-============
+Acknowledgements
+================
 
 Brett Cannon <brett@python.org>
   review and code cleanup
