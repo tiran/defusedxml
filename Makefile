@@ -2,7 +2,7 @@ PYTHON=python
 SETUPFLAGS=
 COMPILEFLAGS=
 INSTALLFLAGS=
-PYTHONS=python2.6 python2.7 python3.2 python3.3 python3.4
+PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 
 .PHONY: inplace all rebuild test_inplace test fulltests clean distclean
 .PHONY: sdist install
@@ -27,8 +27,13 @@ fulltest:
 	$(MAKE) clean
 	@set -e; \
 	for python in $(PYTHONS); do \
+		if [ -z $$(which $$python) ]; then \
+			echo "*** $$python not found ***\n"; \
+			continue; \
+		fi; \
 		echo "*** $$python ***"; \
-		$$python $(SETUPFLAGS) setup.py build test; \
+		$$python $(SETUPFLAGS) setup.py -q test; \
+		echo ""; \
 	done
 	$(MAKE) clean
 
