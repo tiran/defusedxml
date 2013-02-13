@@ -2,8 +2,10 @@
 defusedxml
 ==========
 
+    "It's just XML, what could probably go wrong?"
+
 The `defusedxml package`_ contains several Python-only workarounds and fixes
-for denial of service vulnerabilities in Python's XML libraries.
+for denial of service and other vulnerabilities in Python's XML libraries.
 
 The `defusedexpat package`_ comes with binary extensions and a `modified expat`_
 libary instead of the standard `expat parser`_.
@@ -30,9 +32,15 @@ they know about ``<!DOCTYPE>`` from experience with HTML but they are not
 aware that a document type definition (DTD) can generate an HTTP request
 or load a file from the file system.
 
-The issues have been known for a long time -- billion laughs was first reported
-in 2003. Nevertheless some XML libraries are still vulnerable and even heavy
-users of XML are surprised by these features.
+None of the issues is new. They have been known for a long time. Billion
+laughs was first reported in 2003. Nevertheless some XML libraries and
+applications are still vulnerable and even heavy users of XML are
+surprised by these features. It's hard to say whom to blame for the
+situation. It's too short sighted to shift all blame on XML parsers and
+XML libraries for using insecure default settings. After all they
+properly implement XML specifications. Application developers must not rely
+that a library is always configured for security and potential harmful data
+by default.
 
 
 Attack vectors
@@ -209,7 +217,7 @@ Best practices
 * Don't use XPath expression from untrusted sources
 * Don't apply XSL transformations that come untrusted sources
 * Always validate and properly quote arguments to XSL transformations and
-  XPath queries.
+  XPath queries
 
 (based on Brad Hill's `Attacking XML Security`_)
 
