@@ -3,8 +3,9 @@ defusedxml
 ==========
 
 The `defusedxml package`_ contains several Python-only workarounds and fixes
-for denial of service vulnerabilities in Python's XML libraries. The
-`defusedexpat package`_ comes with binary extensions and a `modified expat`_
+for denial of service vulnerabilities in Python's XML libraries.
+
+The `defusedexpat package`_ comes with binary extensions and a `modified expat`_
 libary instead of the standard `expat parser`_.
 
 
@@ -147,6 +148,7 @@ the application process. This may include critical configuration files, too.
     ]>
     <root>&ee;</root>
 
+
 DTD retrieval
 -------------
 
@@ -166,35 +168,6 @@ apply to this issue as well.
     </html>
 
 
-attribute blowup
-----------------
-
-XML parsers may use an algorithm with quadratic runtime O(n :sup:`2`) to
-handle attributes and namespaces. If it uses hash tables (dictionaries) to
-store attributes and namespaces the implementation may be vulnerable to
-hash collision attacks, thus reducing the performance to O(n :sup:`2`) again.
-In either case an attacker is able to forge a denial of service attack with
-an XML document that contains thousands upon thousands of attributes in
-a single node.
-
-I haven't researched yet if expat, pyexpat or libxml2 are vulnerable.
-
-
-decompression bomb
-------------------
-
-`ZIP bomb`_
-
-1 GiB zeros ~ 1 MB gzipped
-
-
-::
-
-    $ dd if=/dev/zero bs=1M count=1024 | gzip > zeros.gz
-    $ ls -sh zeros.gz
-    1020K zeros.gz
-
-
 Library overview
 ================
 
@@ -207,7 +180,6 @@ Library overview
    "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested"
    "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested"
    "DTD retrieval", "True", "False", "False", "True", "False (1)", "untested"
-   "attribute blowup", "unknown", "unknown", "unknown", "unknown", "unknown", "untested"
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
    "xpath", "False", "False", "False", "False", "True", "untested"
    "xslt", "False", "False", "False", "False", "True", "untested"
@@ -235,9 +207,51 @@ Best practices
 * Limit parse depth
 * Limit total input size
 * Don't use XPath expression from untrusted sources
-* Don't use XSLT code from untrusted sources
+* Don't apply XSL transformations that come untrusted sources
+* Always validate and properly quote arguments to XSL transformations and
+  XPath queries.
 
 (based on Brad Hill's `Attacking XML Security`_)
+
+
+attribute blowup
+----------------
+
+XML parsers may use an algorithm with quadratic runtime O(n :sup:`2`) to
+handle attributes and namespaces. If it uses hash tables (dictionaries) to
+store attributes and namespaces the implementation may be vulnerable to
+hash collision attacks, thus reducing the performance to O(n :sup:`2`) again.
+In either case an attacker is able to forge a denial of service attack with
+an XML document that contains thousands upon thousands of attributes in
+a single node.
+
+I haven't researched yet if expat, pyexpat or libxml2 are vulnerable.
+
+
+decompression bomb
+------------------
+
+The issue of decompression bombs (aka `ZIP bomb`_) apply to all XML libraries
+that can parse compressed XML stream like gzipped HTTP streams or LZMA-ed
+files. For an attacker it can reduce the amount of transmitted data by three
+magnitudes or more. Gzip is able to compress 1 GiB zeros to roughly 1 MB,
+lzma is even better::
+
+    $ dd if=/dev/zero bs=1M count=1024 | gzip > zeros.gz
+    $ dd if=/dev/zero bs=1M count=1024 | lzma -z > zeros.xy
+    $ ls -sh zeros.*
+    1020K zeros.gz
+     148K zeros.xy
+
+None of Python's standard XML libraries decompresses streams except of
+``xmlrpclib`` and that is vulnerable <http://bugs.python.org/issue16043>
+to decompression bombs.
+
+lxml can load and process compressed data through libxml2 transparently.
+libxml2 can handle even very large blobs of compressed data efficiently
+without using too much memory. But it doesn't protect applications from
+decompression bombs. A carefully written SAX or iterparse-like approach can
+be safe.
 
 
 Processing Instruction
@@ -247,7 +261,9 @@ Processing Instruction
 
   <?xml-stylesheet type="text/xsl" href="style.xsl"?>
 
-may impose more threats for XML processing.
+may impose more threats for XML processing. It depends if and how a
+processor handles processing instructions. The issue of URL retrieval with
+network or local file access apply to processing instructions, too.
 
 
 Other DTD features
@@ -260,14 +276,35 @@ these features may be a security threat.
 XPath
 -----
 
-XPath statements may introduce DoS vulnerabilities.
+XPath statements may introduce DoS vulnerabilities. Code should never execute
+queries from untrusted sources. An attacker may also be able to create a XML
+document that makes certain XPath queries costly or resource hungry.
+
+
+XPath injection attacks
+-----------------------
+
+XPath injeciton attacks pretty much work like SQL injection attacks.
+Arguments to XPath queries must be quoted and validated properly, especially
+when they are taken from the user. The page `Avoid the dangers of XPath injection`_
+list some ramifications of XPath injections.
+
+Python's standard library doesn't have XPath support. Lxml supports
+parameterized XPath queries which does proper quoting. You just have to use
+its xpath() method correctly::
+
+   # DON'T
+   >>> tree.xpath("/tag[@id='%s']" % value)
+
+   # instead do
+   >>> tree.xpath("/tag[@id=$tagid]", tagid=name)
 
 
 XSL Transformation
 ------------------
 
 You should keep in mind that XSLT is a Turing complete language. Never
-process XSLT code from unknown or untrusted source. XSLT processors may
+process XSLT code from unknown or untrusted source! XSLT processors may
 allow you to interact with external resources in ways you can't even imagine.
 
 Example from `Attacking XML Security`_ for Xalan-J::
@@ -318,13 +355,18 @@ entites from local and remote resources.
 C# / .NET / Mono
 ----------------
 
-not tested yet
+Untested. Information in `XML DoS and Defenses (MSDN)`_ suggest that .NET is
+vulnerable with its default settings.
 
 
 Java
 ----
 
-not tested yet
+Untested. The documentation of Xerces and its `Xerces SecurityMananger`_
+sounds like Xerces is also vulnerable to billion laugh attacks with its
+default settings. It also does entity resolving when an
+``org.xml.sax.EntityResolver`` is configured. I'm not yet sure about the
+default setting here.
 
 
 TODO
@@ -375,4 +417,6 @@ References
 .. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
 .. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
 .. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
+.. _Avoid the dangers of XPath injection: http://www.ibm.com/developerworks/xml/library/x-xpathinjection/index.html
+.. _Xerces SecurityMananger: http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
 
