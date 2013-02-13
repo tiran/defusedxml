@@ -180,18 +180,18 @@ Library overview
 ================
 
 .. csv-table::
-   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python"
-   :widths: 25, 10, 10, 10, 10, 10, 13
+   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python", "genshi"
+   :widths: 25, 10, 10, 10, 10, 10, 13, 10
 
-   "billion laughs", "True", "True", "True", "True", "False (1)", "untested"
-   "quadratic blowup", "True", "True", "True", "True", "True", "untested"
-   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested"
-   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested"
-   "DTD retrieval", "True", "False", "False", "True", "False (1)", "untested"
-   "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested"
-   "xpath", "False", "False", "False", "False", "True", "untested"
-   "xslt", "False", "False", "False", "False", "True", "untested"
-   "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2"
+   "billion laughs", "True", "True", "True", "True", "False (1)", "untested", "False (5)"
+   "quadratic blowup", "True", "True", "True", "True", "True", "untested", "False (5)"
+   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested", "False (5)"
+   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested", "False (5)"
+   "DTD retrieval", "True", "False", "False", "True", "False (1)", "untested", "False"
+   "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested", "False"
+   "xpath support", "False", "False", "False", "False", "True", "untested", "False"
+   "xsl(t) support", "False", "False", "False", "False", "True", "untested", "False"
+   "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
    lookups by default.
@@ -201,6 +201,8 @@ Library overview
    occurs.
 4. minidom doesn't expand entities and simply returns the unexpanded entity
    verbatim.
+5. genshi 0.6 doesn't support entity expansion and raises a ParserError when
+   an entity occurs.
 
 
 Other things to consider
