@@ -8,7 +8,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
-from .common import PY3, PY26
+from .common import PY3, PY26, PY31
 if PY3:
     import importlib
 else:
@@ -28,12 +28,11 @@ from .common import (DTDForbidden, EntitiesForbidden,
 
 __origin__ = "xml.etree.ElementTree"
 
-def _get_python_classes():
+def _get_py3_cls():
     """Python 3.3 hides the pure Python code but defusedxml requires it.
 
     The code is based on test.support.import_fresh_module().
     """
-    global _XMLParser, _iterparse, _IterParseIterator, ParseError
     pymodname = "xml.etree.ElementTree"
     cmodname = "_elementtree"
 
@@ -50,27 +49,30 @@ def _get_python_classes():
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
-    _IterParseIterator = pure_pymod._IterParseIterator
-    ParseError = pure_pymod.ParseError
+    if PY31:
+        _IterParseIterator = None
+        from xml.parsers.expat import ExpatError as ParseError
+    else:
+        _IterParseIterator = pure_pymod._IterParseIterator
+        ParseError = pure_pymod.ParseError
+
+    return _XMLParser, _iterparse, _IterParseIterator, ParseError
 
 if PY3:
-    _get_python_classes()
+    _XMLParser, _iterparse, _IterParseIterator, ParseError = _get_py3_cls()
 
 
 class DefusedXMLParser(_XMLParser):
     def __init__(self, html=0, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True):
-        if PY3:
-            super().__init__(html, target, encoding)
-        elif PY26:
-            # Python 2.x old style class
+        if PY26 or PY31:
             _XMLParser.__init__(self, html, target)
         else:
             # Python 2.x old style class
             _XMLParser.__init__(self, html, target, encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
-        if PY3:
+        if PY3 and not PY31:
             parser = self.parser
         else:
             parser = self._parser
