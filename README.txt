@@ -201,8 +201,8 @@ Library overview
    occurs.
 4. minidom doesn't expand entities and simply returns the unexpanded entity
    verbatim.
-5. genshi 0.6 doesn't support entity expansion and raises a ParserError when
-   an entity occurs.
+5. genshi.input of genshi 0.6 doesn't support entity expansion and raises a
+   ParserError when an entity occurs.
 
 
 Other things to consider
@@ -308,6 +308,19 @@ its xpath() method correctly::
 
    # instead do
    >>> tree.xpath("/tag[@id=$tagid]", tagid=name)
+
+
+XInclude
+--------
+
+`XML Inclusion`_ is another way to load and include external files::
+
+   <root xmlns:xi="http://www.w3.org/2001/XInclude">
+     <xi:include href="filename.txt" parse="text" />
+   </root>
+
+This feature should be disabled when XML files from an untrusted source are
+processed.
 
 
 XSL Transformation
@@ -433,4 +446,5 @@ References
 .. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
 .. _Avoid the dangers of XPath injection: http://www.ibm.com/developerworks/xml/library/x-xpathinjection/index.html
 .. _Xerces SecurityMananger: http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
+.. _XML Inclusion: http://www.w3.org/TR/xinclude/#include_element
 
