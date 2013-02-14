@@ -1,14 +1,8 @@
-==========
-defusedxml
-==========
+===================================================
+defusedxml -- defusing XML bombs and other exploits
+===================================================
 
     "It's just XML, what could probably go wrong?"
-
-The `defusedxml package`_ contains several Python-only workarounds and fixes
-for denial of service and other vulnerabilities in Python's XML libraries.
-
-The `defusedexpat package`_ comes with binary extensions and a `modified expat`_
-libary instead of the standard `expat parser`_.
 
 
 .. contents:: Table of Contents
@@ -183,7 +177,7 @@ Python XML Libraries
 
 .. csv-table::
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python", "genshi"
-   :widths: 25, 10, 10, 10, 10, 10, 13, 10
+   :widths: 20, 8, 8, 8, 8, 8, 12, 8
 
    "billion laughs", "True", "True", "True", "True", "False (1)", "untested", "False (5)"
    "quadratic blowup", "True", "True", "True", "True", "True", "untested", "False (5)"
@@ -193,7 +187,7 @@ Python XML Libraries
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested", "False"
    "xpath support", "False", "False", "False", "False", "True", "untested", "False"
    "xsl(t) support", "False", "False", "False", "False", "True", "untested", "False"
-   "xinclude support", "False", "True (6)", "False", "False", "True (6), "untested", "True"
+   "xinclude support", "False", "True (6)", "False", "False", "True (6)", "untested", "True"
    "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
@@ -222,8 +216,55 @@ CVE-2013-1665:
   security flaws and DoS vulnerabilities
 
 
-Other things to consider
-========================
+defusedxml
+==========
+
+The `defusedxml package`_ contains several Python-only workarounds and fixes
+for denial of service and other vulnerabilities in Python's XML libraries.
+
+defused.cElementTree
+--------------------
+
+
+defused.ElementTree
+--------------------
+
+
+defused.expatreader
+-------------------
+
+
+defused.sax
+-----------
+
+
+defused.expatbuilder
+--------------------
+
+
+defused.minidom
+---------------
+
+
+defused.pulldom
+---------------
+
+
+defused.lxml
+------------
+
+
+
+defusedexpat
+============
+
+The `defusedexpat package`_ comes with binary extensions and a `modified expat`_
+libary instead of the standard `expat parser`_. It's basically a stand-alone
+version of the patches for Python's standard library C extensions.
+
+
+How to avoid XML vulnerabilities
+================================
 
 Best practices
 --------------
@@ -239,6 +280,15 @@ Best practices
   XPath queries
 
 (based on Brad Hill's `Attacking XML Security`_)
+
+
+Other things to consider
+========================
+
+XML, XML parsers and processing libraries have more features and possible
+issue that can lead to DoS vulnerabilities or security exploits in
+applications. I have compiled an incomplete list of possible issues that
+need further research and more attention.
 
 
 attribute blowup
@@ -478,4 +528,3 @@ References
 .. _Avoid the dangers of XPath injection: http://www.ibm.com/developerworks/xml/library/x-xpathinjection/index.html
 .. _Xerces SecurityMananger: http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
 .. _XML Inclusion: http://www.w3.org/TR/xinclude/#include_element
-
