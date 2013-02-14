@@ -6,6 +6,8 @@ import io
 import re
 
 from xml.sax.saxutils import XMLGenerator
+from xml.sax import SAXParseException
+from pyexpat import ExpatError
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax
 from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
@@ -15,9 +17,11 @@ from defusedxml.common import PY3, PY26, PY31
 
 try:
     from defusedxml import lxml
+    from lxml.etree import XMLSyntaxError
     LXML3 = lxml.LXML3
 except ImportError:
     lxml = None
+    XMLSyntaxError = None
     LXML3 = False
 
 
@@ -74,6 +78,7 @@ class BaseTests(unittest.TestCase):
     dtd_external_ref = False
 
     external_ref_exception = ExternalReferenceForbidden
+    cyclic_error = None
 
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
@@ -83,6 +88,7 @@ class BaseTests(unittest.TestCase):
     xml_simple_ns = os.path.join(HERE, "xmltestdata", "simple-ns.xml")
     xml_bomb = os.path.join(HERE, "xmltestdata", "xmlbomb.xml")
     xml_bomb2 = os.path.join(HERE, "xmltestdata", "xmlbomb2.xml")
+    xml_cyclic = os.path.join(HERE, "xmltestdata", "cyclic.xml")
 
     if PY26 or PY31:
         # old Python versions don't have these useful test methods
@@ -128,6 +134,10 @@ class BaseTests(unittest.TestCase):
                           self.get_content(self.xml_quadratic))
         self.assertRaises(EntitiesForbidden, self.parseString,
                           self.get_content(self.xml_external))
+
+    def test_entity_cycle(self):
+        self.assertRaises(self.cyclic_error, self.parse, self.xml_cyclic,
+                          forbid_entities=False)
 
     def test_dtd_forbidden(self):
         self.assertRaises(DTDForbidden, self.parse, self.xml_bomb,
@@ -182,8 +192,11 @@ class BaseTests(unittest.TestCase):
 class TestDefusedElementTree(BaseTests):
     module = ElementTree
 
+
     # etree doesn't do external ref lookup
     external_ref_exception = ElementTree.ParseError
+
+    cyclic_error = ElementTree.ParseError
 
     def parse(self, xmlfile, **kwargs):
         tree = self.module.parse(xmlfile, **kwargs)
@@ -204,6 +217,9 @@ class TestDefusedcElementTree(TestDefusedElementTree):
 class TestDefusedMinidom(BaseTests):
     module = minidom
 
+    cyclic_error = ExpatError
+
+
     iterparse = None
 
     def parse(self, xmlfile, **kwargs):
@@ -217,6 +233,8 @@ class TestDefusedMinidom(BaseTests):
 
 class TestDefusedPulldom(BaseTests):
     module = pulldom
+
+    cyclic_error = SAXParseException
 
     dtd_external_ref = True
     iterparse = None
@@ -232,6 +250,8 @@ class TestDefusedPulldom(BaseTests):
 
 class TestDefusedSax(BaseTests):
     module = sax
+
+    cyclic_error = SAXParseException
 
     content_binary = True
     dtd_external_ref = True
@@ -283,6 +303,8 @@ class TestDefusedSax(BaseTests):
 
 class TestDefusedLxml(BaseTests):
     module = lxml
+
+    cyclic_error = XMLSyntaxError
 
     content_binary = True
     iterparse = None
