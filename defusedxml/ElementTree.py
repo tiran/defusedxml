@@ -64,7 +64,8 @@ if PY3:
 
 class DefusedXMLParser(_XMLParser):
     def __init__(self, html=0, target=None, encoding=None,
-                 forbid_dtd=False, forbid_entities=True):
+                 forbid_dtd=False, forbid_entities=True,
+                 forbid_external=True):
         if PY26 or PY31:
             _XMLParser.__init__(self, html, target)
         else:
@@ -72,6 +73,7 @@ class DefusedXMLParser(_XMLParser):
             _XMLParser.__init__(self, html, target, encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
+        self.forbid_external = forbid_external
         if PY3 and not PY31:
             parser = self.parser
         else:
@@ -81,7 +83,7 @@ class DefusedXMLParser(_XMLParser):
         if self.forbid_entities:
             parser.EntityDeclHandler = self.defused_entity_decl
             parser.UnparsedEntityDeclHandler = self.defused_unparsed_entity_decl
-        if hasattr(parser.ExternalEntityRefHandler, "__call__"):
+        if self.forbid_external:
             parser.ExternalEntityRefHandler = self.defused_external_entity_ref_handler
 
     def defused_start_doctype_decl(self, name, sysid, pubid,
