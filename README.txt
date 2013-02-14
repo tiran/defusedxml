@@ -176,19 +176,19 @@ Python XML Libraries
 ====================
 
 .. csv-table::
-   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python", "genshi"
-   :widths: 20, 8, 8, 8, 8, 8, 12, 8
+   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "genshi"
+   :widths: 24, 8, 8, 8, 8, 8, 8
 
-   "billion laughs", "True", "True", "True", "True", "False (1)", "untested", "False (5)"
-   "quadratic blowup", "True", "True", "True", "True", "True", "untested", "False (5)"
-   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "untested", "False (5)"
-   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "untested", "False (5)"
-   "DTD retrieval", "True", "False", "False", "True", "False (1)", "untested", "False"
-   "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested", "False"
-   "xpath support", "False", "False", "False", "False", "True", "untested", "False"
-   "xsl(t) support", "False", "False", "False", "False", "True", "untested", "False"
-   "xinclude support", "False", "True (6)", "False", "False", "True (6)", "untested", "True"
-   "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2", "expat"
+   "billion laughs", "True", "True", "True", "True", "False (1)", "False (5)"
+   "quadratic blowup", "True", "True", "True", "True", "True", "False (5)"
+   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "False (5)"
+   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "False (5)"
+   "DTD retrieval", "True", "False", "False", "True", "False (1)", "False"
+   "gzip bomb", "False", "False", "False", "False", "partly (2)", "False"
+   "xpath support", "False", "False", "False", "False", "True", "False"
+   "xsl(t) support", "False", "False", "False", "False", "True", "False"
+   "xinclude support", "False", "True (6)", "False", "False", "True (6)", "True"
+   "C library", "expat", "expat", "expat", "expat", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
    lookups by default.
