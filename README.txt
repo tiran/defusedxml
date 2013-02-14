@@ -132,6 +132,8 @@ example:
 * An attacker can exhaust additional resources on the machine, e.g. with
   requests to a service that doesn't respond or responds with very large
   files.
+* An attacker may gain knowledge, when, how often and from which IP address
+  a XML document is accessed.
 * An attacker could send mail from inside your network if the URL handler
   supports ``smtp://`` URIs.
 
@@ -206,6 +208,18 @@ Python XML Libraries
    ParserError when an entity occurs.
 6. Library has (limited) XInclude support but requires an additional step to
    process inclusion.
+
+
+CVE
+===
+
+CVE-2013-1664:
+  Unrestricted entity expansion induces DoS vulnerabilities in Python XML
+  libraries (XML bomb)
+
+CVE-2013-1665:
+  External entity expansion in Python XML libraries inflicts potential
+  security flaws and DoS vulnerabilities
 
 
 Other things to consider
