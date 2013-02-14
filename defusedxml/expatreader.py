@@ -16,12 +16,15 @@ __origin__ = "xml.sax.expatreader"
 
 
 class DefusedExpatParser(_ExpatParser):
+    """Defused SAX driver for the pyexpat C module."""
 
-    def __init__(self, forbid_dtd=False, forbid_entities=True,
-                 *args, **kwargs):
-        _ExpatParser.__init__(self, *args, **kwargs)
+    def __init__(self, namespaceHandling=0, bufsize=2 ** 16 - 20,
+                 forbid_dtd=False, forbid_entities=True,
+                 forbid_external=True):
+        _ExpatParser.__init__(self, namespaceHandling, bufsize)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
+        self.forbid_external = forbid_external
 
     def defused_start_doctype_decl(self, name, sysid, pubid,
                                    has_internal_subset):
@@ -48,7 +51,7 @@ class DefusedExpatParser(_ExpatParser):
         if self.forbid_entities:
             parser.EntityDeclHandler = self.defused_entity_decl
             parser.UnparsedEntityDeclHandler = self.defused_unparsed_entity_decl
-        if hasattr(parser.ExternalEntityRefHandler, "__call__"):
+        if self.forbid_external:
             parser.ExternalEntityRefHandler = self.defused_external_entity_ref_handler
 
 
