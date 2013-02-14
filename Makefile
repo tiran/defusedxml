@@ -11,7 +11,8 @@ all: inplace README.html
 
 README.html: README.txt CHANGES.txt
 	@echo | cat README.txt - CHANGES.txt | \
-	    rst2html --verbose --exit-status=1 > README.html
+	    rst2html --verbose --exit-status=1 --stylesheet=void.css \
+            > README.html
 
 inplace:
 	$(PYTHON) setup.py $(SETUPFLAGS) build_ext -i $(COMPILEFLAGS)
