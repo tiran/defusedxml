@@ -176,8 +176,8 @@ apply to this issue as well.
     </html>
 
 
-Library overview
-================
+Python XML Libraries
+====================
 
 .. csv-table::
    :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "libxml2 python", "genshi"
@@ -191,6 +191,7 @@ Library overview
    "gzip bomb", "False", "False", "False", "False", "partly (2)", "untested", "False"
    "xpath support", "False", "False", "False", "False", "True", "untested", "False"
    "xsl(t) support", "False", "False", "False", "False", "True", "untested", "False"
+   "xinclude support", "False", "True (6)", "False", "False", "True (6), "untested", "True"
    "C library", "expat", "expat", "expat", "expat", "libxml2", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
@@ -203,6 +204,8 @@ Library overview
    verbatim.
 5. genshi.input of genshi 0.6 doesn't support entity expansion and raises a
    ParserError when an entity occurs.
+6. Library has (limited) XInclude support but requires an additional step to
+   process inclusion.
 
 
 Other things to consider
@@ -320,7 +323,8 @@ XInclude
    </root>
 
 This feature should be disabled when XML files from an untrusted source are
-processed.
+processed. Some Python XML libraries and libxml2 support XInclude but don't
+have an option to sandbox inclusion and limit it to allowed directories.
 
 
 XSL Transformation
@@ -419,12 +423,25 @@ See http://www.python.org/psf/license for licensing details.
 Acknowledgements
 ================
 
-Brett Cannon <brett@python.org>
+Brett Cannon (Python Core developer)
   review and code cleanup
 
+Antoine Pitrou (Python Core developer)
+  code review
+
+Aaron Patterson, Ben Murphy and Michael Koziarski (Ruby community)
+  Many thanks to Aaron, Ben and Michael from the Ruby community for their
+  report and assistance.
+
+Thierry Carrez (OpenStack)
+
+Carl Meyer (Django)
+
+Daniel Veillard (libxml2)
+
 semantics GmbH (http://www.semantics.de/)
-   I like to thank my employer s<e>mantics for letting me work on the issue
-   during working hours as part of semantics's open source initiative.
+  Many thanks to my employer semantics for letting me work on the issue
+  during working hours as part of semantics's open source initiative.
 
 
 References
