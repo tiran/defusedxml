@@ -4,7 +4,7 @@ Changelog
 defusedxml 0.2
 --------------
 
-*Release date: ??-Feb-2013*
+*Release date: 15-Feb-2013*
 
 - Rename ExternalEntitiesForbidden to ExternalReferenceForbidden
 - Rename defusedxml.lxml.check_dtd() to check_docinfo()
