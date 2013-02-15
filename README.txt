@@ -425,6 +425,8 @@ XSL Transformation
 You should keep in mind that XSLT is a Turing complete language. Never
 process XSLT code from unknown or untrusted source! XSLT processors may
 allow you to interact with external resources in ways you can't even imagine.
+Some processors even support extensions that allow read/write access to file
+system, access to JRE objects or scripting with Jython.
 
 Example from `Attacking XML Security`_ for Xalan-J::
 
@@ -446,11 +448,16 @@ Example from `Attacking XML Security`_ for Xalan-J::
 Other languages / frameworks
 =============================
 
+Several other programming languages and frameworks are vulnerable as well. A
+couple of them are affected by the fact that libxml2 up to 2.9.0 has no
+protection against quadratic blowup attacks. Most of them have potential
+dangerous default settings for entity expansion and external entities, too.
+
 Perl
 ----
 
 Perl's XML::Simple is vulnerable to quadratic entity expansion and external
-entity expansion (both local and remote)
+entity expansion (both local and remote).
 
 
 Ruby
@@ -526,10 +533,15 @@ Aaron Patterson, Ben Murphy and Michael Koziarski (Ruby community)
   report and assistance.
 
 Thierry Carrez (OpenStack)
+  Many thanks to Thierry for his report to the Python Security Response
+  Team on behalf of the OpenStack security team.
 
 Carl Meyer (Django)
+  Many thanks to Carl for his report to PSRT on behalf of the Django security
+  team.
 
 Daniel Veillard (libxml2)
+  Many thanks to Daniel for his insight and assistance with libxml2.
 
 semantics GmbH (http://www.semantics.de/)
   Many thanks to my employer semantics for letting me work on the issue
