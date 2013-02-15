@@ -281,18 +281,31 @@ defused.pulldom
 parse(), parseString()
 
 
-defused.xmlrpclib
------------------
+defused.xmlrpc
+--------------
 
-TODO
+The fix is implemented as monkey patch for the stdlib's xmlrpc package (3.x)
+or xmlrpclib module (2.x). The function `monkey_patch()` enables the fixes,
+`unmonkey_patch()` removes the patch and puts the code in its former state.
+
+The monkey patch protects against XML related attacks as well as
+decompression bombs and excessively large requests or responses. The default
+setting is 30 MB for requests, responses and gzip decompression. You can
+modify the default by changing the module variable `MAX_DATA`. A value of
+`-1` disables the limit.
 
 
 defused.lxml
 ------------
 
-parse(), fromstring()
+The module acts as an *example* how you could protect code that uses
+lxml.etree. It implements a custom Element class that filters out
+Entity instances, a custom parser factory and a thread local storage for
+parser instances. It also has a check_docinfo() function which inspects
+a tree for internal or external DTDs and entity declarations.
 
-RestrictedElement, GlobalParserTLS, getDefaultParser, check_docinfo()
+parse(), fromstring()
+RestrictedElement, GlobalParserTLS, getDefaultParser(), check_docinfo()
 
 
 defusedexpat
