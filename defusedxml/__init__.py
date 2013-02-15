@@ -18,3 +18,6 @@ from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
 #from . import xmlrpc
 #from . import expatbuilder
 #from . import expatreader
+
+__version__ = "0.2dev"
+
