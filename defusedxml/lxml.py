@@ -3,9 +3,9 @@
 # Copyright (c) 2013 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See http://www.python.org/psf/license for licensing details.
-"""Example code for lxml.etree
+"""Example code for lxml.etree protection
 
-
+The code has NO protection against decompression bombs.
 """
 from __future__ import print_function, absolute_import
 
@@ -71,7 +71,6 @@ class GlobalParserTLS(threading.local):
         'resolve_entities': False,
         #'remove_comments': True,
         #'remove_pis': True,
-
     }
 
     element_class = RestrictedElement
