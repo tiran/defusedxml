@@ -339,13 +339,15 @@ Other things to consider
 ========================
 
 XML, XML parsers and processing libraries have more features and possible
-issue that can lead to DoS vulnerabilities or security exploits in
+issue that could lead to DoS vulnerabilities or security exploits in
 applications. I have compiled an incomplete list of possible issues that
-need further research and more attention.
+need further research and more attention. The list is deliberately pessimistic
+and a bit paranoid, too. It contains things that might go wrong under daffy
+circumstances.
 
 
-attribute blowup
-----------------
+attribute blowup / hash collision attack
+----------------------------------------
 
 XML parsers may use an algorithm with quadratic runtime O(n :sup:`2`) to
 handle attributes and namespaces. If it uses hash tables (dictionaries) to
