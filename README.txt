@@ -176,19 +176,20 @@ Python XML Libraries
 ====================
 
 .. csv-table::
-   :header: "kind", "sax", "etree", "minidom", "pulldom", "lxml", "genshi"
-   :widths: 24, 8, 8, 8, 8, 8, 8
+   :header: "kind", "sax", "etree", "minidom", "pulldom", "xmlrpc", "lxml", "genshi"
+   :widths: 24, 7, 8, 8, 7, 8, 8, 8
+   :stub-columns: 0
 
-   "billion laughs", "True", "True", "True", "True", "False (1)", "False (5)"
-   "quadratic blowup", "True", "True", "True", "True", "True", "False (5)"
-   "external entity expansion (remote)", "True", "False (3)", "False (4)", "True", "False (1)", "False (5)"
-   "external entity expansion (local file)", "True", "False (3)", "False (4)", "True", "True", "False (5)"
-   "DTD retrieval", "True", "False", "False", "True", "False (1)", "False"
-   "gzip bomb", "False", "False", "False", "False", "partly (2)", "False"
-   "xpath support", "False", "False", "False", "False", "True", "False"
-   "xsl(t) support", "False", "False", "False", "False", "True", "False"
-   "xinclude support", "False", "True (6)", "False", "False", "True (6)", "True"
-   "C library", "expat", "expat", "expat", "expat", "libxml2", "expat"
+   "billion laughs", "**True**", "**True**", "**True**", "**True**", "**True**", "False (1)", "False (5)"
+   "quadratic blowup", "**True**", "**True**", "**True**", "**True**", "**True**", "**True**", "False (5)"
+   "external entity expansion (remote)", "**True**", "False (3)", "False (4)", "**True**", "untested", "False (1)", "False (5)"
+   "external entity expansion (local file)", "**True**", "False (3)", "False (4)", "**True**", "untested", "**True**", "False (5)"
+   "DTD retrieval", "**True**", "False", "False", "**True**", "untested", "False (1)", "False"
+   "gzip bomb", "False", "False", "False", "False", "**True**", "**partly** (2)", "False"
+   "xpath support", "False", "False", "False", "False", "False", "**True**", "False"
+   "xsl(t) support", "False", "False", "False", "False", "False", "**True**", "False"
+   "xinclude support", "False", "**True** (6)", "False", "False", "False", "**True** (6)", "**True**"
+   "C library", "expat", "expat", "expat", "expat", "expat", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
    lookups by default.
@@ -274,6 +275,11 @@ defused.pulldom
 ---------------
 
 parse(), parseString()
+
+defused.xmlrpclib
+-----------------
+
+TODO
 
 defused.lxml
 ------------
@@ -506,6 +512,7 @@ TODO
 * SAX: take feature_external_ges and feature_external_pes (?) into account
 * implement monkey patching of stdlib modules
 * document which module / library is vulnerable to which kind of attack
+* Add fix for xmlrpc's ExpatParser
 * documentation, documentation, documentation ...
 
 

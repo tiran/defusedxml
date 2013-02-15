@@ -14,6 +14,10 @@ from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
                         ExternalReferenceForbidden, NotSupportedError)
 from defusedxml.common import PY3, PY26, PY31
 
+if PY3:
+    from xmlrpclib.client import ExpatParser as XmlRpcParser
+else:
+    from xmlrpclib import ExpatParser as XmlRpcParser
 
 try:
     from defusedxml import lxml
@@ -67,18 +71,12 @@ if PY26 or PY31:
             return True
 
 
-class BaseTests(unittest.TestCase):
-    module = None
+class DefusedTestCase(unittest.TestCase):
 
     if PY3:
         content_binary = False
     else:
         content_binary = True
-
-    dtd_external_ref = False
-
-    external_ref_exception = ExternalReferenceForbidden
-    cyclic_error = None
 
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
@@ -110,6 +108,15 @@ class BaseTests(unittest.TestCase):
         with io.open(xmlfile, mode) as f:
             data = f.read()
         return data
+
+
+class BaseTests(DefusedTestCase):
+    module = None
+    dtd_external_ref = False
+
+    external_ref_exception = ExternalReferenceForbidden
+    cyclic_error = None
+
 
     def test_simple_parse(self):
         self.parse(self.xml_simple)
@@ -193,8 +200,8 @@ class TestDefusedElementTree(BaseTests):
     module = ElementTree
 
 
-    # etree doesn't do external ref lookup
-    external_ref_exception = ElementTree.ParseError
+    ## etree doesn't do external ref lookup
+    #external_ref_exception = ElementTree.ParseError
 
     cyclic_error = ElementTree.ParseError
 
@@ -391,6 +398,40 @@ class TestDefusedLxml(BaseTests):
         self.assertEqual(elements, list(root)[:1])
 
 
+class XmlRpcTarget(object):
+    def __init__(self):
+        self._data = []
+
+    def __str__(self):
+        return "\n".join(self._data)
+
+    def xml(self, encoding, standalone):
+        pass
+
+    def start(self, tag, attrs):
+        self._data.append("<%s>" % tag)
+
+    def data(self, text):
+        self._data.append(text)
+
+    def end(self, tag):
+        self._data.append("</%s>" % tag)
+
+
+class TestXmlRpc(DefusedTestCase):
+    def parse(self, xmlfile):
+        target = XmlRpcTarget()
+        parser = XmlRpcParser(target)
+        data = self.get_content(xmlfile)
+        parser.feed(data)
+        parser.close()
+        return target
+
+    def test_xmlrpc(self):
+        self.parse(self.xml_bomb)
+        self.parse(self.xml_quadratic)
+
+
 def test_main():
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(TestDefusedcElementTree))
@@ -398,6 +439,7 @@ def test_main():
     suite.addTests(unittest.makeSuite(TestDefusedMinidom))
     suite.addTests(unittest.makeSuite(TestDefusedPulldom))
     suite.addTests(unittest.makeSuite(TestDefusedSax))
+    suite.addTests(unittest.makeSuite(TestXmlRpc))
     if lxml is not None:
         suite.addTests(unittest.makeSuite(TestDefusedLxml))
     return suite
