@@ -4,6 +4,8 @@ import sys
 from distutils.core import setup, Command
 import subprocess
 
+import defusedxml
+
 class PyTest(Command):
     user_options = []
     def initialize_options(self):
@@ -23,7 +25,7 @@ with open("CHANGES.txt") as f:
 
 setup(
     name="defusedxml",
-    version="0.2dev",
+    version=defusedxml.__version__,
     cmdclass={"test": PyTest},
     packages=["defusedxml"],
     author="Christian Heimes",
