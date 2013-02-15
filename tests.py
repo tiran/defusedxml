@@ -449,6 +449,12 @@ class TestXmlRpc(DefusedTestCase):
         self.assertRaises(DTDForbidden, self.parse, self.xml_dtd,
                           forbid_dtd=True)
 
+    def test_monkeypatch(self):
+        try:
+            xmlrpc.monkey_patch()
+        finally:
+            xmlrpc.unmonkey_patch()
+
 
 class TestDefusedGzip(DefusedTestCase):
     def get_gzipped(self, length):
