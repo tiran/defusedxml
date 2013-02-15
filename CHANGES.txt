@@ -14,6 +14,7 @@ defusedxml 0.2
 - More tests
 - LOTS of documentation
 - Add example code for other languages (Ruby, Perl, PHP) and parsers (Genshi)
+- Add protection against XML and gzip attacks to xmlrpclib
 
 defusedxml 0.1
 --------------
