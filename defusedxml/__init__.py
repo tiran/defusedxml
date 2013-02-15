@@ -10,11 +10,11 @@ from __future__ import print_function, absolute_import
 from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
                      ExternalReferenceForbidden, NotSupportedError)
 
-from . import cElementTree
-from . import ElementTree
-from . import minidom
-from . import pulldom
-from . import sax
-
-from . import expatbuilder
-from . import expatreader
+#from . import cElementTree
+#from . import ElementTree
+#from . import minidom
+#from . import pulldom
+#from . import sax
+#from . import xmlrpc
+#from . import expatbuilder
+#from . import expatreader
