@@ -40,6 +40,7 @@ except ImportError:
 # Limit maximum request size to prevent resource exhaustion DoS
 # Also used to limit maximum amount of gzip decoded data in order to prevent
 # decompression bombs
+# A value of -1 or smaller disables the limit
 MAX_DATA = 30 * 1024 * 1024 # 30 MB
 
 def defused_gzip_decode(data, limit=None):
