@@ -19,5 +19,5 @@ from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
 #from . import expatbuilder
 #from . import expatreader
 
-__version__ = "0.2"
+__version__ = "0.3dev"
 
