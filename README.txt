@@ -223,18 +223,20 @@ defusedxml
 The `defusedxml package`_ contains several Python-only workarounds and fixes
 for denial of service and other vulnerabilities in Python's XML libraries.
 
-All functions and parser classes accept two additional keyword arguments.
+All functions and parser classes accept three additional keyword arguments.
 
 forbid_dtd (default: False)
   disallow XML with a ``<!DOCTYPE>`` processing instruction and raise a
-  DTDForbidden exception
+  DTDForbidden exception when a DTD processing instruction is found.
 
 forbid_entities (default: True)
-  disallow XML with ``<!ENTITY>`` declarations inside the DTD and raise a
-  EntitiesForbidden exception
+  disallow XML with ``<!ENTITY>`` declarations inside the DTD and raise an
+  EntitiesForbidden exception when an entity is declared.
 
-All parsers also enforce a hard ban of external entities and retrieval of
-external DTDs by raising an ExternalReferenceForbidden exception.
+forbid_external (default: True)
+  disallow any access to remote or local resources in external entities
+  or DTD and raising an ExternalReferenceForbidden exception when a DTD
+  or entity references an external resource.
 
 
 defused.cElementTree
@@ -266,20 +268,24 @@ defused.expatbuilder
 
 parse(), parseString(), DefusedExpatBuilder, DefusedExpatBuilderNS
 
+
 defused.minidom
 ---------------
 
 parse(), parseString()
+
 
 defused.pulldom
 ---------------
 
 parse(), parseString()
 
+
 defused.xmlrpclib
 -----------------
 
 TODO
+
 
 defused.lxml
 ------------
