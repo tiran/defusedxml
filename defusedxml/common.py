@@ -6,6 +6,7 @@
 """Common constants, exceptions and helpe functions
 """
 import sys
+from types import MethodType
 
 PY3 = sys.version_info[0] == 3
 PY26 = sys.version_info[:2] == (2, 6)
@@ -99,23 +100,32 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
         return _parse(source, parser)
 
     if PY26 or PY31:
-        def unbound(f):
-                return getattr(f, "__func__", f)
+        def bind(xmlparser, funcname, hookname):
+            func = getattr(DefusedXMLParser, funcname)
+            if PY26:
+                # unbound -> function
+                func = func.__func__
+                method = MethodType(func, xmlparser, xmlparser.__class__)
+            else:
+                method = MethodType(func, xmlparser)
+            # set hook
+            setattr(xmlparser._parser, hookname, method)
+
         def iterparse(source, events=None, forbid_dtd=False,
                       forbid_entities=True, forbid_external=True):
             it = _iterparse(source, events)
-            parser = it._parser._parser
+            xmlparser = it._parser
             if forbid_dtd:
-                parser.StartDoctypeDeclHandler = \
-                    unbound(DefusedXMLParser.defused_start_doctype_decl)
+                bind(xmlparser, "defused_start_doctype_decl",
+                     "StartDoctypeDeclHandler")
             if forbid_entities:
-                parser.EntityDeclHandler = \
-                    unbound(DefusedXMLParser.defused_entity_decl)
-                parser.UnparsedEntityDeclHandler = \
-                    unbound(DefusedXMLParser.defused_unparsed_entity_decl)
+                bind(xmlparser, "defused_entity_decl",
+                     "EntityDeclHandler")
+                bind(xmlparser, "defused_unparsed_entity_decl",
+                     "UnparsedEntityDeclHandler")
             if forbid_external:
-                parser.ExternalEntityRefHandler = \
-                    unbound(DefusedXMLParser.defused_external_entity_ref_handler)
+                bind(xmlparser, "defused_external_entity_ref_handler",
+                     "ExternalEntityRefHandler")
             return it
     elif PY3:
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
