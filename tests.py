@@ -459,11 +459,11 @@ class TestDefusedGzip(DefusedTestCase):
         f.seek(0)
         return f
 
-    def decode_response(self, response, limit=None):
+    def decode_response(self, response, limit=None, readlength=1024):
         dec = xmlrpc.DefusedGzipDecodedResponse(response, limit)
         acc = []
         while True:
-            data = dec.read(1024)
+            data = dec.read(readlength)
             if not data:
                 break
             acc.append(data)
@@ -496,6 +496,10 @@ class TestDefusedGzip(DefusedTestCase):
         with self.assertRaises(ValueError):
             response = self.get_gzipped(4096)
             self.decode_response(response, 4095)
+
+        with self.assertRaises(ValueError):
+            response = self.get_gzipped(4096)
+            self.decode_response(response, 4095, 8192)
 
 
 def test_main():
