@@ -6,11 +6,14 @@ defusedxml 0.2
 
 *Release date: ??-Feb-2013*
 
-- Renamed ExternalEntitiesForbidden to ExternalReferenceForbidden
-- Renamed defusedxml.lxml.check_dtd() to check_docinfo()
-- Unified argument names in callbacks
-- Added arguments and formatted representation to exceptions
+- Rename ExternalEntitiesForbidden to ExternalReferenceForbidden
+- Rename defusedxml.lxml.check_dtd() to check_docinfo()
+- Unify argument names in callbacks
+- Add arguments and formatted representation to exceptions
+- Add forbid_external argument to all functions and classs
 - More tests
+- LOTS of documentation
+- Add example code for other languages (Ruby, Perl, PHP) and parsers (Genshi)
 
 defusedxml 0.1
 --------------
