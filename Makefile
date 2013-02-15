@@ -9,7 +9,7 @@ PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 
 all: inplace README.html
 
-README.html: README.txt CHANGES.txt
+README.html: README.txt CHANGES.txt void.css
 	@echo | cat README.txt - CHANGES.txt | \
 	    rst2html --verbose --exit-status=1 --stylesheet=void.css \
             > README.html

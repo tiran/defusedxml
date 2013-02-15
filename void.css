@@ -436,3 +436,8 @@ tt.literal
 {
 	background-color: #eeeeee;
 }
+h1
+{
+	border-bottom: solid 1px black;
+	padding-top: 20px;
+}
