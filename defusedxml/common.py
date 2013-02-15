@@ -143,9 +143,12 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
     else:
         # Python 2.7
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
-                      forbid_entities=True):
+                      forbid_entities=True, forbid_external=True):
             if parser is None:
-                parser = DefusedXMLParser(target=_TreeBuilder())
+                parser = DefusedXMLParser(target=_TreeBuilder(),
+                                          forbid_dtd=forbid_dtd,
+                                          forbid_entities=forbid_entities,
+                                          forbid_external=forbid_external)
             return _iterparse(source, events, parser)
 
     def fromstring(text, forbid_dtd=False, forbid_entities=True,
