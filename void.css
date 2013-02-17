@@ -441,3 +441,9 @@ h1
 	border-bottom: solid 1px black;
 	padding-top: 20px;
 }
+caption
+{
+	margin-bottom: 0.4em;
+	font-weight: bold;
+	font-size: 120%;
+}
