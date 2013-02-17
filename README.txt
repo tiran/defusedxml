@@ -4,16 +4,12 @@ defusedxml -- defusing XML bombs and other exploits
 
     "It's just XML, what could probably go wrong?"
 
-
-.. contents:: Table of Contents
-   :depth: 2
-
 Synopsis
 ========
 
 The results of an attack on a vulnerable XML library can be fairly dramatic.
-With just a few hundred bytes of XML data an attacker can occupy several
-**gigabytes** of memory within **seconds**. An attacker can also keep
+With just a few hundred **Bytes** of XML data an attacker can occupy several
+**Gigabytes** of memory within **seconds**. An attacker can also keep
 CPUs busy for a long time with a small to medium size request. Under some
 circumstances it is even possible to access local files on your
 server, to circumvent a firewall, or to abuse services to rebound attacks to
@@ -35,6 +31,10 @@ XML libraries for using insecure default settings. After all they
 properly implement XML specifications. Application developers must not rely
 that a library is always configured for security and potential harmful data
 by default.
+
+
+.. contents:: Table of Contents
+   :depth: 2
 
 
 Attack vectors
@@ -175,7 +175,8 @@ apply to this issue as well.
 Python XML Libraries
 ====================
 
-.. csv-table::
+
+.. csv-table:: vulnerabilities and features
    :header: "kind", "sax", "etree", "minidom", "pulldom", "xmlrpc", "lxml", "genshi"
    :widths: 24, 7, 8, 8, 7, 8, 8, 8
    :stub-columns: 0
@@ -186,9 +187,9 @@ Python XML Libraries
    "external entity expansion (local file)", "**True**", "False (3)", "False (4)", "**True**", "untested", "**True**", "False (5)"
    "DTD retrieval", "**True**", "False", "False", "**True**", "untested", "False (1)", "False"
    "gzip bomb", "False", "False", "False", "False", "**True**", "**partly** (2)", "False"
-   "xpath support", "False", "False", "False", "False", "False", "**True**", "False"
-   "xsl(t) support", "False", "False", "False", "False", "False", "**True**", "False"
-   "xinclude support", "False", "**True** (6)", "False", "False", "False", "**True** (6)", "**True**"
+   "xpath support (7)", "False", "False", "False", "False", "False", "**True**", "False"
+   "xsl(t) support (7)", "False", "False", "False", "False", "False", "**True**", "False"
+   "xinclude support (7)", "False", "**True** (6)", "False", "False", "False", "**True** (6)", "**True**"
    "C library", "expat", "expat", "expat", "expat", "expat", "libxml2", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
@@ -203,18 +204,8 @@ Python XML Libraries
    ParserError when an entity occurs.
 6. Library has (limited) XInclude support but requires an additional step to
    process inclusion.
-
-
-CVE
-===
-
-CVE-2013-1664:
-  Unrestricted entity expansion induces DoS vulnerabilities in Python XML
-  libraries (XML bomb)
-
-CVE-2013-1665:
-  External entity expansion in Python XML libraries inflicts potential
-  security flaws and DoS vulnerabilities
+7. These are features but they may introduce exploitable holes, see
+   `Other things to consider`_
 
 
 defusedxml
@@ -222,67 +213,94 @@ defusedxml
 
 The `defusedxml package`_ contains several Python-only workarounds and fixes
 for denial of service and other vulnerabilities in Python's XML libraries.
+In order to benefit from the protection you just have to import and use the
+listed functions / classes from the right defusedxml module instead of the
+original module. Merely `defusedxml.xmlrpc`_ is implemented as monkey patch.
+
+Instead of::
+
+   >>> from xml.etree.ElementTree import parse
+   >>> et = parse(xmlfile)
+
+alter code to::
+
+   >>> from defusedxml.ElementTree import parse
+   >>> et = parse(xmlfile)
+
+Additionally the package has an **untested** function to monkey patch
+all stdlib modules with ``defusedxml.defuse_stdlib()``.
 
 All functions and parser classes accept three additional keyword arguments.
+They return either the same objects as the original functions or compatible
+subclasses.
 
 forbid_dtd (default: False)
   disallow XML with a ``<!DOCTYPE>`` processing instruction and raise a
-  DTDForbidden exception when a DTD processing instruction is found.
+  *DTDForbidden* exception when a DTD processing instruction is found.
 
 forbid_entities (default: True)
   disallow XML with ``<!ENTITY>`` declarations inside the DTD and raise an
-  EntitiesForbidden exception when an entity is declared.
+  *EntitiesForbidden* exception when an entity is declared.
 
 forbid_external (default: True)
   disallow any access to remote or local resources in external entities
-  or DTD and raising an ExternalReferenceForbidden exception when a DTD
+  or DTD and raising an *ExternalReferenceForbidden* exception when a DTD
   or entity references an external resource.
 
 
-defused.cElementTree
+defusedxml (package)
 --------------------
+
+DefusedXmlException, DTDForbidden, EntitiesForbidden,
+ExternalReferenceForbidden, NotSupportedError
+
+defuse_stdlib() (*experimental*)
+
+
+defusedxml.cElementTree
+-----------------------
 
 parse(), iterparse(), fromstring(), XMLParser
 
 
-defused.ElementTree
---------------------
+defusedxml.ElementTree
+-----------------------
 
 parse(), iterparse(), fromstring(), XMLParser
 
 
-defused.expatreader
--------------------
+defusedxml.expatreader
+----------------------
 
 create_parser(), DefusedExpatParser
 
 
-defused.sax
------------
+defusedxml.sax
+--------------
 
 parse(), parseString(), create_parser()
 
 
-defused.expatbuilder
---------------------
+defusedxml.expatbuilder
+-----------------------
 
 parse(), parseString(), DefusedExpatBuilder, DefusedExpatBuilderNS
 
 
-defused.minidom
----------------
+defusedxml.minidom
+------------------
 
 parse(), parseString()
 
 
-defused.pulldom
----------------
+defusedxml.pulldom
+------------------
 
 parse(), parseString()
 
 
-defused.xmlrpc
---------------
+defusedxml.xmlrpc
+-----------------
 
 The fix is implemented as monkey patch for the stdlib's xmlrpc package (3.x)
 or xmlrpclib module (2.x). The function `monkey_patch()` enables the fixes,
@@ -295,14 +313,15 @@ modify the default by changing the module variable `MAX_DATA`. A value of
 `-1` disables the limit.
 
 
-defused.lxml
-------------
+defusedxml.lxml
+---------------
 
 The module acts as an *example* how you could protect code that uses
 lxml.etree. It implements a custom Element class that filters out
 Entity instances, a custom parser factory and a thread local storage for
 parser instances. It also has a check_docinfo() function which inspects
-a tree for internal or external DTDs and entity declarations.
+a tree for internal or external DTDs and entity declarations. In order to
+check for entities lxml > 3.0 is required.
 
 parse(), fromstring()
 RestrictedElement, GlobalParserTLS, getDefaultParser(), check_docinfo()
@@ -311,9 +330,10 @@ RestrictedElement, GlobalParserTLS, getDefaultParser(), check_docinfo()
 defusedexpat
 ============
 
-The `defusedexpat package`_ comes with binary extensions and a `modified expat`_
-libary instead of the standard `expat parser`_. It's basically a stand-alone
-version of the patches for Python's standard library C extensions.
+The `defusedexpat package`_ comes with binary extensions and a
+`modified expat`_ libary instead of the standard `expat parser`_. It's
+basically a stand-alone version of the patches for Python's standard
+library C extensions.
 
 
 How to avoid XML vulnerabilities
@@ -340,7 +360,7 @@ Other things to consider
 
 XML, XML parsers and processing libraries have more features and possible
 issue that could lead to DoS vulnerabilities or security exploits in
-applications. I have compiled an incomplete list of possible issues that
+applications. I have compiled an incomplete list of theoretical issues that
 need further research and more attention. The list is deliberately pessimistic
 and a bit paranoid, too. It contains things that might go wrong under daffy
 circumstances.
@@ -375,8 +395,8 @@ lzma is even better::
     1020K zeros.gz
      148K zeros.xy
 
-None of Python's standard XML libraries decompresses streams except of
-``xmlrpclib`` and that is vulnerable <http://bugs.python.org/issue16043>
+None of Python's standard XML libraries decompress streams except for
+``xmlrpclib``. The module vulnerable <http://bugs.python.org/issue16043>
 to decompression bombs.
 
 lxml can load and process compressed data through libxml2 transparently.
@@ -472,6 +492,33 @@ Example from `Attacking XML Security`_ for Xalan-J::
     </xsl:stylesheet>
 
 
+Related CVEs
+============
+
+Python
+------
+
+CVE-2013-1664
+  Unrestricted entity expansion induces DoS vulnerabilities in Python XML
+  libraries (XML bomb)
+
+CVE-2013-1665
+  External entity expansion in Python XML libraries inflicts potential
+  security flaws and DoS vulnerabilities
+
+OpenStack
+---------
+
+CVE-2013-0278
+  OpenStack Keystone
+
+CVE-2013-0279
+  Cinder
+
+CVE-2013-0280
+  Nova
+
+
 Other languages / frameworks
 =============================
 
@@ -531,10 +578,8 @@ TODO
 
 * DOM: Use xml.dom.xmlbuilder options for entity handling
 * SAX: take feature_external_ges and feature_external_pes (?) into account
-* implement monkey patching of stdlib modules
-* document which module / library is vulnerable to which kind of attack
-* Add fix for xmlrpc's ExpatParser
-* documentation, documentation, documentation ...
+* test experimental monkey patching of stdlib modules
+* improve documentation
 
 
 License
@@ -582,6 +627,8 @@ References
 * `XML DoS and Defenses (MSDN)`_
 * `Billion Laughs`_ on Wikipedia
 * `ZIP bomb`_ on Wikipedia
+* `Configure SAX parsers for secure processing`_
+* `Testing for XML Injection`_
 
 .. _defusedxml package: https://bitbucket.org/tiran/defusedxml
 .. _defusedexpat package: https://bitbucket.org/tiran/defusedexpat
@@ -594,5 +641,7 @@ References
 .. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
 .. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
 .. _Avoid the dangers of XPath injection: http://www.ibm.com/developerworks/xml/library/x-xpathinjection/index.html
+.. _Configure SAX parsers for secure processing: http://www.ibm.com/developerworks/xml/library/x-tipcfsx/index.html
+.. _Testing for XML Injection: https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008)
 .. _Xerces SecurityMananger: http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
 .. _XML Inclusion: http://www.w3.org/TR/xinclude/#include_element
