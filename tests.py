@@ -10,9 +10,11 @@ from xml.sax import SAXParseException
 from pyexpat import ExpatError
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc
+from defusedxml import defuse_stdlib
 from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
                         ExternalReferenceForbidden, NotSupportedError)
 from defusedxml.common import PY3, PY26, PY31
+
 
 try:
     import gzip
@@ -525,4 +527,6 @@ def test_main():
 if __name__ == "__main__":
     suite = test_main()
     result = unittest.TextTestRunner(verbosity=1).run(suite)
+    # TODO: test that it actually works
+    defuse_stdlib()
     sys.exit(not result.wasSuccessful())
