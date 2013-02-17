@@ -71,18 +71,17 @@ class NotSupportedError(DefusedXmlException):
     """
 
 
-def _wire_module(srcmod, dstmodname):
-    assert srcmod is sys.modules[srcmod.__name__]
-    dstmod = sys.modules[dstmodname]
-    names = getattr(srcmod, "__all__", None)
-    if not names:
-        names = tuple(name for name in dir(srcmod)
-                      if not name.startswith("_"))
-    for name in names:
-        if hasattr(dstmod, name):
+def _apply_defusing(defused_mod):
+    assert defused_mod is sys.modules[defused_mod.__name__]
+    stdlib_name = defused_mod.__origin__
+    __import__(stdlib_name, {}, {}, ["*"])
+    stdlib_mod = sys.modules[stdlib_name]
+    stdlib_names = set(dir(stdlib_mod))
+    for name, obj in vars(defused_mod).items():
+        if name.startswith("_") or name not in stdlib_names:
             continue
-        value = getattr(srcmod, name)
-        setattr(dstmod, name, value)
+        setattr(stdlib_mod, name, obj)
+    return stdlib_mod
 
 
 def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
