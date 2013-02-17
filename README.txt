@@ -175,7 +175,6 @@ apply to this issue as well.
 Python XML Libraries
 ====================
 
-
 .. csv-table:: vulnerabilities and features
    :header: "kind", "sax", "etree", "minidom", "pulldom", "xmlrpc", "lxml", "genshi"
    :widths: 24, 7, 8, 8, 7, 8, 8, 8
@@ -206,6 +205,35 @@ Python XML Libraries
    process inclusion.
 7. These are features but they may introduce exploitable holes, see
    `Other things to consider`_
+
+
+Settings in standard library
+----------------------------
+
+
+xml.sax.handler Features
+........................
+
+feature_external_ges (http://xml.org/sax/features/external-general-entities)
+  disables external entity expansion
+
+feature_external_pes (http://xml.org/sax/features/external-parameter-entities)
+  the option is ignored and doesn't modify any functionality
+
+DOM xml.dom.xmlbuilder.Options
+..............................
+
+external_parameter_entities
+  ignored
+
+external_general_entities
+  ignored
+
+external_dtd_subset
+  ignored
+
+entities
+  unsure
 
 
 defusedxml
@@ -559,8 +587,15 @@ have no effect on entity expansion in PHP 5.4.6.
 C# / .NET / Mono
 ----------------
 
-Untested. Information in `XML DoS and Defenses (MSDN)`_ suggest that .NET is
-vulnerable with its default settings.
+Information in `XML DoS and Defenses (MSDN)`_ suggest that .NET is
+vulnerable with its default settings. The article contains code snippets
+how to create a secure XML reader::
+
+  XmlReaderSettings settings = new XmlReaderSettings();
+  settings.ProhibitDtd = false;
+  settings.MaxCharactersFromEntities = 1024;
+  settings.XmlResolver = null;
+  XmlReader reader = XmlReader.Create(stream, settings);
 
 
 Java
@@ -571,6 +606,20 @@ sounds like Xerces is also vulnerable to billion laugh attacks with its
 default settings. It also does entity resolving when an
 ``org.xml.sax.EntityResolver`` is configured. I'm not yet sure about the
 default setting here.
+
+Java specialists suggest to have a custom builder factory::
+
+  DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+  builderFactory.setXIncludeAware(False);
+  builderFactory.setExpandEntityReferences(False);
+  builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, True);
+  # either
+  builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", True);
+  # or if you need DTDs
+  builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", False);
+  builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", False);
+  builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", False);
+  builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", False);
 
 
 TODO
