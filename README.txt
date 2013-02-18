@@ -4,6 +4,8 @@ defusedxml -- defusing XML bombs and other exploits
 
     "It's just XML, what could probably go wrong?"
 
+Christian Heimes <christian@python.org>
+
 Synopsis
 ========
 
@@ -363,6 +365,79 @@ The `defusedexpat package`_ comes with binary extensions and a
 basically a stand-alone version of the patches for Python's standard
 library C extensions.
 
+Modifications to expat
+----------------------
+
+new definitions::
+
+  XML_BOMB_PROTECTION
+  XML_DEFAULT_MAX_ENTITY_INDIRECTIONS
+  XML_DEFAULT_MAX_ENTITY_EXPANSIONS
+  XML_DEFAULT_RESET_DTD
+
+new XML_FeatureEnum members::
+
+  XML_FEATURE_MAX_ENTITY_INDIRECTIONS
+  XML_FEATURE_MAX_ENTITY_EXPANSIONS
+  XML_FEATURE_IGNORE_DTD
+
+new XML_Error members::
+
+  XML_ERROR_ENTITY_INDIRECTIONS
+  XML_ERROR_ENTITY_EXPANSION
+
+new API functions::
+
+  int XML_GetFeature(XML_Parser parser,
+                     enum XML_FeatureEnum feature,
+                     long *value);
+  int XML_SetFeature(XML_Parser parser,
+                     enum XML_FeatureEnum feature,
+                     long value);
+  int XML_GetFeatureDefault(enum XML_FeatureEnum feature,
+                            long *value);
+  int XML_SetFeatureDefault(enum XML_FeatureEnum feature,
+                            long value);
+
+XML_FEATURE_MAX_ENTITY_INDIRECTIONS
+   Limit the amount of indirections that are allowed to occur during the
+   expansion of a nested entity. A counter starts when an entity reference
+   is encountered. It resets after the entity is fully expanded. The limit
+   protects the parser against exponential entity expansion attacks (aka
+   billion laughs attack). When the limit is exceeded the parser stops and
+   fails with `XML_ERROR_ENTITY_INDIRECTIONS`.
+   A value of 0 disables the protection.
+
+   Supported range
+     0 .. UINT_MAX
+   Default
+     40
+
+XML_FEATURE_MAX_ENTITY_EXPANSIONS
+   Limit the total length of all entity expansions throughout the entire
+   document. The lengths of all entities are accumulated in a parser variable.
+   The setting protects against quadratic blowup attacks (lots of expansions
+   of a large entity declaration). When the sum of all entities exceeds
+   the limit, the parser stops and fails with `XML_ERROR_ENTITY_EXPANSION`.
+   A value of 0 disables the protection.
+
+   Supported range
+     0 .. UINT_MAX
+   Default
+     8 MiB
+
+XML_FEATURE_RESET_DTD
+   Reset all DTD information after the <!DOCTYPE> block has been parsed. When
+   the flag is set (default: false) all DTD information after the
+   endDoctypeDeclHandler has been called. The flag can be set inside the
+   endDoctypeDeclHandler. Without DTD information any entity reference in
+   the document body leads to `XML_ERROR_UNDEFINED_ENTITY`.
+
+   Supported range
+     0, 1
+   Default
+     0
+
 
 How to avoid XML vulnerabilities
 ================================
@@ -375,10 +450,12 @@ Best practices
 * Don't resolve externals
 * Limit parse depth
 * Limit total input size
+* Limit parse time
+* Favor a SAX or iterparse-like parser for potential large data
+* Validate and properly quote arguments to XSL transformations and
+  XPath queries
 * Don't use XPath expression from untrusted sources
 * Don't apply XSL transformations that come untrusted sources
-* Always validate and properly quote arguments to XSL transformations and
-  XPath queries
 
 (based on Brad Hill's `Attacking XML Security`_)
 
