@@ -4,7 +4,9 @@ Changelog
 defusedxml 0.3
 --------------
 
-*Release date: ??-Feb-2013*
+*Release date: 19-Feb-2013*
+
+- Improve documentation
 
 
 defusedxml 0.2
