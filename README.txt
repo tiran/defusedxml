@@ -365,7 +365,7 @@ The `defusedexpat package`_ comes with binary extensions and a
 basically a stand-alone version of the patches for Python's standard
 library C extensions.
 
-Modifications to expat
+Modifications in expat
 ----------------------
 
 new definitions::
