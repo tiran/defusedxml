@@ -600,9 +600,6 @@ Example from `Attacking XML Security`_ for Xalan-J::
 Related CVEs
 ============
 
-Python
-------
-
 CVE-2013-1664
   Unrestricted entity expansion induces DoS vulnerabilities in Python XML
   libraries (XML bomb)
@@ -610,18 +607,6 @@ CVE-2013-1664
 CVE-2013-1665
   External entity expansion in Python XML libraries inflicts potential
   security flaws and DoS vulnerabilities
-
-OpenStack
----------
-
-CVE-2013-0278
-  OpenStack Keystone
-
-CVE-2013-0279
-  Cinder
-
-CVE-2013-0280
-  Nova
 
 
 Other languages / frameworks
