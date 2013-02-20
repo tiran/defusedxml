@@ -159,7 +159,7 @@ DTD retrieval
 -------------
 
 This case is similar to external entity expansion, too. Some XML libraries
-like Python's xml.dom.pulldown retrieve document type definitions from remote
+like Python's xml.dom.pulldom retrieve document type definitions from remote
 or local locations. Several attack scenarios from the external entity case
 apply to this issue as well.
 
@@ -501,7 +501,7 @@ lzma is even better::
      148K zeros.xy
 
 None of Python's standard XML libraries decompress streams except for
-``xmlrpclib``. The module vulnerable <http://bugs.python.org/issue16043>
+``xmlrpclib``. The module is vulnerable <http://bugs.python.org/issue16043>
 to decompression bombs.
 
 lxml can load and process compressed data through libxml2 transparently.
