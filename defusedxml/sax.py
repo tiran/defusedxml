@@ -43,5 +43,5 @@ def parseString(string, handler, errorHandler=_ErrorHandler(),
     inpsrc.setByteStream(BytesIO(string))
     parser.parse(inpsrc)
 
-def make_parser():
+def make_parser(parser_list=[]):
     return expatreader.create_parser()

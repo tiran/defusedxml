@@ -10,6 +10,9 @@ defusedxml 0.4
   CVE-2013-0278, CVE-2013-0279 and CVE-2013-0280 and use CVE-2013-1664,
   CVE-2013-1665 for OpenStack/etc.
 
+- Add missing parser_list argument to sax.make_parser(). The argument is
+  ignored, though. (thanks to Florian Apolloner)
+
 
 defusedxml 0.3
 --------------
