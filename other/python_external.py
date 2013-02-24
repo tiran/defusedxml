@@ -1,5 +1,7 @@
 #!/usr/bin/python
 """Demo exploit for external entity expansion
+
+Author: Christian Heimes
 """
 import sys
 from xml.sax import ContentHandler
