@@ -73,7 +73,7 @@ quadratic blowup entity expansion
 
 A quadratic blowup attack is similar to a `Billion Laughs`_ attack; it abuses
 entity expansion, too. Instead of nested entities it repeats one large entity
-with a couple of ten thousand chars over and over again. The attack isn't as
+with a couple of thousand chars over and over again. The attack isn't as
 efficient as the exponential case but it avoids triggering countermeasures of
 parsers against heavily nested entities. Some parsers limit the depth and
 breadth of a single entity but not the total amount of expanded text
@@ -241,7 +241,8 @@ entities
 defusedxml
 ==========
 
-The `defusedxml package`_ contains several Python-only workarounds and fixes
+The `defusedxml package`_ (`defusedxml on PyPI`_)
+contains several Python-only workarounds and fixes
 for denial of service and other vulnerabilities in Python's XML libraries.
 In order to benefit from the protection you just have to import and use the
 listed functions / classes from the right defusedxml module instead of the
@@ -360,7 +361,8 @@ RestrictedElement, GlobalParserTLS, getDefaultParser(), check_docinfo()
 defusedexpat
 ============
 
-The `defusedexpat package`_ comes with binary extensions and a
+The `defusedexpat package`_ (`defusedexpat on PyPI`_)
+comes with binary extensions and a
 `modified expat`_ libary instead of the standard `expat parser`_. It's
 basically a stand-alone version of the patches for Python's standard
 library C extensions.
@@ -742,7 +744,9 @@ References
 * `Testing for XML Injection`_
 
 .. _defusedxml package: https://bitbucket.org/tiran/defusedxml
+.. _defusedxml on PyPI: https://pypi.python.org/pypi/defusedxml
 .. _defusedexpat package: https://bitbucket.org/tiran/defusedexpat
+.. _defusedexpat on PyPI: https://pypi.python.org/pypi/defusedexpat
 .. _modified expat: https://bitbucket.org/tiran/expat
 .. _expat parser: http://expat.sourceforge.net/
 .. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
