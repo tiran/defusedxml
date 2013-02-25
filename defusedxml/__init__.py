@@ -38,5 +38,5 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.4"
+__version__ = "0.5dev"
 
