@@ -573,6 +573,20 @@ processed. Some Python XML libraries and libxml2 support XInclude but don't
 have an option to sandbox inclusion and limit it to allowed directories.
 
 
+XMLSchema location
+------------------
+
+A validating XML parser may download schema files from the information in a
+``xsi:schemaLocation`` attribute.
+
+::
+
+  <ead xmlns="urn:isbn:1-931666-22-9"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="urn:isbn:1-931666-22-9 http://www.loc.gov/ead/ead.xsd">
+  </ead>
+
+
 XSL Transformation
 ------------------
 
@@ -588,7 +602,7 @@ Example from `Attacking XML Security`_ for Xalan-J::
      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
      xmlns:rt="http://xml.apache.org/xalan/java/java.lang.Runtime"
      xmlns:ob="http://xml.apache.org/xalan/java/java.lang.Object"
-     exclude-result-prefixes= "rt,ob">
+     exclude-result-prefixes= "rt ob">
      <xsl:template match="/">
        <xsl:variable name="runtimeObject" select="rt:getRuntime()"/>
        <xsl:variable name="command"
