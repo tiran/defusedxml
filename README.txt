@@ -184,9 +184,9 @@ Python XML Libraries
 
    "billion laughs", "**True**", "**True**", "**True**", "**True**", "**True**", "False (1)", "False (5)"
    "quadratic blowup", "**True**", "**True**", "**True**", "**True**", "**True**", "**True**", "False (5)"
-   "external entity expansion (remote)", "**True**", "False (3)", "False (4)", "**True**", "untested", "False (1)", "False (5)"
-   "external entity expansion (local file)", "**True**", "False (3)", "False (4)", "**True**", "untested", "**True**", "False (5)"
-   "DTD retrieval", "**True**", "False", "False", "**True**", "untested", "False (1)", "False"
+   "external entity expansion (remote)", "**True**", "False (3)", "False (4)", "**True**", "false", "False (1)", "False (5)"
+   "external entity expansion (local file)", "**True**", "False (3)", "False (4)", "**True**", "false", "**True**", "False (5)"
+   "DTD retrieval", "**True**", "False", "False", "**True**", "false", "False (1)", "False"
    "gzip bomb", "False", "False", "False", "False", "**True**", "**partly** (2)", "False"
    "xpath support (7)", "False", "False", "False", "False", "False", "**True**", "False"
    "xsl(t) support (7)", "False", "False", "False", "False", "False", "**True**", "False"
