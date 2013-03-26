@@ -420,7 +420,7 @@ class XmlRpcTarget(object):
         self._data = []
 
     def __str__(self):
-        return "\n".join(self._data)
+        return "".join(self._data)
 
     def xml(self, encoding, standalone):
         pass
@@ -444,12 +444,24 @@ class TestXmlRpc(DefusedTestCase):
         parser.close()
         return target
 
+    def parse_unpatched(self, xmlfile):
+        target = XmlRpcTarget()
+        parser = self.module.ExpatParser(target)
+        data = self.get_content(xmlfile)
+        parser.feed(data)
+        parser.close()
+        return target
+
     def test_xmlrpc(self):
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_bomb)
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_quadratic)
         self.parse(self.xml_dtd)
         self.assertRaises(DTDForbidden, self.parse, self.xml_dtd,
                           forbid_dtd=True)
+
+    #def test_xmlrpc_unpatched(self):
+    #    for fname in (self.xml_external,  self.xml_dtd):
+    #        print(self.parse_unpatched(fname))
 
     def test_monkeypatch(self):
         try:
