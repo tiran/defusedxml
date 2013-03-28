@@ -40,7 +40,7 @@ setup(
     description="XML bomb protection for Python stdlib modules",
     long_description="\n".join(long_description),
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Python Software Foundation License",
         "Natural Language :: English",

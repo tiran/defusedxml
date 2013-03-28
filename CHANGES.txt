@@ -1,10 +1,13 @@
 Changelog
 =========
 
-defusedxml 0.5
---------------
+defusedxml 0.4.1
+----------------
 
-*Release date: ??-???-2013*
+*Release date: 28-Mar-2013*
+
+- Add more demo exploits, e.g. python_external.py and Xalan XSLT demos.
+- Improved documentation.
 
 
 defusedxml 0.4

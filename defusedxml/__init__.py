@@ -14,7 +14,7 @@ from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
 def defuse_stdlib():
     """Monkey patch and defuse all stdlib packages
 
-    :warning: It's an HIGHLY EXPERIMETNAL and hardly tested feature.
+    :warning: The monkey patch is an EXPERIMETNAL feature.
     """
     defused = {}
 
@@ -38,5 +38,5 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.5dev"
+__version__ = "0.4.1"
 
