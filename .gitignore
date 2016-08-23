@@ -1,0 +1,10 @@
+/build/
+/dist/
+__pycache__
+*.pyc
+*.pyo
+.tox
+.cache
+.coverage
+MANIFEST
+
