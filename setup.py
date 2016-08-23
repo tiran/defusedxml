@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
 import sys
-from distutils.core import setup, Command
+from distutils.core import Command
 import subprocess
+
+from setuptools import setup
 
 import defusedxml
 
