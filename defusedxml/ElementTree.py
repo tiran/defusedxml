@@ -49,7 +49,7 @@ def _get_py3_cls():
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
-    if PY31:
+    if PY31 or sys.version_info >= (3, 6):
         _IterParseIterator = None
         from xml.parsers.expat import ExpatError as ParseError
     else:

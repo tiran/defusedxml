@@ -16,6 +16,8 @@ matrix:
       env: TOXENV=py34
     - python: 3.5
       env: TOXENV=py35
+    - python: nightly
+      env: TOXENV=py36
 
 install:
   - pip install --upgrade pip setuptools
