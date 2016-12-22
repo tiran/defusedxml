@@ -8,7 +8,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
-from .common import PY3, PY26, PY31
+from .common import PY3, PY26, PY31, PY33
 if PY3:
     import importlib
 else:
@@ -29,9 +29,16 @@ from .common import (DTDForbidden, EntitiesForbidden,
 __origin__ = "xml.etree.ElementTree"
 
 def _get_py3_cls():
-    """Python 3.3 hides the pure Python code but defusedxml requires it.
+    """We have to do some extra work to get the pure Python code and
+    handle some issues specific to certain Python 3 versions. First
+    we ensure we get the pure Python code by avoiding the optimized C
+    code in _elementtree. Then we handle a difference in a raised
+    exception on Python 3.1, and get the _IterParseIterator function
+    on Python 3.3, where we cannot access the pure-Python version of
+    iterparse. This stuff is passed to _generate_etree_functions,
+    which knows what to do with it all.
 
-    The code is based on test.support.import_fresh_module().
+    The code is partly based on test.support.import_fresh_module().
     """
     pymodname = "xml.etree.ElementTree"
     cmodname = "_elementtree"
@@ -49,12 +56,16 @@ def _get_py3_cls():
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
-    if PY31 or sys.version_info >= (3, 6):
-        _IterParseIterator = None
+    ParseError = pure_pymod.ParseError
+    _IterParseIterator = None
+    if PY31:
         from xml.parsers.expat import ExpatError as ParseError
-    else:
+    if PY33:
+        # Python 3.3 specifically did some shenanigans to hide the
+        # pure-Python iterparse() entirely, so we need to use the
+        # this private iterator instead. All other Pythons don't have
+        # this problem
         _IterParseIterator = pure_pymod._IterParseIterator
-        ParseError = pure_pymod.ParseError
 
     return _XMLParser, _iterparse, _IterParseIterator, ParseError
 
