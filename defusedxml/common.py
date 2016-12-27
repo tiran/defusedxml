@@ -11,6 +11,7 @@ from types import MethodType
 PY3 = sys.version_info[0] == 3
 PY26 = sys.version_info[:2] == (2, 6)
 PY31 = sys.version_info[:2] == (3, 1)
+PY33 = sys.version_info[:2] == (3, 3)
 
 
 class DefusedXmlException(ValueError):
@@ -126,7 +127,9 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
                 bind(xmlparser, "defused_external_entity_ref_handler",
                      "ExternalEntityRefHandler")
             return it
-    elif PY3:
+    elif PY33:
+        # pure-Python iterparse() is completely hidden on Python 3.3,
+        # we have to use the backing _IterParseIterator
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
                       forbid_entities=True, forbid_external=True):
             close_source = False
@@ -140,7 +143,7 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
                                           forbid_external=forbid_external)
             return _IterParseIterator(source, events, parser, close_source)
     else:
-        # Python 2.7
+        # Python 2.7, Python 3.2, Python 3.4+
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
                       forbid_entities=True, forbid_external=True):
             if parser is None:
