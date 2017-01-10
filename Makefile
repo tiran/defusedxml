@@ -11,7 +11,7 @@ all: inplace README.html
 
 README.html: README.rst CHANGES.rst void.css
 	@echo | cat README.rst - CHANGES.rst | \
-	    rst2html --verbose --exit-status=1 --stylesheet=void.css \
+	    rst2html.py --verbose --exit-status=1 --stylesheet=void.css \
             > README.html
 
 inplace:
