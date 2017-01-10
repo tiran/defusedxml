@@ -8,7 +8,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
-from .common import PY3, PY26, PY31
+from .common import PY3, PY26, PY31, PY36
 if PY3:
     import importlib
 else:
@@ -49,9 +49,12 @@ def _get_py3_cls():
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
-    if PY31 or sys.version_info >= (3, 6):
+    if PY31:
         _IterParseIterator = None
         from xml.parsers.expat import ExpatError as ParseError
+    elif PY36:
+        _IterParseIterator = None
+        ParseError = pure_pymod.ParseError
     else:
         _IterParseIterator = pure_pymod._IterParseIterator
         ParseError = pure_pymod.ParseError
