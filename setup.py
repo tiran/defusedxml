@@ -20,9 +20,9 @@ class PyTest(Command):
 
 
 long_description = []
-with open("README.txt") as f:
+with open("README.rst") as f:
     long_description.append(f.read())
-with open("CHANGES.txt") as f:
+with open("CHANGES.rst") as f:
     long_description.append(f.read())
 
 setup(
@@ -34,8 +34,8 @@ setup(
     author_email="christian@python.org",
     maintainer="Christian Heimes",
     maintainer_email="christian@python.org",
-    url="https://bitbucket.org/tiran/defusedxml",
-    download_url="http://pypi.python.org/pypi/defusedxml",
+    url="https://github.com/tiran/defusedxml",
+    download_url="https://pypi.python.org/pypi/defusedxml",
     keywords="xml bomb DoS",
     platforms="all",
     license="PSFL",

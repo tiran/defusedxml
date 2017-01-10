@@ -6,6 +6,11 @@ defusedxml -- defusing XML bombs and other exploits
 
 Christian Heimes <christian@python.org>
 
+
+.. image:: https://travis-ci.org/tiran/defusedxml.svg?branch=master
+    :target: https://travis-ci.org/tiran/defusedxml
+
+
 Synopsis
 ========
 
