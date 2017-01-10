@@ -12,6 +12,7 @@ PY3 = sys.version_info[0] == 3
 PY26 = sys.version_info[:2] == (2, 6)
 PY31 = sys.version_info[:2] == (3, 1)
 PY36 = sys.version_info[:2] == (3, 6)
+PY37 = sys.version_info[:2] == (3, 7)
 
 
 class DefusedXmlException(ValueError):
@@ -127,7 +128,7 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
                 bind(xmlparser, "defused_external_entity_ref_handler",
                      "ExternalEntityRefHandler")
             return it
-    elif PY36:
+    elif PY36 or PY37:
         def iterparse(source, events=None, parser=None, forbid_dtd=False,
                       forbid_entities=True, forbid_external=True):
             if not parser:

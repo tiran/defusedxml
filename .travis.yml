@@ -20,6 +20,9 @@ matrix:
       env: TOXENV=py36
     - python: nightly
       env: TOXENV=py37
+  allow_failures:
+    - python: nightly
+      env: TOXENV=py37
 
 install:
   - pip install --upgrade pip setuptools

@@ -8,7 +8,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
-from .common import PY3, PY26, PY31, PY36
+from .common import PY3, PY26, PY31, PY36, PY37
 if PY3:
     import importlib
 else:
@@ -52,7 +52,7 @@ def _get_py3_cls():
     if PY31:
         _IterParseIterator = None
         from xml.parsers.expat import ExpatError as ParseError
-    elif PY36:
+    elif PY36 or PY37:
         _IterParseIterator = None
         ParseError = pure_pymod.ParseError
     else:
