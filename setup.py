@@ -20,9 +20,9 @@ class PyTest(Command):
 
 
 long_description = []
-with open("README.txt") as f:
+with open("README.rst") as f:
     long_description.append(f.read())
-with open("CHANGES.txt") as f:
+with open("CHANGES.rst") as f:
     long_description.append(f.read())
 
 setup(
