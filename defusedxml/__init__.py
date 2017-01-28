@@ -39,7 +39,7 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.5.0"
+__version__ = "0.5.0.dev1"
 
 __all__ = ['DefusedXmlException', 'DTDForbidden', 'EntitiesForbidden',
            'ExternalReferenceForbidden', 'NotSupportedError']
