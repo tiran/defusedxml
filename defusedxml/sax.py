@@ -14,6 +14,7 @@ from . import expatreader
 
 __origin__ = "xml.sax"
 
+
 def parse(source, handler, errorHandler=_ErrorHandler(), forbid_dtd=False,
           forbid_entities=True, forbid_external=True):
     parser = make_parser()
@@ -42,6 +43,7 @@ def parseString(string, handler, errorHandler=_ErrorHandler(),
     inpsrc = _InputSource()
     inpsrc.setByteStream(BytesIO(string))
     parser.parse(inpsrc)
+
 
 def make_parser(parser_list=[]):
     return expatreader.create_parser()

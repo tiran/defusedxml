@@ -11,6 +11,7 @@ from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
                      ExternalReferenceForbidden, NotSupportedError,
                      _apply_defusing)
 
+
 def defuse_stdlib():
     """Monkey patch and defuse all stdlib packages
 
@@ -38,5 +39,7 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
+__all__ = ['DefusedXmlException', 'DTDForbidden', 'EntitiesForbidden',
+           'ExternalReferenceForbidden', 'NotSupportedError']

@@ -20,14 +20,14 @@ if PY3:
     from xmlrpc import client as xmlrpc_client
     from xmlrpc import server as xmlrpc_server
     from xmlrpc.client import gzip_decode as _orig_gzip_decode
-    from xmlrpc.client import GzipDecodedResponse as  _OrigGzipDecodedResponse
+    from xmlrpc.client import GzipDecodedResponse as _OrigGzipDecodedResponse
 else:
     __origin__ = "xmlrpclib"
     from xmlrpclib import ExpatParser
     import xmlrpclib as xmlrpc_client
     xmlrpc_server = None
     from xmlrpclib import gzip_decode as _orig_gzip_decode
-    from xmlrpclib import GzipDecodedResponse as  _OrigGzipDecodedResponse
+    from xmlrpclib import GzipDecodedResponse as _OrigGzipDecodedResponse
 
 try:
     import gzip
@@ -39,7 +39,8 @@ except ImportError:
 # Also used to limit maximum amount of gzip decoded data in order to prevent
 # decompression bombs
 # A value of -1 or smaller disables the limit
-MAX_DATA = 30 * 1024 * 1024 # 30 MB
+MAX_DATA = 30 * 1024 * 1024  # 30 MB
+
 
 def defused_gzip_decode(data, limit=None):
     """gzip encoded data -> unencoded data
@@ -53,7 +54,7 @@ def defused_gzip_decode(data, limit=None):
     f = io.BytesIO(data)
     gzf = gzip.GzipFile(mode="rb", fileobj=f)
     try:
-        if limit < 0: # no limit
+        if limit < 0:  # no limit
             decoded = gzf.read()
         else:
             decoded = gzf.read(limit + 1)
@@ -70,13 +71,14 @@ class DefusedGzipDecodedResponse(gzip.GzipFile if gzip else object):
     """a file-like object to decode a response encoded with the gzip
     method, as described in RFC 1952.
     """
+
     def __init__(self, response, limit=None):
-        #response doesn't support tell() and read(), required by
-        #GzipFile
+        # response doesn't support tell() and read(), required by
+        # GzipFile
         if not gzip:
             raise NotImplementedError
         self.limit = limit = limit if limit is not None else MAX_DATA
-        if limit < 0: # no limit
+        if limit < 0:  # no limit
             data = response.read()
             self.readlength = None
         else:
@@ -105,6 +107,7 @@ class DefusedGzipDecodedResponse(gzip.GzipFile if gzip else object):
 
 
 class DefusedExpatParser(ExpatParser):
+
     def __init__(self, target, forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
         ExpatParser.__init__(self, target)
@@ -144,6 +147,7 @@ def monkey_patch():
     xmlrpc_client.gzip_decode = defused_gzip_decode
     if xmlrpc_server:
         xmlrpc_server.gzip_decode = defused_gzip_decode
+
 
 def unmonkey_patch():
     xmlrpc_client.FastParser = None
