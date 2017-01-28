@@ -1,6 +1,16 @@
 Changelog
 =========
 
+defusedxml 0.5.0
+----------------
+
+*Release date: XX-Jan-2017*
+
+- Add compatibility with Python 3.6
+- Drop support for Python 2.6, 3.1, 3.2, 3.3
+- Fix lxml tests (XMLSyntaxError: Detected an entity reference loop)
+
+
 defusedxml 0.4.1
 ----------------
 
