@@ -7,7 +7,11 @@ PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 .PHONY: inplace all rebuild test_inplace test fulltests clean distclean
 .PHONY: sdist install
 
-all: inplace README.html
+all: inplace README.html README.md
+
+README.md: README.txt CHANGES.txt
+	pandoc --from=rst --to=markdown README.txt > $@
+	pandoc --from=rst --to=markdown CHANGES.txt >> $@
 
 README.html: README.txt CHANGES.txt void.css
 	@echo | cat README.txt - CHANGES.txt | \
@@ -54,8 +58,8 @@ whitespace:
 	    xargs sed -i 's/[ \t]*$$//'
 
 
-sdist: README.html
-	$(PYTHON) setup.py sdist --formats gztar,zip
+packages: README.html README.md
+	$(PYTHON) setup.py packages
 
 install:
 	$(PYTHON) setup.py $(SETUPFLAGS) build $(COMPILEFLAGS)
