@@ -11,25 +11,23 @@ from __future__ import print_function, absolute_import
 
 import io
 
-from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalReferenceForbidden, PY3, PY31, PY26)
+from .common import (
+    DTDForbidden, EntitiesForbidden, ExternalReferenceForbidden, PY3)
 
 if PY3:
     __origin__ = "xmlrpc.client"
     from xmlrpc.client import ExpatParser
     from xmlrpc import client as xmlrpc_client
     from xmlrpc import server as xmlrpc_server
-    if not PY31:
-        from xmlrpc.client import gzip_decode as _orig_gzip_decode
-        from xmlrpc.client import GzipDecodedResponse as  _OrigGzipDecodedResponse
+    from xmlrpc.client import gzip_decode as _orig_gzip_decode
+    from xmlrpc.client import GzipDecodedResponse as  _OrigGzipDecodedResponse
 else:
     __origin__ = "xmlrpclib"
     from xmlrpclib import ExpatParser
     import xmlrpclib as xmlrpc_client
     xmlrpc_server = None
-    if not PY26:
-        from xmlrpclib import gzip_decode as _orig_gzip_decode
-        from xmlrpclib import GzipDecodedResponse as  _OrigGzipDecodedResponse
+    from xmlrpclib import gzip_decode as _orig_gzip_decode
+    from xmlrpclib import GzipDecodedResponse as  _OrigGzipDecodedResponse
 
 try:
     import gzip
@@ -142,9 +140,6 @@ class DefusedExpatParser(ExpatParser):
 
 def monkey_patch():
     xmlrpc_client.FastParser = DefusedExpatParser
-    if PY26 or PY31:
-        # Python 2.6 and 3.1 have no gzip support in xmlrpc
-        return
     xmlrpc_client.GzipDecodedResponse = DefusedGzipDecodedResponse
     xmlrpc_client.gzip_decode = defused_gzip_decode
     if xmlrpc_server:
@@ -152,8 +147,6 @@ def monkey_patch():
 
 def unmonkey_patch():
     xmlrpc_client.FastParser = None
-    if PY26 or PY31:
-        return
     xmlrpc_client.GzipDecodedResponse = _OrigGzipDecodedResponse
     xmlrpc_client.gzip_decode = _orig_gzip_decode
     if xmlrpc_server:

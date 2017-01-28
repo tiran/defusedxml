@@ -8,17 +8,13 @@
 from __future__ import print_function, absolute_import
 
 import sys
-from .common import PY3, PY26, PY31
+from .common import PY3
 if PY3:
     import importlib
 else:
     from xml.etree.ElementTree import XMLParser as _XMLParser
     from xml.etree.ElementTree import iterparse as _iterparse
-    if PY26:
-        from xml.parsers.expat import ExpatError as ParseError
-    else:
-        from xml.etree.ElementTree import ParseError
-    _IterParseIterator = None
+    from xml.etree.ElementTree import ParseError
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
 from xml.etree.ElementTree import tostring
@@ -49,32 +45,24 @@ def _get_py3_cls():
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
-    if PY31 or sys.version_info >= (3, 6):
-        _IterParseIterator = None
-        from xml.parsers.expat import ExpatError as ParseError
-    else:
-        _IterParseIterator = pure_pymod._IterParseIterator
-        ParseError = pure_pymod.ParseError
+    ParseError = pure_pymod.ParseError
 
-    return _XMLParser, _iterparse, _IterParseIterator, ParseError
+    return _XMLParser, _iterparse, ParseError
 
 if PY3:
-    _XMLParser, _iterparse, _IterParseIterator, ParseError = _get_py3_cls()
+    _XMLParser, _iterparse, ParseError = _get_py3_cls()
 
 
 class DefusedXMLParser(_XMLParser):
     def __init__(self, html=0, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
-        if PY26 or PY31:
-            _XMLParser.__init__(self, html, target)
-        else:
-            # Python 2.x old style class
-            _XMLParser.__init__(self, html, target, encoding)
+        # Python 2.x old style class
+        _XMLParser.__init__(self, html, target, encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
-        if PY3 and not PY31:
+        if PY3:
             parser = self.parser
         else:
             parser = self._parser
@@ -108,5 +96,5 @@ class DefusedXMLParser(_XMLParser):
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
 parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
-        _TreeBuilder, _IterParseIterator, _parse, _iterparse)
+        _TreeBuilder, _parse, _iterparse)
 XML = fromstring

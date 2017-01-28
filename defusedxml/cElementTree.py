@@ -13,7 +13,7 @@ from xml.etree.cElementTree import tostring
 # iterparse from ElementTree!
 from xml.etree.ElementTree import iterparse as _iterparse
 
-from .ElementTree import DefusedXMLParser, _IterParseIterator
+from .ElementTree import DefusedXMLParser
 from .common import _generate_etree_functions
 
 __origin__ = "xml.etree.cElementTree"
@@ -21,5 +21,5 @@ __origin__ = "xml.etree.cElementTree"
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
 parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
-        _TreeBuilder, _IterParseIterator, _parse, _iterparse)
+        _TreeBuilder, _parse, _iterparse)
 XML = fromstring
