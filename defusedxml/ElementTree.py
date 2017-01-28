@@ -8,21 +8,26 @@
 from __future__ import print_function, absolute_import
 
 import sys
+from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
+from xml.etree.ElementTree import parse as _parse
+from xml.etree.ElementTree import tostring
+
 from .common import PY3
+
+
 if PY3:
     import importlib
 else:
     from xml.etree.ElementTree import XMLParser as _XMLParser
     from xml.etree.ElementTree import iterparse as _iterparse
     from xml.etree.ElementTree import ParseError
-from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
-from xml.etree.ElementTree import parse as _parse
-from xml.etree.ElementTree import tostring
+
 
 from .common import (DTDForbidden, EntitiesForbidden,
                      ExternalReferenceForbidden, _generate_etree_functions)
 
 __origin__ = "xml.etree.ElementTree"
+
 
 def _get_py3_cls():
     """Python 3.3 hides the pure Python code but defusedxml requires it.
@@ -49,11 +54,13 @@ def _get_py3_cls():
 
     return _XMLParser, _iterparse, ParseError
 
+
 if PY3:
     _XMLParser, _iterparse, ParseError = _get_py3_cls()
 
 
 class DefusedXMLParser(_XMLParser):
+
     def __init__(self, html=0, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
@@ -96,5 +103,10 @@ class DefusedXMLParser(_XMLParser):
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
 parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
-        _TreeBuilder, _parse, _iterparse)
+                                                         _TreeBuilder, _parse,
+                                                         _iterparse)
 XML = fromstring
+
+
+__all__ = ['XML', 'XMLParse', 'XMLTreeBuilder', 'fromstring', 'iterparse',
+           'parse', 'tostring']

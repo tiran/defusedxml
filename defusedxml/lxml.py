@@ -40,7 +40,8 @@ class RestrictedElement(_etree.ElementBase):
         return self._filter(iterator)
 
     def iterchildren(self, tag=None, reversed=False):
-        iterator = super(RestrictedElement, self).iterchildren(tag=tag, reversed=reversed)
+        iterator = super(RestrictedElement, self).iterchildren(
+            tag=tag, reversed=reversed)
         return self._filter(iterator)
 
     def iter(self, tag=None, *tags):
@@ -48,11 +49,13 @@ class RestrictedElement(_etree.ElementBase):
         return self._filter(iterator)
 
     def iterdescendants(self, tag=None, *tags):
-        iterator = super(RestrictedElement, self).iterdescendants(tag=tag, *tags)
+        iterator = super(RestrictedElement,
+                         self).iterdescendants(tag=tag, *tags)
         return self._filter(iterator)
 
     def itersiblings(self, tag=None, preceding=False):
-        iterator = super(RestrictedElement, self).itersiblings(tag=tag, preceding=preceding)
+        iterator = super(RestrictedElement, self).itersiblings(
+            tag=tag, preceding=preceding)
         return self._filter(iterator)
 
     def getchildren(self):
@@ -69,8 +72,8 @@ class GlobalParserTLS(threading.local):
     """
     parser_config = {
         'resolve_entities': False,
-        #'remove_comments': True,
-        #'remove_pis': True,
+        # 'remove_comments': True,
+        # 'remove_pis': True,
     }
 
     element_class = RestrictedElement
@@ -141,6 +144,7 @@ def fromstring(text, parser=None, base_url=None, forbid_dtd=False,
     elementtree = rootelement.getroottree()
     check_docinfo(elementtree, forbid_dtd, forbid_entities)
     return rootelement
+
 
 XML = fromstring
 

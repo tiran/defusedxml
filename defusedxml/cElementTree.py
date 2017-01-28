@@ -18,8 +18,13 @@ from .common import _generate_etree_functions
 
 __origin__ = "xml.etree.cElementTree"
 
+
 XMLTreeBuilder = XMLParse = DefusedXMLParser
 
 parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
-        _TreeBuilder, _parse, _iterparse)
+                                                         _TreeBuilder, _parse,
+                                                         _iterparse)
 XML = fromstring
+
+__all__ = ['XML', 'XMLParse', 'XMLTreeBuilder', 'fromstring', 'iterparse',
+           'parse', 'tostring']

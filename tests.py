@@ -3,7 +3,6 @@ import os
 import sys
 import unittest
 import io
-import re
 
 from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
@@ -11,7 +10,7 @@ from pyexpat import ExpatError
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc
 from defusedxml import defuse_stdlib
-from defusedxml import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
+from defusedxml import (DTDForbidden, EntitiesForbidden,
                         ExternalReferenceForbidden, NotSupportedError)
 from defusedxml.common import PY3
 
@@ -141,7 +140,6 @@ class BaseTests(DefusedTestCase):
             self.assertRaises(DTDForbidden, self.iterparse,
                               self.xml_dtd, forbid_dtd=True)
 
-
     def test_dtd_with_external_ref(self):
         if self.dtd_external_ref:
             self.assertRaises(self.external_ref_exception, self.parse,
@@ -172,9 +170,8 @@ class BaseTests(DefusedTestCase):
 class TestDefusedElementTree(BaseTests):
     module = ElementTree
 
-
-    ## etree doesn't do external ref lookup
-    #external_ref_exception = ElementTree.ParseError
+    # etree doesn't do external ref lookup
+    # external_ref_exception = ElementTree.ParseError
 
     cyclic_error = ElementTree.ParseError
 
@@ -198,7 +195,6 @@ class TestDefusedMinidom(BaseTests):
     module = minidom
 
     cyclic_error = ExpatError
-
 
     iterparse = None
 
@@ -376,6 +372,7 @@ class TestDefusedLxml(BaseTests):
 
 
 class XmlRpcTarget(object):
+
     def __init__(self):
         self._data = []
 
@@ -394,8 +391,10 @@ class XmlRpcTarget(object):
     def end(self, tag):
         self._data.append("</%s>" % tag)
 
+
 class TestXmlRpc(DefusedTestCase):
     module = xmlrpc
+
     def parse(self, xmlfile, **kwargs):
         target = XmlRpcTarget()
         parser = self.module.DefusedExpatParser(target, **kwargs)
@@ -419,7 +418,7 @@ class TestXmlRpc(DefusedTestCase):
         self.assertRaises(DTDForbidden, self.parse, self.xml_dtd,
                           forbid_dtd=True)
 
-    #def test_xmlrpc_unpatched(self):
+    # def test_xmlrpc_unpatched(self):
     #    for fname in (self.xml_external,  self.xml_dtd):
     #        print(self.parse_unpatched(fname))
 
@@ -431,6 +430,7 @@ class TestXmlRpc(DefusedTestCase):
 
 
 class TestDefusedGzip(DefusedTestCase):
+
     def get_gzipped(self, length):
         f = io.BytesIO()
         gzf = gzip.GzipFile(mode="wb", fileobj=f)
@@ -452,11 +452,11 @@ class TestDefusedGzip(DefusedTestCase):
     def test_defused_gzip_decode(self):
         data = self.get_gzipped(4096).getvalue()
         result = xmlrpc.defused_gzip_decode(data)
-        self.assertEqual(result, b"d" *4096)
+        self.assertEqual(result, b"d" * 4096)
         result = xmlrpc.defused_gzip_decode(data, -1)
-        self.assertEqual(result, b"d" *4096)
+        self.assertEqual(result, b"d" * 4096)
         result = xmlrpc.defused_gzip_decode(data, 4096)
-        self.assertEqual(result, b"d" *4096)
+        self.assertEqual(result, b"d" * 4096)
         with self.assertRaises(ValueError):
             result = xmlrpc.defused_gzip_decode(data, 4095)
         with self.assertRaises(ValueError):
@@ -467,7 +467,7 @@ class TestDefusedGzip(DefusedTestCase):
 
         response = self.get_gzipped(4096)
         data = self.decode_response(response)
-        self.assertEqual(data, b"d" *4096)
+        self.assertEqual(data, b"d" * 4096)
 
         with self.assertRaises(ValueError):
             response = self.get_gzipped(4096)
@@ -495,6 +495,7 @@ def test_main():
     if gzip is not None:
         suite.addTests(unittest.makeSuite(TestDefusedGzip))
     return suite
+
 
 if __name__ == "__main__":
     suite = test_main()

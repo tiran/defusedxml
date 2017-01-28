@@ -8,12 +8,16 @@ from setuptools import setup
 
 import defusedxml
 
+
 class PyTest(Command):
     user_options = []
+
     def initialize_options(self):
         pass
+
     def finalize_options(self):
         pass
+
     def run(self):
         errno = subprocess.call([sys.executable, "tests.py"])
         raise SystemExit(errno)
@@ -24,6 +28,7 @@ with open("README.txt") as f:
     long_description.append(f.read())
 with open("CHANGES.txt") as f:
     long_description.append(f.read())
+
 
 setup(
     name="defusedxml",
@@ -56,4 +61,3 @@ setup(
         "Topic :: Text Processing :: Markup :: XML",
     ],
 )
-

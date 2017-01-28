@@ -6,7 +6,6 @@
 """Common constants, exceptions and helpe functions
 """
 import sys
-from types import MethodType
 
 PY3 = sys.version_info[0] == 3
 
@@ -14,6 +13,7 @@ PY3 = sys.version_info[0] == 3
 class DefusedXmlException(ValueError):
     """Base exception
     """
+
     def __repr__(self):
         return str(self)
 
@@ -21,6 +21,7 @@ class DefusedXmlException(ValueError):
 class DTDForbidden(DefusedXmlException):
     """Document type definition is forbidden
     """
+
     def __init__(self, name, sysid, pubid):
         super(DTDForbidden, self).__init__()
         self.name = name
@@ -35,6 +36,7 @@ class DTDForbidden(DefusedXmlException):
 class EntitiesForbidden(DefusedXmlException):
     """Entity definition is forbidden
     """
+
     def __init__(self, name, value, base, sysid, pubid, notation_name):
         super(EntitiesForbidden, self).__init__()
         self.name = name
@@ -52,6 +54,7 @@ class EntitiesForbidden(DefusedXmlException):
 class ExternalReferenceForbidden(DefusedXmlException):
     """Resolving an external reference is forbidden
     """
+
     def __init__(self, context, base, sysid, pubid):
         super(ExternalReferenceForbidden, self).__init__()
         self.context = context
@@ -83,7 +86,7 @@ def _apply_defusing(defused_mod):
 
 
 def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
-        _parse, _iterparse):
+                              _parse, _iterparse):
     """Factory for functions needed by etree, dependent on whether
     cElementTree or ElementTree is used."""
 
@@ -113,6 +116,5 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder,
                                   forbid_external=forbid_external)
         parser.feed(text)
         return parser.close()
-
 
     return parse, iterparse, fromstring

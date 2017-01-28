@@ -49,7 +49,7 @@ class DefusedExpatBuilder(_ExpatBuilder):
         if self.forbid_dtd:
             parser.StartDoctypeDeclHandler = self.defused_start_doctype_decl
         if self.forbid_entities:
-            #if self._options.entities:
+            # if self._options.entities:
             parser.EntityDeclHandler = self.defused_entity_decl
             parser.UnparsedEntityDeclHandler = self.defused_unparsed_entity_decl
         if self.forbid_external:
