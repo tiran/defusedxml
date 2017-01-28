@@ -717,10 +717,10 @@ References
 Changelog
 =========
 
-defusedxml 0.5.0
-----------------
+defusedxml 0.5.0.rc1
+--------------------
 
-*Release date: XX-Jan-2017*
+*Release date: 28-Jan-2017*
 
 -   Add compatibility with Python 3.6
 -   Drop support for Python 2.6, 3.1, 3.2, 3.3
