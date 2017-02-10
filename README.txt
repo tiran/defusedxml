@@ -309,7 +309,7 @@ create_parser(), DefusedExpatParser
 defusedxml.sax
 --------------
 
-parse(), parseString(), create_parser()
+parse(), parseString(), make_parser()
 
 
 defusedxml.expatbuilder

@@ -268,7 +268,7 @@ create\_parser(), DefusedExpatParser
 
 ### defusedxml.sax
 
-parse(), parseString(), create\_parser()
+parse(), parseString(), make\_parser()
 
 ### defusedxml.expatbuilder
 
@@ -716,6 +716,13 @@ References
 
 Changelog
 =========
+
+defusedxml 0.5.0
+----------------
+
+*Release date: 07-Feb-2017*
+
+-   No changes
 
 defusedxml 0.5.0.rc1
 --------------------
