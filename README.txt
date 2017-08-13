@@ -129,7 +129,7 @@ example:
   requests to a service that doesn't respond or responds with very large
   files.
 * An attacker may gain knowledge, when, how often and from which IP address
-  a XML document is accessed.
+  an XML document is accessed.
 * An attacker could send mail from inside your network if the URL handler
   supports ``smtp://`` URIs.
 
@@ -363,7 +363,7 @@ defusedexpat
 
 The `defusedexpat package`_ (`defusedexpat on PyPI`_)
 comes with binary extensions and a
-`modified expat`_ libary instead of the standard `expat parser`_. It's
+`modified expat`_ library instead of the standard `expat parser`_. It's
 basically a stand-alone version of the patches for Python's standard
 library C extensions.
 
@@ -536,7 +536,7 @@ XPath
 -----
 
 XPath statements may introduce DoS vulnerabilities. Code should never execute
-queries from untrusted sources. An attacker may also be able to create a XML
+queries from untrusted sources. An attacker may also be able to create an XML
 document that makes certain XPath queries costly or resource hungry.
 
 
@@ -657,7 +657,7 @@ PHP
 ---
 
 PHP's SimpleXML API is vulnerable to quadratic entity expansion and loads
-entites from local and remote resources. The option ``LIBXML_NONET`` disables
+entities from local and remote resources. The option ``LIBXML_NONET`` disables
 network access but still allows local file access. ``LIBXML_NOENT`` seems to
 have no effect on entity expansion in PHP 5.4.6.
 

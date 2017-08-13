@@ -118,7 +118,7 @@ possible. For example:
     with requests to a service that doesn't respond or responds with
     very large files.
 -   An attacker may gain knowledge, when, how often and from which IP
-    address a XML document is accessed.
+    address an XML document is accessed.
 -   An attacker could send mail from inside your network if the URL
     handler supports `smtp://` URIs.
 
@@ -313,7 +313,7 @@ defusedexpat
 The [defusedexpat package](https://github.com/tiran/defusedexpat)
 ([defusedexpat on PyPI](https://pypi.python.org/pypi/defusedexpat))
 comes with binary extensions and a [modified
-expat](https://github.com/tiran/expat) libary instead of the standard
+expat](https://github.com/tiran/expat) library instead of the standard
 [expat parser](http://expat.sourceforge.net/). It's basically a
 stand-alone version of the patches for Python's standard library C
 extensions.
@@ -492,7 +492,7 @@ be a security threat.
 
 XPath statements may introduce DoS vulnerabilities. Code should never
 execute queries from untrusted sources. An attacker may also be able to
-create a XML document that makes certain XPath queries costly or
+create an XML document that makes certain XPath queries costly or
 resource hungry.
 
 ### XPath injection attacks
@@ -606,7 +606,7 @@ configuration.
 ### PHP
 
 PHP's SimpleXML API is vulnerable to quadratic entity expansion and
-loads entites from local and remote resources. The option `LIBXML_NONET`
+loads entities from local and remote resources. The option `LIBXML_NONET`
 disables network access but still allows local file access.
 `LIBXML_NOENT` seems to have no effect on entity expansion in PHP 5.4.6.
 
@@ -771,7 +771,7 @@ defusedxml 0.2
 -   Rename defusedxml.lxml.check\_dtd() to check\_docinfo()
 -   Unify argument names in callbacks
 -   Add arguments and formatted representation to exceptions
--   Add forbid\_external argument to all functions and classs
+-   Add forbid\_external argument to all functions and classes
 -   More tests
 -   LOTS of documentation
 -   Add example code for other languages (Ruby, Perl, PHP) and
