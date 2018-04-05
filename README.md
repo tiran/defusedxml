@@ -38,7 +38,7 @@ Attack vectors
 
 ### billion laughs / exponential entity expansion
 
-The [Billion Laughs](http://en.wikipedia.org/wiki/Billion_laughs) attack
+The [Billion Laughs](https://en.wikipedia.org/wiki/Billion_laughs) attack
 -- also known as exponential entity expansion --uses multiple levels of
 nested entities. The original example uses 9 levels of 10 expansions in
 each level to expand the string `lol` to a string of 3 \* 10 ^9^ bytes,
@@ -64,7 +64,7 @@ Example XML:
 ### quadratic blowup entity expansion
 
 A quadratic blowup attack is similar to a [Billion
-Laughs](http://en.wikipedia.org/wiki/Billion_laughs) attack; it abuses
+Laughs](https://en.wikipedia.org/wiki/Billion_laughs) attack; it abuses
 entity expansion, too. Instead of nested entities it repeats one large
 entity with a couple of thousand chars over and over again. The attack
 isn't as efficient as the exponential case but it avoids triggering
@@ -450,7 +450,7 @@ I haven't researched yet if expat, pyexpat or libxml2 are vulnerable.
 ### decompression bomb
 
 The issue of decompression bombs (aka [ZIP
-bomb](http://en.wikipedia.org/wiki/Zip_bomb)) apply to all XML libraries
+bomb](https://en.wikipedia.org/wiki/Zip_bomb)) apply to all XML libraries
 that can parse compressed XML stream like gzipped HTTP streams or
 LZMA-ed files. For an attacker it can reduce the amount of transmitted
 data by three magnitudes or more. Gzip is able to compress 1 GiB zeros
@@ -464,7 +464,7 @@ to roughly 1 MB, lzma is even better:
 
 None of Python's standard XML libraries decompress streams except for
 `xmlrpclib`. The module is vulnerable
-&lt;<http://bugs.python.org/issue16043>&gt; to decompression bombs.
+&lt;<https://bugs.python.org/issue16043>&gt; to decompression bombs.
 
 lxml can load and process compressed data through libxml2 transparently.
 libxml2 can handle even very large blobs of compressed data efficiently
@@ -484,7 +484,7 @@ with network or local file access apply to processing instructions, too.
 
 ### Other DTD features
 
-[DTD](http://en.wikipedia.org/wiki/Document_Type_Definition) has more
+[DTD](https://en.wikipedia.org/wiki/Document_Type_Definition) has more
 features like `<!NOTATION>`. I haven't researched how these features may
 be a security threat.
 
@@ -516,7 +516,7 @@ use its xpath() method correctly:
 
 ### XInclude
 
-[XML Inclusion](http://www.w3.org/TR/xinclude/#include_element) is
+[XML Inclusion](https://www.w3.org/TR/xinclude/#include_element) is
 another way to load and include external files:
 
     <root xmlns:xi="http://www.w3.org/2001/XInclude">
@@ -613,7 +613,7 @@ disables network access but still allows local file access.
 ### C\# / .NET / Mono
 
 Information in [XML DoS and Defenses
-(MSDN)](http://msdn.microsoft.com/en-us/magazine/ee335713.aspx) suggest
+(MSDN)](https://msdn.microsoft.com/en-us/magazine/ee335713.aspx) suggest
 that .NET is vulnerable with its default settings. The article contains
 code snippets how to create a secure XML reader:
 
@@ -626,7 +626,7 @@ code snippets how to create a secure XML reader:
 ### Java
 
 Untested. The documentation of Xerces and its [Xerces
-SecurityMananger](http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html)
+SecurityMananger](https://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html)
 sounds like Xerces is also vulnerable to billion laugh attacks with its
 default settings. It also does entity resolving when an
 `org.xml.sax.EntityResolver` is configured. I'm not yet sure about the
@@ -663,7 +663,7 @@ Copyright (c) 2013-2017 by Christian Heimes
 
 Licensed to PSF under a Contributor Agreement.
 
-See <http://www.python.org/psf/license> for licensing details.
+See <https://www.python.org/psf/license> for licensing details.
 
 Acknowledgements
 ----------------
@@ -695,7 +695,7 @@ Daniel Veillard (libxml2)
 
 :   Many thanks to Daniel for his insight and assistance with libxml2.
 
-semantics GmbH (<http://www.semantics.de/>)
+semantics GmbH (<https://www.semantics.de/>)
 
 :   Many thanks to my employer semantics for letting me work on the
     issue during working hours as part of semantics's open
@@ -705,10 +705,10 @@ References
 ----------
 
 -   [XML DoS and
-    Defenses (MSDN)](http://msdn.microsoft.com/en-us/magazine/ee335713.aspx)
--   [Billion Laughs](http://en.wikipedia.org/wiki/Billion_laughs) on
+    Defenses (MSDN)](https://msdn.microsoft.com/en-us/magazine/ee335713.aspx)
+-   [Billion Laughs](https://en.wikipedia.org/wiki/Billion_laughs) on
     Wikipedia
--   [ZIP bomb](http://en.wikipedia.org/wiki/Zip_bomb) on Wikipedia
+-   [ZIP bomb](https://en.wikipedia.org/wiki/Zip_bomb) on Wikipedia
 -   [Configure SAX parsers for secure
     processing](http://www.ibm.com/developerworks/xml/library/x-tipcfsx/index.html)
 -   [Testing for XML

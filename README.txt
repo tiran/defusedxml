@@ -503,7 +503,7 @@ lzma is even better::
      148K zeros.xy
 
 None of Python's standard XML libraries decompress streams except for
-``xmlrpclib``. The module is vulnerable <http://bugs.python.org/issue16043>
+``xmlrpclib``. The module is vulnerable <https://bugs.python.org/issue16043>
 to decompression bombs.
 
 lxml can load and process compressed data through libxml2 transparently.
@@ -716,7 +716,7 @@ Copyright (c) 2013-2017 by Christian Heimes <christian@python.org>
 
 Licensed to PSF under a Contributor Agreement.
 
-See http://www.python.org/psf/license for licensing details.
+See https://www.python.org/psf/license for licensing details.
 
 
 Acknowledgements
@@ -743,7 +743,7 @@ Carl Meyer (Django)
 Daniel Veillard (libxml2)
   Many thanks to Daniel for his insight and assistance with libxml2.
 
-semantics GmbH (http://www.semantics.de/)
+semantics GmbH (https://www.semantics.de/)
   Many thanks to my employer semantics for letting me work on the issue
   during working hours as part of semantics's open source initiative.
 
@@ -764,13 +764,13 @@ References
 .. _modified expat: https://bitbucket.org/tiran/expat
 .. _expat parser: http://expat.sourceforge.net/
 .. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
-.. _Billion Laughs: http://en.wikipedia.org/wiki/Billion_laughs
-.. _XML DoS and Defenses (MSDN): http://msdn.microsoft.com/en-us/magazine/ee335713.aspx
-.. _ZIP bomb: http://en.wikipedia.org/wiki/Zip_bomb
-.. _DTD: http://en.wikipedia.org/wiki/Document_Type_Definition
+.. _Billion Laughs: https://en.wikipedia.org/wiki/Billion_laughs
+.. _XML DoS and Defenses (MSDN): https://msdn.microsoft.com/en-us/magazine/ee335713.aspx
+.. _ZIP bomb: https://en.wikipedia.org/wiki/Zip_bomb
+.. _DTD: https://en.wikipedia.org/wiki/Document_Type_Definition
 .. _PI: https://en.wikipedia.org/wiki/Processing_Instruction
 .. _Avoid the dangers of XPath injection: http://www.ibm.com/developerworks/xml/library/x-xpathinjection/index.html
 .. _Configure SAX parsers for secure processing: http://www.ibm.com/developerworks/xml/library/x-tipcfsx/index.html
 .. _Testing for XML Injection: https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008)
-.. _Xerces SecurityMananger: http://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
-.. _XML Inclusion: http://www.w3.org/TR/xinclude/#include_element
+.. _Xerces SecurityMananger: https://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
+.. _XML Inclusion: https://www.w3.org/TR/xinclude/#include_element

@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2013 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
-# See http://www.python.org/psf/license for licensing details.
+# See https://www.python.org/psf/license for licensing details.
 """Defused xml.dom.expatbuilder
 """
 from __future__ import print_function, absolute_import
