@@ -757,11 +757,11 @@ References
 * `Configure SAX parsers for secure processing`_
 * `Testing for XML Injection`_
 
-.. _defusedxml package: https://bitbucket.org/tiran/defusedxml
+.. _defusedxml package: https://github.com/tiran/defusedxml
 .. _defusedxml on PyPI: https://pypi.python.org/pypi/defusedxml
-.. _defusedexpat package: https://bitbucket.org/tiran/defusedexpat
+.. _defusedexpat package: https://github.com/tiran/defusedexpat
 .. _defusedexpat on PyPI: https://pypi.python.org/pypi/defusedexpat
-.. _modified expat: https://bitbucket.org/tiran/expat
+.. _modified expat: https://github.com/tiran/expat
 .. _expat parser: http://expat.sourceforge.net/
 .. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
 .. _Billion Laughs: https://en.wikipedia.org/wiki/Billion_laughs

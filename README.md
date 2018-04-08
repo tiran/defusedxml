@@ -206,7 +206,7 @@ entities
 defusedxml
 ----------
 
-The [defusedxml package](https://bitbucket.org/tiran/defusedxml)
+The [defusedxml package](https://github.com/tiran/defusedxml)
 ([defusedxml on PyPI](https://pypi.python.org/pypi/defusedxml)) contains
 several Python-only workarounds and fixes for denial of service and
 other vulnerabilities in Python's XML libraries. In order to benefit
@@ -310,10 +310,10 @@ getDefaultParser(), check\_docinfo()
 defusedexpat
 ------------
 
-The [defusedexpat package](https://bitbucket.org/tiran/defusedexpat)
+The [defusedexpat package](https://github.com/tiran/defusedexpat)
 ([defusedexpat on PyPI](https://pypi.python.org/pypi/defusedexpat))
 comes with binary extensions and a [modified
-expat](https://bitbucket.org/tiran/expat) libary instead of the standard
+expat](https://github.com/tiran/expat) libary instead of the standard
 [expat parser](http://expat.sourceforge.net/). It's basically a
 stand-alone version of the patches for Python's standard library C
 extensions.
@@ -784,4 +784,3 @@ defusedxml 0.1
 *Release date: 08-Feb-2013*
 
 -   Initial and internal release for PSRT review
-
