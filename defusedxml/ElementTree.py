@@ -61,7 +61,7 @@ if PY3:
 
 class DefusedXMLParser(_XMLParser):
 
-    def __init__(self, target=None, encoding=None,
+    def __init__(self, html=0, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
         # Python 2.x old style class
