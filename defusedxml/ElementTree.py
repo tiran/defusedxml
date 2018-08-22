@@ -65,7 +65,7 @@ class DefusedXMLParser(_XMLParser):
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
         # Python 2.x old style class
-        _XMLParser.__init__(self, target=target, encoding=encoding)
+        _XMLParser.__init__(self, target=target, encoding=encoding) 
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
