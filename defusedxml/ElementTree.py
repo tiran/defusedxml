@@ -61,11 +61,15 @@ if PY3:
 
 class DefusedXMLParser(_XMLParser):
 
-    def __init__(self, html=0, target=None, encoding=None,
+    def __init__(self, html=None, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
-        # Python 2.x old style class
-        _XMLParser.__init__(self, html, target, encoding)
+        # Since Python 3.8, the html argument is not supported,
+        # so we only pass it when we got it - the TypeError will propagate
+        if html is None:
+            _XMLParser.__init__(self, target=target, encoding=encoding)
+        else:
+            _XMLParser.__init__(self, html, target=target, encoding=encoding)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
