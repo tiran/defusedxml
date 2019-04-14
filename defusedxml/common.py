@@ -6,8 +6,13 @@
 """Common constants, exceptions and helpe functions
 """
 import sys
+import xml.parsers.expat
 
 PY3 = sys.version_info[0] == 3
+
+# Fail early when pyexpat is not installed correctly
+if not hasattr(xml.parsers.expat, "ParserCreate"):
+    raise ImportError('pyexpat')
 
 
 class DefusedXmlException(ValueError):

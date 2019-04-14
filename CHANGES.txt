@@ -12,6 +12,8 @@ defusedxml 0.6.0.dev1
   ignored for a long time. The DefusedXMLParser still takes a html argument.
   A deprecation warning is issued when the argument is False and a TypeError
   when it's True.
+- defusedxml now fails early when pyexpat stdlib module is not available or
+  broken.
 
 
 defusedxml 0.5.0
