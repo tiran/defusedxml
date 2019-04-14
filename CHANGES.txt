@@ -6,7 +6,7 @@ defusedxml 0.6.0.dev1
 
 *Release date: ??-???-2019*
 
-
+- Test on Python 3.7 stable and 3.8-dev
 
 
 defusedxml 0.5.0
