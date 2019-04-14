@@ -4,6 +4,8 @@ language: python
 
 cache: pip
 
+dist: xenial
+
 matrix:
   include:
     - python: 2.7
