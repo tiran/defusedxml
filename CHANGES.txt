@@ -14,6 +14,7 @@ defusedxml 0.6.0.dev1
   when it's True.
 - defusedxml now fails early when pyexpat stdlib module is not available or
   broken.
+- defusedxml.ElementTree.__all__ now lists ParseError as public attribute.
 
 
 defusedxml 0.5.0

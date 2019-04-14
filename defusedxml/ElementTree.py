@@ -122,5 +122,7 @@ parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
 XML = fromstring
 
 
-__all__ = ['XML', 'XMLParse', 'XMLTreeBuilder', 'fromstring', 'iterparse',
-           'parse', 'tostring']
+__all__ = [
+    'ParseError', 'XML', 'XMLParse', 'XMLTreeBuilder', 'fromstring',
+    'iterparse', 'parse', 'tostring'
+]
