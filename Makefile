@@ -5,9 +5,9 @@ INSTALLFLAGS=
 PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 
 .PHONY: inplace all rebuild test_inplace test fulltests clean distclean
-.PHONY: sdist install
+.PHONY: sdist install black
 
-all: inplace README.html README.md
+all: inplace black README.html README.md
 
 README.md: README.txt CHANGES.txt
 	pandoc --from=rst --to=gfm README.txt > $@
@@ -27,6 +27,9 @@ test_inplace: inplace
 	$(PYTHON) -m tests
 
 test: test_inplace
+
+black:
+	black $(CURDIR) || true
 
 fulltest:
 	$(MAKE) clean
