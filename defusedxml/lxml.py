@@ -24,16 +24,16 @@ tostring = _etree.tostring
 
 
 warnings.warn(
-    "defusedxml.lxml is no longer supported and will be removed in a "
-    "future release.",
+    "defusedxml.lxml is no longer supported and will be removed in a " "future release.",
     category=DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
 
 class RestrictedElement(_etree.ElementBase):
     """A restricted Element class that filters out instances of some classes
     """
+
     __slots__ = ()
     # blacklist = (etree._Entity, etree._ProcessingInstruction, etree._Comment)
     blacklist = _etree._Entity
@@ -50,8 +50,7 @@ class RestrictedElement(_etree.ElementBase):
         return self._filter(iterator)
 
     def iterchildren(self, tag=None, reversed=False):
-        iterator = super(RestrictedElement, self).iterchildren(
-            tag=tag, reversed=reversed)
+        iterator = super(RestrictedElement, self).iterchildren(tag=tag, reversed=reversed)
         return self._filter(iterator)
 
     def iter(self, tag=None, *tags):
@@ -59,13 +58,11 @@ class RestrictedElement(_etree.ElementBase):
         return self._filter(iterator)
 
     def iterdescendants(self, tag=None, *tags):
-        iterator = super(RestrictedElement,
-                         self).iterdescendants(tag=tag, *tags)
+        iterator = super(RestrictedElement, self).iterdescendants(tag=tag, *tags)
         return self._filter(iterator)
 
     def itersiblings(self, tag=None, preceding=False):
-        iterator = super(RestrictedElement, self).itersiblings(
-            tag=tag, preceding=preceding)
+        iterator = super(RestrictedElement, self).itersiblings(tag=tag, preceding=preceding)
         return self._filter(iterator)
 
     def getchildren(self):
@@ -80,8 +77,9 @@ class RestrictedElement(_etree.ElementBase):
 class GlobalParserTLS(threading.local):
     """Thread local context for custom parser instances
     """
+
     parser_config = {
-        'resolve_entities': False,
+        "resolve_entities": False,
         # 'remove_comments': True,
         # 'remove_pis': True,
     }
@@ -120,25 +118,20 @@ def check_docinfo(elementtree, forbid_dtd=False, forbid_entities=True):
     docinfo = elementtree.docinfo
     if docinfo.doctype:
         if forbid_dtd:
-            raise DTDForbidden(docinfo.doctype,
-                               docinfo.system_url,
-                               docinfo.public_id)
+            raise DTDForbidden(docinfo.doctype, docinfo.system_url, docinfo.public_id)
         if forbid_entities and not LXML3:
             # lxml < 3 has no iterentities()
-            raise NotSupportedError("Unable to check for entity declarations "
-                                    "in lxml 2.x")
+            raise NotSupportedError("Unable to check for entity declarations " "in lxml 2.x")
 
     if forbid_entities:
         for dtd in docinfo.internalDTD, docinfo.externalDTD:
             if dtd is None:
                 continue
             for entity in dtd.iterentities():
-                raise EntitiesForbidden(entity.name, entity.content, None,
-                                        None, None, None)
+                raise EntitiesForbidden(entity.name, entity.content, None, None, None, None)
 
 
-def parse(source, parser=None, base_url=None, forbid_dtd=False,
-          forbid_entities=True):
+def parse(source, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
     elementtree = _etree.parse(source, parser, base_url=base_url)
@@ -146,8 +139,7 @@ def parse(source, parser=None, base_url=None, forbid_dtd=False,
     return elementtree
 
 
-def fromstring(text, parser=None, base_url=None, forbid_dtd=False,
-               forbid_entities=True):
+def fromstring(text, parser=None, base_url=None, forbid_dtd=False, forbid_entities=True):
     if parser is None:
         parser = getDefaultParser()
     rootelement = _etree.fromstring(text, parser, base_url=base_url)

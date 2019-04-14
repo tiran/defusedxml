@@ -12,8 +12,12 @@ from pyexpat import ExpatError
 
 from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc
 from defusedxml import defuse_stdlib
-from defusedxml import (DTDForbidden, EntitiesForbidden,
-                        ExternalReferenceForbidden, NotSupportedError)
+from defusedxml import (
+    DTDForbidden,
+    EntitiesForbidden,
+    ExternalReferenceForbidden,
+    NotSupportedError,
+)
 from defusedxml.common import PY3
 
 
@@ -24,16 +28,14 @@ except ImportError:
 
 
 if sys.version_info < (3, 7):
-    warnings.filterwarnings(
-        'once',
-        category=DeprecationWarning
-    )
+    warnings.filterwarnings("once", category=DeprecationWarning)
 
 
 try:
     with warnings.catch_warnings(record=True) as lxml_warnings:
         from defusedxml import lxml
     from lxml.etree import XMLSyntaxError
+
     LXML3 = lxml.LXML3
 except ImportError:
     lxml = None
@@ -42,11 +44,7 @@ except ImportError:
     lxml_warnings = None
 
 
-warnings.filterwarnings(
-    'error',
-    category=DeprecationWarning,
-    module=r"defusedxml\..*"
-)
+warnings.filterwarnings("error", category=DeprecationWarning, module=r"defusedxml\..*")
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -107,68 +105,57 @@ class BaseTests(DefusedTestCase):
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_quadratic)
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_external)
 
-        self.assertRaises(EntitiesForbidden, self.parseString,
-                          self.get_content(self.xml_bomb))
-        self.assertRaises(EntitiesForbidden, self.parseString,
-                          self.get_content(self.xml_quadratic))
-        self.assertRaises(EntitiesForbidden, self.parseString,
-                          self.get_content(self.xml_external))
+        self.assertRaises(EntitiesForbidden, self.parseString, self.get_content(self.xml_bomb))
+        self.assertRaises(
+            EntitiesForbidden, self.parseString, self.get_content(self.xml_quadratic)
+        )
+        self.assertRaises(
+            EntitiesForbidden, self.parseString, self.get_content(self.xml_external)
+        )
 
         if self.iterparse:
-            self.assertRaises(EntitiesForbidden, self.iterparse,
-                              self.xml_bomb)
-            self.assertRaises(EntitiesForbidden, self.iterparse,
-                              self.xml_quadratic)
-            self.assertRaises(EntitiesForbidden, self.iterparse,
-                              self.xml_external)
+            self.assertRaises(EntitiesForbidden, self.iterparse, self.xml_bomb)
+            self.assertRaises(EntitiesForbidden, self.iterparse, self.xml_quadratic)
+            self.assertRaises(EntitiesForbidden, self.iterparse, self.xml_external)
 
     def test_entity_cycle(self):
-        self.assertRaises(self.cyclic_error, self.parse, self.xml_cyclic,
-                          forbid_entities=False)
+        self.assertRaises(self.cyclic_error, self.parse, self.xml_cyclic, forbid_entities=False)
 
     def test_dtd_forbidden(self):
-        self.assertRaises(DTDForbidden, self.parse, self.xml_bomb,
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parse, self.xml_quadratic,
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parse, self.xml_external,
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parse, self.xml_dtd,
-                          forbid_dtd=True)
+        self.assertRaises(DTDForbidden, self.parse, self.xml_bomb, forbid_dtd=True)
+        self.assertRaises(DTDForbidden, self.parse, self.xml_quadratic, forbid_dtd=True)
+        self.assertRaises(DTDForbidden, self.parse, self.xml_external, forbid_dtd=True)
+        self.assertRaises(DTDForbidden, self.parse, self.xml_dtd, forbid_dtd=True)
 
-        self.assertRaises(DTDForbidden, self.parseString,
-                          self.get_content(self.xml_bomb),
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parseString,
-                          self.get_content(self.xml_quadratic),
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parseString,
-                          self.get_content(self.xml_external),
-                          forbid_dtd=True)
-        self.assertRaises(DTDForbidden, self.parseString,
-                          self.get_content(self.xml_dtd),
-                          forbid_dtd=True)
+        self.assertRaises(
+            DTDForbidden, self.parseString, self.get_content(self.xml_bomb), forbid_dtd=True
+        )
+        self.assertRaises(
+            DTDForbidden, self.parseString, self.get_content(self.xml_quadratic), forbid_dtd=True
+        )
+        self.assertRaises(
+            DTDForbidden, self.parseString, self.get_content(self.xml_external), forbid_dtd=True
+        )
+        self.assertRaises(
+            DTDForbidden, self.parseString, self.get_content(self.xml_dtd), forbid_dtd=True
+        )
 
         if self.iterparse:
-            self.assertRaises(DTDForbidden, self.iterparse,
-                              self.xml_bomb, forbid_dtd=True)
-            self.assertRaises(DTDForbidden, self.iterparse,
-                              self.xml_quadratic, forbid_dtd=True)
-            self.assertRaises(DTDForbidden, self.iterparse,
-                              self.xml_external, forbid_dtd=True)
-            self.assertRaises(DTDForbidden, self.iterparse,
-                              self.xml_dtd, forbid_dtd=True)
+            self.assertRaises(DTDForbidden, self.iterparse, self.xml_bomb, forbid_dtd=True)
+            self.assertRaises(DTDForbidden, self.iterparse, self.xml_quadratic, forbid_dtd=True)
+            self.assertRaises(DTDForbidden, self.iterparse, self.xml_external, forbid_dtd=True)
+            self.assertRaises(DTDForbidden, self.iterparse, self.xml_dtd, forbid_dtd=True)
 
     def test_dtd_with_external_ref(self):
         if self.dtd_external_ref:
-            self.assertRaises(self.external_ref_exception, self.parse,
-                              self.xml_dtd)
+            self.assertRaises(self.external_ref_exception, self.parse, self.xml_dtd)
         else:
             self.parse(self.xml_dtd)
 
     def test_external_ref(self):
-        self.assertRaises(self.external_ref_exception, self.parse,
-                          self.xml_external, forbid_entities=False)
+        self.assertRaises(
+            self.external_ref_exception, self.parse, self.xml_external, forbid_entities=False
+        )
 
     def test_external_file_ref(self):
         content = self.get_content(self.xml_external_file)
@@ -177,13 +164,13 @@ class BaseTests(DefusedTestCase):
             content = content.replace(b"/PATH/TO", here)
         else:
             content = content.replace("/PATH/TO", HERE)
-        self.assertRaises(self.external_ref_exception, self.parseString,
-                          content, forbid_entities=False)
+        self.assertRaises(
+            self.external_ref_exception, self.parseString, content, forbid_entities=False
+        )
 
     def test_allow_expansion(self):
         self.parse(self.xml_bomb2, forbid_entities=False)
-        self.parseString(self.get_content(self.xml_bomb2),
-                         forbid_entities=False)
+        self.parseString(self.get_content(self.xml_bomb2), forbid_entities=False)
 
 
 class TestDefusedElementTree(BaseTests):
@@ -289,8 +276,10 @@ class TestDefusedSax(BaseTests):
 
         with self.assertRaises(ExternalReferenceForbidden) as ctx:
             self.parse(self.xml_external, forbid_entities=False)
-        msg = ("ExternalReferenceForbidden"
-               "(system_id='http://www.w3schools.com/xml/note.xml', public_id=None)")
+        msg = (
+            "ExternalReferenceForbidden"
+            "(system_id='http://www.w3schools.com/xml/note.xml', public_id=None)"
+        )
         self.assertEqual(str(ctx.exception), msg)
         self.assertEqual(repr(ctx.exception), msg)
 
@@ -323,6 +312,7 @@ class TestDefusedLxml(BaseTests):
         return self.module.tostring(tree)
 
     if not LXML3:
+
         def test_entities_forbidden(self):
             self.assertRaises(NotSupportedError, self.parse, self.xml_bomb)
 
@@ -337,8 +327,7 @@ class TestDefusedLxml(BaseTests):
 
     def test_restricted_element1(self):
         try:
-            tree = self.module.parse(self.xml_bomb, forbid_dtd=False,
-                                     forbid_entities=False)
+            tree = self.module.parse(self.xml_bomb, forbid_dtd=False, forbid_entities=False)
         except XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         root = tree.getroot()
@@ -355,8 +344,7 @@ class TestDefusedLxml(BaseTests):
 
     def test_restricted_element2(self):
         try:
-            tree = self.module.parse(self.xml_bomb2, forbid_dtd=False,
-                                     forbid_entities=False)
+            tree = self.module.parse(self.xml_bomb2, forbid_dtd=False, forbid_entities=False)
         except XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         root = tree.getroot()
@@ -404,11 +392,10 @@ class TestDefusedLxml(BaseTests):
     def test_lxml_warnings(self):
         self.assertTrue(lxml_warnings)
         self.assertEqual(lxml_warnings[0].category, DeprecationWarning)
-        self.assertIn('tests.py', lxml_warnings[0].filename)
+        self.assertIn("tests.py", lxml_warnings[0].filename)
 
 
 class XmlRpcTarget(object):
-
     def __init__(self):
         self._data = []
 
@@ -451,8 +438,7 @@ class TestXmlRpc(DefusedTestCase):
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_bomb)
         self.assertRaises(EntitiesForbidden, self.parse, self.xml_quadratic)
         self.parse(self.xml_dtd)
-        self.assertRaises(DTDForbidden, self.parse, self.xml_dtd,
-                          forbid_dtd=True)
+        self.assertRaises(DTDForbidden, self.parse, self.xml_dtd, forbid_dtd=True)
 
     # def test_xmlrpc_unpatched(self):
     #    for fname in (self.xml_external,  self.xml_dtd):
@@ -466,7 +452,6 @@ class TestXmlRpc(DefusedTestCase):
 
 
 class TestDefusedGzip(DefusedTestCase):
-
     def get_gzipped(self, length):
         f = io.BytesIO()
         gzf = gzip.GzipFile(mode="wb", fileobj=f)

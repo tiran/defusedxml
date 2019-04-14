@@ -3,7 +3,8 @@
 
 Author: Christian Heimes
 """
-import sys
+from __future__ import print_function
+
 from xml.sax import ContentHandler
 from xml.sax import parseString
 
@@ -41,7 +42,7 @@ class WeatherHandler(ContentHandler):
 
     def characters(self, content):
         if self.tag == "processing":
-           self.city.append(content)
+            self.city.append(content)
 
 
 def weatherResponse(xml):
@@ -51,6 +52,7 @@ def weatherResponse(xml):
         return "<weather>The weather in %s is terrible.</weather" % handler.city
     else:
         return "<error>Unknown city %s</error>" % handler.city[:500]
+
 
 for xml in (xml_good, xml_bad_file, xml_bad_url):
     print("\nREQUEST:\n--------")

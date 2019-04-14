@@ -23,8 +23,12 @@ else:
     from xml.etree.ElementTree import ParseError
 
 
-from .common import (DTDForbidden, EntitiesForbidden,
-                     ExternalReferenceForbidden, _generate_etree_functions)
+from .common import (
+    DTDForbidden,
+    EntitiesForbidden,
+    ExternalReferenceForbidden,
+    _generate_etree_functions,
+)
 
 __origin__ = "xml.etree.ElementTree"
 
@@ -62,10 +66,15 @@ _sentinel = object()
 
 
 class DefusedXMLParser(_XMLParser):
-
-    def __init__(self, html=_sentinel, target=None, encoding=None,
-                 forbid_dtd=False, forbid_entities=True,
-                 forbid_external=True):
+    def __init__(
+        self,
+        html=_sentinel,
+        target=None,
+        encoding=None,
+        forbid_dtd=False,
+        forbid_entities=True,
+        forbid_external=True,
+    ):
         # Python 2.x old style class
         _XMLParser.__init__(self, target=target, encoding=encoding)
         if html is not _sentinel:
@@ -77,7 +86,7 @@ class DefusedXMLParser(_XMLParser):
                 warnings.warn(
                     "'html' keyword argument is no longer supported. Pass "
                     "in arguments as keyword arguments.",
-                    category=DeprecationWarning
+                    category=DeprecationWarning,
                 )
 
         self.forbid_dtd = forbid_dtd
@@ -95,21 +104,19 @@ class DefusedXMLParser(_XMLParser):
         if self.forbid_external:
             parser.ExternalEntityRefHandler = self.defused_external_entity_ref_handler
 
-    def defused_start_doctype_decl(self, name, sysid, pubid,
-                                   has_internal_subset):
+    def defused_start_doctype_decl(self, name, sysid, pubid, has_internal_subset):
         raise DTDForbidden(name, sysid, pubid)
 
-    def defused_entity_decl(self, name, is_parameter_entity, value, base,
-                            sysid, pubid, notation_name):
+    def defused_entity_decl(
+        self, name, is_parameter_entity, value, base, sysid, pubid, notation_name
+    ):
         raise EntitiesForbidden(name, value, base, sysid, pubid, notation_name)
 
-    def defused_unparsed_entity_decl(self, name, base, sysid, pubid,
-                                     notation_name):
+    def defused_unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
         # expat 1.2
         raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)
 
-    def defused_external_entity_ref_handler(self, context, base, sysid,
-                                            pubid):
+    def defused_external_entity_ref_handler(self, context, base, sysid, pubid):
         raise ExternalReferenceForbidden(context, base, sysid, pubid)
 
 
@@ -117,13 +124,20 @@ class DefusedXMLParser(_XMLParser):
 # XMLParse is a typo, keep it for backwards compatibility
 XMLTreeBuilder = XMLParse = XMLParser = DefusedXMLParser
 
-parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
-                                                         _TreeBuilder, _parse,
-                                                         _iterparse)
+parse, iterparse, fromstring = _generate_etree_functions(
+    DefusedXMLParser, _TreeBuilder, _parse, _iterparse
+)
 XML = fromstring
 
 
 __all__ = [
-    'ParseError', 'XML', 'XMLParse', 'XMLParser', 'XMLTreeBuilder',
-    'fromstring', 'iterparse', 'parse', 'tostring'
+    "ParseError",
+    "XML",
+    "XMLParse",
+    "XMLParser",
+    "XMLTreeBuilder",
+    "fromstring",
+    "iterparse",
+    "parse",
+    "tostring",
 ]

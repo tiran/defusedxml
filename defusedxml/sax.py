@@ -15,8 +15,14 @@ from . import expatreader
 __origin__ = "xml.sax"
 
 
-def parse(source, handler, errorHandler=_ErrorHandler(), forbid_dtd=False,
-          forbid_entities=True, forbid_external=True):
+def parse(
+    source,
+    handler,
+    errorHandler=_ErrorHandler(),
+    forbid_dtd=False,
+    forbid_entities=True,
+    forbid_external=True,
+):
     parser = make_parser()
     parser.setContentHandler(handler)
     parser.setErrorHandler(errorHandler)
@@ -26,9 +32,14 @@ def parse(source, handler, errorHandler=_ErrorHandler(), forbid_dtd=False,
     parser.parse(source)
 
 
-def parseString(string, handler, errorHandler=_ErrorHandler(),
-                forbid_dtd=False, forbid_entities=True,
-                forbid_external=True):
+def parseString(
+    string,
+    handler,
+    errorHandler=_ErrorHandler(),
+    forbid_dtd=False,
+    forbid_entities=True,
+    forbid_external=True,
+):
     from io import BytesIO
 
     if errorHandler is None:

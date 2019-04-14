@@ -7,9 +7,14 @@
 """
 from __future__ import print_function, absolute_import
 
-from .common import (DefusedXmlException, DTDForbidden, EntitiesForbidden,
-                     ExternalReferenceForbidden, NotSupportedError,
-                     _apply_defusing)
+from .common import (
+    DefusedXmlException,
+    DTDForbidden,
+    EntitiesForbidden,
+    ExternalReferenceForbidden,
+    NotSupportedError,
+    _apply_defusing,
+)
 
 
 def defuse_stdlib():
@@ -31,8 +36,15 @@ def defuse_stdlib():
     xmlrpc.monkey_patch()
     defused[xmlrpc] = None
 
-    for defused_mod in [cElementTree, ElementTree, minidom, pulldom, sax,
-                        expatbuilder, expatreader]:
+    for defused_mod in [
+        cElementTree,
+        ElementTree,
+        minidom,
+        pulldom,
+        sax,
+        expatbuilder,
+        expatreader,
+    ]:
         stdlib_mod = _apply_defusing(defused_mod)
         defused[defused_mod] = stdlib_mod
 
@@ -41,5 +53,10 @@ def defuse_stdlib():
 
 __version__ = "0.6.0.dev1"
 
-__all__ = ['DefusedXmlException', 'DTDForbidden', 'EntitiesForbidden',
-           'ExternalReferenceForbidden', 'NotSupportedError']
+__all__ = [
+    "DefusedXmlException",
+    "DTDForbidden",
+    "EntitiesForbidden",
+    "ExternalReferenceForbidden",
+    "NotSupportedError",
+]
