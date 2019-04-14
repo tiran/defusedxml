@@ -114,7 +114,8 @@ class DefusedXMLParser(_XMLParser):
 
 
 # aliases
-XMLTreeBuilder = XMLParse = DefusedXMLParser
+# XMLParse is a typo, keep it for backwards compatibility
+XMLTreeBuilder = XMLParse = XMLParser = DefusedXMLParser
 
 parse, iterparse, fromstring = _generate_etree_functions(DefusedXMLParser,
                                                          _TreeBuilder, _parse,
@@ -123,6 +124,6 @@ XML = fromstring
 
 
 __all__ = [
-    'ParseError', 'XML', 'XMLParse', 'XMLTreeBuilder', 'fromstring',
-    'iterparse', 'parse', 'tostring'
+    'ParseError', 'XML', 'XMLParse', 'XMLParser', 'XMLTreeBuilder',
+    'fromstring', 'iterparse', 'parse', 'tostring'
 ]

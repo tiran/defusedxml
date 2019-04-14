@@ -200,6 +200,12 @@ class TestDefusedElementTree(BaseTests):
         with self.assertRaises(TypeError):
             ElementTree.XMLParse(html=1)
 
+    def test_aliases(self):
+        parser = self.module.DefusedXMLParser
+        assert self.module.XMLTreeBuilder is parser
+        assert self.module.XMLParser is parser
+        assert self.module.XMLParse is parser
+
 
 class TestDefusedcElementTree(TestDefusedElementTree):
     module = cElementTree
