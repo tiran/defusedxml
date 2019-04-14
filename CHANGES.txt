@@ -8,6 +8,10 @@ defusedxml 0.6.0.dev1
 
 - Test on Python 3.7 stable and 3.8-dev
 - Drop support for Python 3.4
+- No longer pass *html* argument to XMLParse. It has been deprecated and
+  ignored for a long time. The DefusedXMLParser still takes a html argument.
+  A deprecation warning is issued when the argument is False and a TypeError
+  when it's True.
 
 
 defusedxml 0.5.0

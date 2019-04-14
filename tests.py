@@ -1,8 +1,10 @@
 from __future__ import print_function
+
+import io
 import os
 import sys
 import unittest
-import io
+import warnings
 
 from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
@@ -29,6 +31,12 @@ except ImportError:
     XMLSyntaxError = None
     LXML3 = False
 
+
+warnings.filterwarnings(
+    'error',
+    category=DeprecationWarning,
+    module=r"defusedxml\..*"
+)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -185,6 +193,12 @@ class TestDefusedElementTree(BaseTests):
 
     def iterparse(self, source, **kwargs):
         return list(self.module.iterparse(source, **kwargs))
+
+    def test_html_arg(self):
+        with self.assertRaises(DeprecationWarning):
+            ElementTree.XMLParse(html=0)
+        with self.assertRaises(TypeError):
+            ElementTree.XMLParse(html=1)
 
 
 class TestDefusedcElementTree(TestDefusedElementTree):

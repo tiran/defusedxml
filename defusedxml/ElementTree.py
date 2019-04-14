@@ -8,12 +8,12 @@
 from __future__ import print_function, absolute_import
 
 import sys
+import warnings
 from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
 from xml.etree.ElementTree import tostring
 
 from .common import PY3
-
 
 if PY3:
     import importlib
@@ -58,14 +58,28 @@ def _get_py3_cls():
 if PY3:
     _XMLParser, _iterparse, ParseError = _get_py3_cls()
 
+_sentinel = object()
+
 
 class DefusedXMLParser(_XMLParser):
 
-    def __init__(self, html=0, target=None, encoding=None,
+    def __init__(self, html=_sentinel, target=None, encoding=None,
                  forbid_dtd=False, forbid_entities=True,
                  forbid_external=True):
         # Python 2.x old style class
-        _XMLParser.__init__(self, html, target, encoding)
+        _XMLParser.__init__(self, target=target, encoding=encoding)
+        if html is not _sentinel:
+            # the 'html' argument has been deprecated and ignored in all
+            # supported versions of Python. Python 3.8 finally removed it.
+            if html:
+                raise TypeError("'html=True' is no longer supported.")
+            else:
+                warnings.warn(
+                    "'html' keyword argument is no longer supported. Pass "
+                    "in arguments as keyword arguments.",
+                    category=DeprecationWarning
+                )
+
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
