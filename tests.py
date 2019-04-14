@@ -22,14 +22,24 @@ try:
 except ImportError:
     gzip = None
 
+
+if sys.version_info < (3, 7):
+    warnings.filterwarnings(
+        'once',
+        category=DeprecationWarning
+    )
+
+
 try:
-    from defusedxml import lxml
+    with warnings.catch_warnings(record=True) as lxml_warnings:
+        from defusedxml import lxml
     from lxml.etree import XMLSyntaxError
     LXML3 = lxml.LXML3
 except ImportError:
     lxml = None
     XMLSyntaxError = None
     LXML3 = False
+    lxml_warnings = None
 
 
 warnings.filterwarnings(
@@ -37,6 +47,7 @@ warnings.filterwarnings(
     category=DeprecationWarning,
     module=r"defusedxml\..*"
 )
+
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -389,6 +400,11 @@ class TestDefusedLxml(BaseTests):
         elements = root.xpath(xp, idname="one")
         self.assertEqual(len(elements), 1)
         self.assertEqual(elements, list(root)[:1])
+
+    def test_lxml_warnings(self):
+        self.assertTrue(lxml_warnings)
+        self.assertEqual(lxml_warnings[0].category, DeprecationWarning)
+        self.assertIn('tests.py', lxml_warnings[0].filename)
 
 
 class XmlRpcTarget(object):

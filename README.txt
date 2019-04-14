@@ -347,6 +347,9 @@ modify the default by changing the module variable `MAX_DATA`. A value of
 defusedxml.lxml
 ---------------
 
+**DEPRECATED** The module is deprecated and will be removed in a future
+release.
+
 The module acts as an *example* how you could protect code that uses
 lxml.etree. It implements a custom Element class that filters out
 Entity instances, a custom parser factory and a thread local storage for

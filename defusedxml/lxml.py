@@ -3,7 +3,7 @@
 # Copyright (c) 2013 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See https://www.python.org/psf/license for licensing details.
-"""Example code for lxml.etree protection
+"""DEPRECATED Example code for lxml.etree protection
 
 The code has NO protection against decompression bombs.
 """
@@ -26,7 +26,8 @@ tostring = _etree.tostring
 warnings.warn(
     "defusedxml.lxml is no longer supported and will be removed in a "
     "future release.",
-    category=DeprecationWarning
+    category=DeprecationWarning,
+    stacklevel=2
 )
 
 
