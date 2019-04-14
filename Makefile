@@ -10,8 +10,8 @@ PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 all: inplace README.html README.md
 
 README.md: README.txt CHANGES.txt
-	pandoc --from=rst --to=markdown README.txt > $@
-	pandoc --from=rst --to=markdown CHANGES.txt >> $@
+	pandoc --from=rst --to=gfm README.txt > $@
+	pandoc --from=rst --to=gfm CHANGES.txt >> $@
 
 README.html: README.txt CHANGES.txt void.css
 	@echo | cat README.txt - CHANGES.txt | \
