@@ -10,6 +10,8 @@ The code has NO protection against decompression bombs.
 from __future__ import print_function, absolute_import
 
 import threading
+import warnings
+
 from lxml import etree as _etree
 
 from .common import DTDForbidden, EntitiesForbidden, NotSupportedError
@@ -19,6 +21,13 @@ LXML3 = _etree.LXML_VERSION[0] >= 3
 __origin__ = "lxml.etree"
 
 tostring = _etree.tostring
+
+
+warnings.warn(
+    "defusedxml.lxml is no longer supported and will be removed in a "
+    "future release.",
+    category=DeprecationWarning
+)
 
 
 class RestrictedElement(_etree.ElementBase):
