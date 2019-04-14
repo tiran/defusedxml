@@ -703,9 +703,9 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
-## defusedxml 0.6.0.dev1
+## defusedxml 0.6.0rc1
 
-*Release date: ??-???-2019*
+*Release date: 14-Apr-2019*
 
   - Test on Python 3.7 stable and 3.8-dev
   - Drop support for Python 3.4
