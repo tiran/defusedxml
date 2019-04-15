@@ -10,7 +10,7 @@ from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
 from pyexpat import ExpatError
 
-from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc
+from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc, expatreader
 from defusedxml import defuse_stdlib
 from defusedxml import (
     DTDForbidden,
@@ -222,6 +222,21 @@ class TestDefusedMinidom(BaseTests):
 
     def parseString(self, xmlstring, **kwargs):
         doc = self.module.parseString(xmlstring, **kwargs)
+        return doc.toxml()
+
+
+class TestDefusedMinidomWithParser(TestDefusedMinidom):
+    cyclic_error = SAXParseException
+    dtd_external_ref = True
+
+    def parse(self, xmlfile, **kwargs):
+        doc = self.module.parse(xmlfile, parser=expatreader.create_parser(**kwargs), **kwargs)
+        return doc.toxml()
+
+    def parseString(self, xmlstring, **kwargs):
+        doc = self.module.parseString(
+            xmlstring, parser=expatreader.create_parser(**kwargs), **kwargs
+        )
         return doc.toxml()
 
 
@@ -508,6 +523,7 @@ def test_main():
     suite.addTests(unittest.makeSuite(TestDefusedcElementTree))
     suite.addTests(unittest.makeSuite(TestDefusedElementTree))
     suite.addTests(unittest.makeSuite(TestDefusedMinidom))
+    suite.addTests(unittest.makeSuite(TestDefusedMinidomWithParser))
     suite.addTests(unittest.makeSuite(TestDefusedPulldom))
     suite.addTests(unittest.makeSuite(TestDefusedSax))
     suite.addTests(unittest.makeSuite(TestXmlRpc))
