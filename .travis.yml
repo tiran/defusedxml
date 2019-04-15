@@ -30,8 +30,11 @@ matrix:
 install:
   - pip install --upgrade pip setuptools
   - pip --version
-  - pip install tox
+  - pip install tox codecov
   - tox --version
 
 script:
   - tox
+
+after_success:
+  - codecov

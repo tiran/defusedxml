@@ -1,6 +1,15 @@
 # defusedxml -- defusing XML bombs and other exploits
-
-> "It's just XML, what could probably go wrong?"
+[![Latest
+Version](https://img.shields.io/pypi/v/defusedxml.svg)](https://pypi.org/project/defusedxml/)
+[![Supported Python
+versions](https://img.shields.io/pypi/pyversions/defusedxml.svg)](https://pypi.org/project/defusedxml/)
+[![Travis
+CI](https://travis-ci.org/tiran/defusedxml.svg?branch=master)](https://travis-ci.org/tiran/defusedxml)
+[![codecov](https://codecov.io/github/tiran/defusedxml/coverage.svg?branch=master)](https://codecov.io/github/tiran/defusedxml?branch=master)
+[![PyPI
+downloads](https://img.shields.io/pypi/dm/defusedxml.svg)](https://pypistats.org/packages/defusedxml)
+[![Code style:
+black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 Christian Heimes \<<christian@python.org>\>
 

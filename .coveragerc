@@ -1,0 +1,10 @@
+[run]
+branch = True
+source =
+    defusedxml/
+    tests.py
+
+[paths]
+source =
+   defusedxml/
+   .tox/py*/lib/python*/site-packages/defusedxml/

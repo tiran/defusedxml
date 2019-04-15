@@ -1,8 +1,7 @@
-PYTHON=python
+PYTHON=python3
 SETUPFLAGS=
 COMPILEFLAGS=
 INSTALLFLAGS=
-PYTHONS=python2.6 python2.7 python3.1 python3.2 python3.3 python3.4
 
 .PHONY: inplace all rebuild test_inplace test fulltests clean distclean
 .PHONY: sdist install black
@@ -12,6 +11,7 @@ all: inplace black README.html README.md
 README.md: README.txt CHANGES.txt
 	pandoc --from=rst --to=gfm README.txt > $@
 	pandoc --from=rst --to=gfm CHANGES.txt >> $@
+	sed -i ':a;N;$$!ba;s/\n\[!/[!/g' $@
 
 README.html: README.txt CHANGES.txt void.css
 	@echo | cat README.txt - CHANGES.txt | \
@@ -30,20 +30,6 @@ test: test_inplace
 
 black:
 	black $(CURDIR) || true
-
-fulltest:
-	$(MAKE) clean
-	@set -e; \
-	for python in $(PYTHONS); do \
-		if [ -z $$(which $$python) ]; then \
-			echo "*** $$python not found ***\n"; \
-			continue; \
-		fi; \
-		echo "*** $$python ***"; \
-		$$python $(SETUPFLAGS) setup.py -q test; \
-		echo ""; \
-	done
-	$(MAKE) clean
 
 clean:
 	@find . \( -name '*.o' -or -name '*.so' -or -name '*.sl' -or \
