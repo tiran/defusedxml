@@ -36,7 +36,7 @@ class DefusedExpatBuilder(_ExpatBuilder):
 
     def defused_unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
         # expat 1.2
-        raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)
+        raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)  # pragma: no cover
 
     def defused_external_entity_ref_handler(self, context, base, sysid, pubid):
         raise ExternalReferenceForbidden(context, base, sysid, pubid)

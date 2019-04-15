@@ -12,7 +12,7 @@ PY3 = sys.version_info[0] == 3
 
 # Fail early when pyexpat is not installed correctly
 if not hasattr(xml.parsers.expat, "ParserCreate"):
-    raise ImportError("pyexpat")
+    raise ImportError("pyexpat")  # pragma: no cover
 
 
 class DefusedXmlException(ValueError):

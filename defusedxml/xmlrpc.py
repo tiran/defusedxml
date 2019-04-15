@@ -31,7 +31,7 @@ else:
 
 try:
     import gzip
-except ImportError:
+except ImportError:  # pragma: no cover
     gzip = None
 
 
@@ -47,7 +47,7 @@ def defused_gzip_decode(data, limit=None):
 
     Decode data using the gzip content encoding as described in RFC 1952
     """
-    if not gzip:
+    if not gzip:  # pragma: no cover
         raise NotImplementedError
     if limit is None:
         limit = MAX_DATA
@@ -58,7 +58,7 @@ def defused_gzip_decode(data, limit=None):
             decoded = gzf.read()
         else:
             decoded = gzf.read(limit + 1)
-    except IOError:
+    except IOError:  # pragma: no cover
         raise ValueError("invalid data")
     f.close()
     gzf.close()
@@ -75,7 +75,7 @@ class DefusedGzipDecodedResponse(gzip.GzipFile if gzip else object):
     def __init__(self, response, limit=None):
         # response doesn't support tell() and read(), required by
         # GzipFile
-        if not gzip:
+        if not gzip:  # pragma: no cover
             raise NotImplementedError
         self.limit = limit = limit if limit is not None else MAX_DATA
         if limit < 0:  # no limit
@@ -131,7 +131,7 @@ class DefusedExpatParser(ExpatParser):
 
     def defused_unparsed_entity_decl(self, name, base, sysid, pubid, notation_name):
         # expat 1.2
-        raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)
+        raise EntitiesForbidden(name, None, base, sysid, pubid, notation_name)  # pragma: no cover
 
     def defused_external_entity_ref_handler(self, context, base, sysid, pubid):
         raise ExternalReferenceForbidden(context, base, sysid, pubid)
