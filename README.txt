@@ -2,6 +2,32 @@
 defusedxml -- defusing XML bombs and other exploits
 ===================================================
 
+.. image:: https://img.shields.io/pypi/v/defusedxml.svg
+    :target: https://pypi.org/project/defusedxml/
+    :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/pyversions/defusedxml.svg
+    :target: https://pypi.org/project/defusedxml/
+    :alt: Supported Python versions
+
+.. image:: https://travis-ci.org/tiran/defusedxml.svg?branch=master
+    :target: https://travis-ci.org/tiran/defusedxml
+    :alt: Travis CI
+
+.. image:: https://codecov.io/github/tiran/defusedxml/coverage.svg?branch=master
+    :target: https://codecov.io/github/tiran/defusedxml?branch=master
+    :alt: codecov
+
+.. image:: https://img.shields.io/pypi/dm/defusedxml.svg
+    :target: https://pypistats.org/packages/defusedxml
+    :alt: PyPI downloads
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
+    :alt: Code style: black
+
+..
+
     "It's just XML, what could probably go wrong?"
 
 Christian Heimes <christian@python.org>
