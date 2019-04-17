@@ -712,6 +712,13 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
+## defusedxml 0.6.0
+
+*Release date: 17-Apr-2019*
+
+  - Increase test coverage.
+  - Add badges to README.
+
 ## defusedxml 0.6.0rc1
 
 *Release date: 14-Apr-2019*

@@ -51,7 +51,7 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.6.0rc1"
+__version__ = "0.6.0"
 
 __all__ = [
     "DefusedXmlException",
