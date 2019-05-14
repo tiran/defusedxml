@@ -204,9 +204,44 @@ class TestDefusedElementTree(BaseTests):
         assert self.module.XMLParser is parser
         assert self.module.XMLParse is parser
 
+    def test_missing_entity(self):
+        with self.assertRaises(ElementTree.ParseError):
+            self.parse(self.xml_external, forbid_entities=False, forbid_external=False)
+
+    def test_py3_pure_python_module_import(self):
+        if PY3:
+            pymodname = "xml.etree.ElementTree"
+            cmodname = "_elementtree"
+
+            pymod = sys.modules[pymodname]
+            cmod = sys.modules[cmodname]
+
+            self.assertIsNot(pymod.XMLParser, ElementTree._XMLParser)
+            self.assertIsNot(pymod.iterparse, ElementTree._iterparse)
+            self.assertIsNot(pymod.ParseError, ElementTree.ParseError)
+
+            ElementTree._get_py3_cls()
+
+            self.assertIs(pymod, sys.modules[pymodname])
+            self.assertIs(cmod, sys.modules[cmodname])
+
+            sys.modules.pop(pymodname)
+            sys.modules.pop(cmodname)
+            ElementTree._get_py3_cls()
+
+            try:
+                self.assertFalse(pymodname in sys.modules)
+                self.assertFalse(cmodname in sys.modules)
+            finally:
+                sys.modules[cmodname] = cmod
+                sys.modules[pymodname] = pymod
+
 
 class TestDefusedcElementTree(TestDefusedElementTree):
     module = cElementTree
+
+    def test_py3_pure_python_module_import(self):
+        pass
 
 
 class TestDefusedMinidom(BaseTests):
