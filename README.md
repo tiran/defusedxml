@@ -9,7 +9,7 @@ CI](https://travis-ci.org/tiran/defusedxml.svg?branch=master)](https://travis-ci
 [![PyPI
 downloads](https://img.shields.io/pypi/dm/defusedxml.svg)](https://pypistats.org/packages/defusedxml)
 [![Code style:
-black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Christian Heimes \<<christian@python.org>\>
 
