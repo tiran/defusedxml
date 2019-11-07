@@ -131,4 +131,25 @@ def _generate_etree_functions(DefusedXMLParser, _TreeBuilder, _parse, _iterparse
         parser.feed(text)
         return parser.close()
 
+    def fromstringlist(sequence, forbid_dtd=False, forbid_entities=True, forbid_external=True):
+        """Parse XML document from sequence of string fragments.
+
+        *sequence* is a list of other sequence, *parser* is an optional parser
+        instance, defaulting to DefusedXMLParser.
+
+        Returns an Element instance.
+        """
+
+        parser = DefusedXMLParser(
+            target=_TreeBuilder(),
+            forbid_dtd=forbid_dtd,
+            forbid_entities=forbid_entities,
+            forbid_external=forbid_external,
+        )
+
+        for text in sequence:
+            parser.feed(text)
+
+        return parser.close()
+
     return parse, iterparse, fromstring
