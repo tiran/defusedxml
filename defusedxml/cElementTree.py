@@ -7,9 +7,9 @@
 """
 from __future__ import absolute_import
 
-from xml.etree.cElementTree import TreeBuilder as _TreeBuilder
-from xml.etree.cElementTree import parse as _parse
-from xml.etree.cElementTree import tostring
+from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
+from xml.etree.ElementTree import parse as _parse
+from xml.etree.ElementTree import tostring
 
 # iterparse from ElementTree!
 from xml.etree.ElementTree import iterparse as _iterparse
