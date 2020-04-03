@@ -40,7 +40,7 @@ properly implement XML specifications. Application developers must not
 rely that a library is always configured for security and potential
 harmful data by default.
 
-<div class="contents">
+<div class="contents" data-depth="2">
 
 Table of Contents
 
@@ -275,6 +275,8 @@ defuse\_stdlib() (*experimental*)
 
 ### defusedxml.cElementTree
 
+**NOTE** `defusedxml.cElementTree` is not available in Python 3.9+
+
 parse(), iterparse(), fromstring(), XMLParser
 
 ### defusedxml.ElementTree
@@ -304,15 +306,17 @@ parse(), parseString()
 ### defusedxml.xmlrpc
 
 The fix is implemented as monkey patch for the stdlib's xmlrpc package
-(3.x) or xmlrpclib module (2.x). The function monkey\_patch() enables
-the fixes, unmonkey\_patch() removes the patch and puts the code in its
-former state.
+(3.x) or xmlrpclib module (2.x). The function
+<span class="title-ref">monkey\_patch()</span> enables the fixes,
+<span class="title-ref">unmonkey\_patch()</span> removes the patch and
+puts the code in its former state.
 
 The monkey patch protects against XML related attacks as well as
 decompression bombs and excessively large requests or responses. The
 default setting is 30 MB for requests, responses and gzip decompression.
-You can modify the default by changing the module variable MAX\_DATA. A
-value of -1 disables the limit.
+You can modify the default by changing the module variable
+<span class="title-ref">MAX\_DATA</span>. A value of
+<span class="title-ref">-1</span> disables the limit.
 
 ### defusedxml.lxml
 
@@ -379,8 +383,8 @@ new API functions:
     expanded. The limit protects the parser against exponential entity
     expansion attacks (aka billion laughs attack). When the limit is
     exceeded the parser stops and fails with
-    XML\_ERROR\_ENTITY\_INDIRECTIONS. A value of 0 disables the
-    protection.
+    <span class="title-ref">XML\_ERROR\_ENTITY\_INDIRECTIONS</span>. A
+    value of 0 disables the protection.
     
       - Supported range  
         0 .. UINT\_MAX
@@ -394,8 +398,8 @@ new API functions:
     parser variable. The setting protects against quadratic blowup
     attacks (lots of expansions of a large entity declaration). When the
     sum of all entities exceeds the limit, the parser stops and fails
-    with XML\_ERROR\_ENTITY\_EXPANSION. A value of 0 disables the
-    protection.
+    with <span class="title-ref">XML\_ERROR\_ENTITY\_EXPANSION</span>. A
+    value of 0 disables the protection.
     
       - Supported range  
         0 .. UINT\_MAX
@@ -409,7 +413,7 @@ new API functions:
     after the endDoctypeDeclHandler has been called. The flag can be set
     inside the endDoctypeDeclHandler. Without DTD information any entity
     reference in the document body leads to
-    XML\_ERROR\_UNDEFINED\_ENTITY.
+    <span class="title-ref">XML\_ERROR\_UNDEFINED\_ENTITY</span>.
     
       - Supported range  
         0, 1
@@ -640,8 +644,7 @@ default settings. It also does entity resolving when an
 `org.xml.sax.EntityResolver` is configured. I'm not yet sure about the
 default setting here.
 
-Java specialists suggest to have a custom builder
-    factory:
+Java specialists suggest to have a custom builder factory:
 
     DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
     builderFactory.setXIncludeAware(False);
@@ -711,6 +714,15 @@ See <https://www.python.org/psf/license> for licensing details.
   - [Testing for XML
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
+
+## defusedxml 0.7.0
+
+*Release date: ??-Mar-2020*
+
+  - Add support for Python 3.9
+  - `defusedxml.cElementTree` is not available with Python 3.9.
+  - Python 2 is deprecate. Support for Python 2 will be removed in
+    0.8.0.
 
 ## defusedxml 0.6.0
 
