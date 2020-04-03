@@ -7,6 +7,11 @@
 """
 from __future__ import absolute_import
 
+from .common import _generate_etree_functions, _HAVE_CELEMENTTREE
+
+if not _HAVE_CELEMENTTREE:
+    raise ImportError("cElementTree has been removed from Python 3.9")
+
 from xml.etree.cElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.cElementTree import parse as _parse
 from xml.etree.cElementTree import tostring
@@ -15,7 +20,6 @@ from xml.etree.cElementTree import tostring
 from xml.etree.ElementTree import iterparse as _iterparse
 
 from .ElementTree import DefusedXMLParser
-from .common import _generate_etree_functions
 
 __origin__ = "xml.etree.cElementTree"
 

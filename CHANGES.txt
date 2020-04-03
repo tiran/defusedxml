@@ -1,6 +1,16 @@
 Changelog
 =========
 
+defusedxml 0.7.0
+----------------
+
+*Release date: ??-Mar-2020*
+
+- Add support for Python 3.9
+- ``defusedxml.cElementTree`` is not available with Python 3.9.
+- Python 2 is deprecate. Support for Python 2 will be removed in 0.8.0.
+
+
 defusedxml 0.6.0
 ----------------
 

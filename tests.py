@@ -10,7 +10,7 @@ from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
 from pyexpat import ExpatError
 
-from defusedxml import cElementTree, ElementTree, minidom, pulldom, sax, xmlrpc, expatreader
+from defusedxml import ElementTree, minidom, pulldom, sax, xmlrpc, expatreader
 from defusedxml import defuse_stdlib
 from defusedxml import (
     DTDForbidden,
@@ -18,7 +18,13 @@ from defusedxml import (
     ExternalReferenceForbidden,
     NotSupportedError,
 )
-from defusedxml.common import PY3
+from defusedxml.common import PY3, _HAVE_CELEMENTTREE
+
+
+if _HAVE_CELEMENTTREE:
+    from defusedxml import cElementTree
+else:
+    cElementTree = None
 
 
 try:
@@ -205,6 +211,7 @@ class TestDefusedElementTree(BaseTests):
         assert self.module.XMLParse is parser
 
 
+@unittest.skipUnless(_HAVE_CELEMENTTREE, "Python 3.9 has removed cElementTree")
 class TestDefusedcElementTree(TestDefusedElementTree):
     module = cElementTree
 

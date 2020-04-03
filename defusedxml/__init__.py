@@ -14,6 +14,7 @@ from .common import (
     ExternalReferenceForbidden,
     NotSupportedError,
     _apply_defusing,
+    _HAVE_CELEMENTTREE,
 )
 
 
@@ -24,7 +25,10 @@ def defuse_stdlib():
     """
     defused = {}
 
-    from . import cElementTree
+    if _HAVE_CELEMENTTREE:
+        from . import cElementTree
+    else:
+        cElementTree = None
     from . import ElementTree
     from . import minidom
     from . import pulldom
@@ -36,22 +40,25 @@ def defuse_stdlib():
     xmlrpc.monkey_patch()
     defused[xmlrpc] = None
 
-    for defused_mod in [
-        cElementTree,
+    defused_mods = [
         ElementTree,
         minidom,
         pulldom,
         sax,
         expatbuilder,
         expatreader,
-    ]:
+    ]
+    if _HAVE_CELEMENTTREE:
+        defused_mods.append(cElementTree)
+
+    for defused_mod in defused_mods:
         stdlib_mod = _apply_defusing(defused_mod)
         defused[defused_mod] = stdlib_mod
 
     return defused
 
 
-__version__ = "0.6.0"
+__version__ = "0.7.0.dev1"
 
 __all__ = [
     "DefusedXmlException",
