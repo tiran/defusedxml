@@ -715,9 +715,9 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
-## defusedxml 0.7.0
+## defusedxml 0.7.0.rc1
 
-*Release date: ??-Mar-2020*
+*Release date: 04-May-2020*
 
   - Add support for Python 3.9
   - `defusedxml.cElementTree` is not available with Python 3.9.
