@@ -39,6 +39,7 @@ def _get_py3_cls():
     The code is based on test.support.import_fresh_module().
     """
     pymodname = "xml.etree.ElementTree"
+    pymodparent = "xml.etree"
     cmodname = "_elementtree"
 
     pymod = sys.modules.pop(pymodname, None)
@@ -51,6 +52,7 @@ def _get_py3_cls():
     else:
         sys.modules.pop(cmodname)
     sys.modules[pymodname] = pymod
+    sys.modules[pymodparent].ElementTree = pymod
 
     _XMLParser = pure_pymod.XMLParser
     _iterparse = pure_pymod.iterparse
