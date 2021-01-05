@@ -28,13 +28,17 @@ if PY3:
 
         sys.modules[cmodname] = None
         pure_pymod = importlib.import_module(pymodname)
+
         if cmod is not None:
             sys.modules[cmodname] = cmod
         else:
             sys.modules.pop(cmodname)
+
         if pymod is not None:
+            sys.modules["xml.etree"].ElementTree = pymod
             sys.modules[pymodname] = pymod
         else:
+            sys.modules.pop("xml.etree")
             sys.modules.pop(pymodname)
 
         return pure_pymod.XMLParser, pure_pymod.iterparse, pure_pymod.ParseError
