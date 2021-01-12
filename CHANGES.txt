@@ -1,8 +1,10 @@
 Changelog
 =========
 
-defusedxml 0.7.0.dev1
+defusedxml 0.8.0.dev1
 ---------------------
+
+- Drop support for Python 2.7, 3.4, and 3.5.
 
 
 defusedxml 0.7.0
