@@ -716,6 +716,13 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
+## defusedxml 0.7.0.rc2
+
+*Release date: ??-Jan-2021*
+
+  - Re-add and deprecate `defusedxml.cElementTree`
+  - Use GitHub Actions instead of TravisCI
+
 ## defusedxml 0.7.0.rc1
 
 *Release date: 04-May-2020*

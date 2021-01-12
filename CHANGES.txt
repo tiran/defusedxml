@@ -1,6 +1,14 @@
 Changelog
 =========
 
+defusedxml 0.7.0.rc2
+--------------------
+
+*Release date: ??-Jan-2021*
+
+- Re-add and deprecate ``defusedxml.cElementTree``
+- Use GitHub Actions instead of TravisCI
+
 defusedxml 0.7.0.rc1
 --------------------
 
