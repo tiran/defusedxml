@@ -7,6 +7,8 @@
 """
 from __future__ import print_function, absolute_import
 
+import warnings
+
 from .common import (
     DefusedXmlException,
     DTDForbidden,
@@ -14,7 +16,6 @@ from .common import (
     ExternalReferenceForbidden,
     NotSupportedError,
     _apply_defusing,
-    _HAVE_CELEMENTTREE,
 )
 
 
@@ -25,10 +26,8 @@ def defuse_stdlib():
     """
     defused = {}
 
-    if _HAVE_CELEMENTTREE:
+    with warnings.catch_warnings():
         from . import cElementTree
-    else:
-        cElementTree = None
     from . import ElementTree
     from . import minidom
     from . import pulldom
@@ -41,6 +40,7 @@ def defuse_stdlib():
     defused[xmlrpc] = None
 
     defused_mods = [
+        cElementTree,
         ElementTree,
         minidom,
         pulldom,
@@ -48,8 +48,6 @@ def defuse_stdlib():
         expatbuilder,
         expatreader,
     ]
-    if _HAVE_CELEMENTTREE:
-        defused_mods.append(cElementTree)
 
     for defused_mod in defused_mods:
         stdlib_mod = _apply_defusing(defused_mod)

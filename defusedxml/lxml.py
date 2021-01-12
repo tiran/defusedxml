@@ -24,7 +24,7 @@ tostring = _etree.tostring
 
 
 warnings.warn(
-    "defusedxml.lxml is no longer supported and will be removed in a " "future release.",
+    "defusedxml.lxml is no longer supported and will be removed in a future release.",
     category=DeprecationWarning,
     stacklevel=2,
 )

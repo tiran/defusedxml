@@ -9,8 +9,6 @@ import sys
 import xml.parsers.expat
 
 PY3 = sys.version_info[0] == 3
-# Python 3.9 removed cElementTree module
-_HAVE_CELEMENTTREE = sys.version_info < (3, 9, 0)
 
 # Fail early when pyexpat is not installed correctly
 if not hasattr(xml.parsers.expat, "ParserCreate"):

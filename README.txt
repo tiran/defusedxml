@@ -317,7 +317,8 @@ defuse_stdlib() (*experimental*)
 defusedxml.cElementTree
 -----------------------
 
-**NOTE** ``defusedxml.cElementTree`` is not available in Python 3.9+
+**NOTE** ``defusedxml.cElementTree`` is deprecated and will be removed in a
+future release. Import from ``defusedxml.ElementTree`` instead.
 
 parse(), iterparse(), fromstring(), XMLParser
 
