@@ -35,6 +35,7 @@ clean:
 	@find . \( -name '*.o' -or -name '*.so' -or -name '*.sl' -or \
 	           -name '*.py[cod]' -or -name README.html \) \
 	    -and -type f -delete
+	@rm -f .coverage .coverage.* coverage.xml
 
 distclean: clean
 	@rm -rf build
