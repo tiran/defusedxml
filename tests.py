@@ -19,8 +19,6 @@ from defusedxml import (
     ExternalReferenceForbidden,
     NotSupportedError,
 )
-from defusedxml.common import PY3
-
 
 if sys.version_info < (3, 7):
     warnings.filterwarnings("once", category=DeprecationWarning)
@@ -62,11 +60,7 @@ os.environ["ftp_proxy"] = os.environ["http_proxy"]
 
 
 class DefusedTestCase(unittest.TestCase):
-
-    if PY3:
-        content_binary = False
-    else:
-        content_binary = True
+    content_binary = False
 
     xml_dtd = os.path.join(HERE, "xmltestdata", "dtd.xml")
     xml_external = os.path.join(HERE, "xmltestdata", "external.xml")
@@ -280,19 +274,13 @@ class TestDefusedSax(BaseTests):
     dtd_external_ref = True
 
     def parse(self, xmlfile, **kwargs):
-        if PY3:
-            result = io.StringIO()
-        else:
-            result = io.BytesIO()
+        result = io.StringIO()
         handler = XMLGenerator(result)
         self.module.parse(xmlfile, handler, **kwargs)
         return result.getvalue()
 
     def parseString(self, xmlstring, **kwargs):
-        if PY3:
-            result = io.StringIO()
-        else:
-            result = io.BytesIO()
+        result = io.StringIO()
         handler = XMLGenerator(result)
         self.module.parseString(xmlstring, handler, **kwargs)
         return result.getvalue()

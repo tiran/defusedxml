@@ -1,6 +1,6 @@
 # defusedxml
 #
-# Copyright (c) 2013 by Christian Heimes <christian@python.org>
+# Copyright (c) 2013-2020 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See https://www.python.org/psf/license for licensing details.
 """Common constants, exceptions and helpe functions
@@ -8,7 +8,7 @@
 import sys
 import xml.parsers.expat
 
-PY3 = sys.version_info[0] == 3
+PY3 = True
 
 # Fail early when pyexpat is not installed correctly
 if not hasattr(xml.parsers.expat, "ParserCreate"):
@@ -26,7 +26,7 @@ class DTDForbidden(DefusedXmlException):
     """Document type definition is forbidden"""
 
     def __init__(self, name, sysid, pubid):
-        super(DTDForbidden, self).__init__()
+        super().__init__()
         self.name = name
         self.sysid = sysid
         self.pubid = pubid
@@ -40,7 +40,7 @@ class EntitiesForbidden(DefusedXmlException):
     """Entity definition is forbidden"""
 
     def __init__(self, name, value, base, sysid, pubid, notation_name):
-        super(EntitiesForbidden, self).__init__()
+        super().__init__()
         self.name = name
         self.value = value
         self.base = base
@@ -57,7 +57,7 @@ class ExternalReferenceForbidden(DefusedXmlException):
     """Resolving an external reference is forbidden"""
 
     def __init__(self, context, base, sysid, pubid):
-        super(ExternalReferenceForbidden, self).__init__()
+        super().__init__()
         self.context = context
         self.base = base
         self.sysid = sysid
