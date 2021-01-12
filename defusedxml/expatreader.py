@@ -25,7 +25,7 @@ class DefusedExpatParser(_ExpatParser):
         forbid_entities=True,
         forbid_external=True,
     ):
-        _ExpatParser.__init__(self, namespaceHandling, bufsize)
+        super().__init__(namespaceHandling, bufsize)
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
@@ -46,7 +46,7 @@ class DefusedExpatParser(_ExpatParser):
         raise ExternalReferenceForbidden(context, base, sysid, pubid)
 
     def reset(self):
-        _ExpatParser.reset(self)
+        super().reset()
         parser = self._parser
         if self.forbid_dtd:
             parser.StartDoctypeDeclHandler = self.defused_start_doctype_decl

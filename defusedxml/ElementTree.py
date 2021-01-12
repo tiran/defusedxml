@@ -1,6 +1,6 @@
 # defusedxml
 #
-# Copyright (c) 2013 by Christian Heimes <christian@python.org>
+# Copyright (c) 2013-2020 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See https://www.python.org/psf/license for licensing details.
 """Defused xml.etree.ElementTree facade
@@ -13,14 +13,7 @@ from xml.etree.ElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.ElementTree import parse as _parse
 from xml.etree.ElementTree import tostring
 
-from .common import PY3
-
-if PY3:
-    import importlib
-else:
-    from xml.etree.ElementTree import XMLParser as _XMLParser
-    from xml.etree.ElementTree import iterparse as _iterparse
-    from xml.etree.ElementTree import ParseError
+import importlib
 
 
 from .common import (
@@ -68,8 +61,7 @@ def _get_py3_cls():
     return _XMLParser, _iterparse, ParseError
 
 
-if PY3:
-    _XMLParser, _iterparse, ParseError = _get_py3_cls()
+_XMLParser, _iterparse, ParseError = _get_py3_cls()
 
 _sentinel = object()
 
@@ -84,8 +76,7 @@ class DefusedXMLParser(_XMLParser):
         forbid_entities=True,
         forbid_external=True,
     ):
-        # Python 2.x old style class
-        _XMLParser.__init__(self, target=target, encoding=encoding)
+        super().__init__(target=target, encoding=encoding)
         if html is not _sentinel:
             # the 'html' argument has been deprecated and ignored in all
             # supported versions of Python. Python 3.8 finally removed it.
@@ -101,10 +92,7 @@ class DefusedXMLParser(_XMLParser):
         self.forbid_dtd = forbid_dtd
         self.forbid_entities = forbid_entities
         self.forbid_external = forbid_external
-        if PY3:
-            parser = self.parser
-        else:
-            parser = self._parser
+        parser = self.parser
         if self.forbid_dtd:
             parser.StartDoctypeDeclHandler = self.defused_start_doctype_decl
         if self.forbid_entities:

@@ -22,6 +22,7 @@ defusedxml 0.7.0rc2
 - Use GitHub Actions instead of TravisCI
 - Restore ``ElementTree`` attribute of ``xml.etree`` module after patching
 
+
 defusedxml 0.7.0rc1
 -------------------
 
