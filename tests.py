@@ -18,23 +18,21 @@ from defusedxml import (
     ExternalReferenceForbidden,
     NotSupportedError,
 )
-from defusedxml.common import PY3, _HAVE_CELEMENTTREE
+from defusedxml.common import PY3
 
 
-if _HAVE_CELEMENTTREE:
+if sys.version_info < (3, 7):
+    warnings.filterwarnings("once", category=DeprecationWarning)
+
+
+with warnings.catch_warnings(record=True) as cetree_warnings:
     from defusedxml import cElementTree
-else:
-    cElementTree = None
 
 
 try:
     import gzip
 except ImportError:
     gzip = None
-
-
-if sys.version_info < (3, 7):
-    warnings.filterwarnings("once", category=DeprecationWarning)
 
 
 try:
@@ -211,9 +209,13 @@ class TestDefusedElementTree(BaseTests):
         assert self.module.XMLParse is parser
 
 
-@unittest.skipUnless(_HAVE_CELEMENTTREE, "Python 3.9 has removed cElementTree")
 class TestDefusedcElementTree(TestDefusedElementTree):
     module = cElementTree
+
+    def test_celementtree_warnings(self):
+        self.assertTrue(cetree_warnings)
+        self.assertEqual(cetree_warnings[0].category, DeprecationWarning)
+        self.assertIn("tests.py", cetree_warnings[0].filename)
 
 
 class TestDefusedMinidom(BaseTests):

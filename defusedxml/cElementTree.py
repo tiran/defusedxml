@@ -7,10 +7,9 @@
 """
 from __future__ import absolute_import
 
-from .common import _generate_etree_functions, _HAVE_CELEMENTTREE
+import warnings
 
-if not _HAVE_CELEMENTTREE:
-    raise ImportError("cElementTree has been removed from Python 3.9")
+from .common import _generate_etree_functions
 
 from xml.etree.cElementTree import TreeBuilder as _TreeBuilder
 from xml.etree.cElementTree import parse as _parse
@@ -23,6 +22,12 @@ from .ElementTree import DefusedXMLParser
 
 __origin__ = "xml.etree.cElementTree"
 
+
+warnings.warn(
+    "defusedxml.cElementTree is deprecated, import from defusedxml.ElementTree instead.",
+    category=DeprecationWarning,
+    stacklevel=2,
+)
 
 # XMLParse is a typo, keep it for backwards compatibility
 XMLTreeBuilder = XMLParse = XMLParser = DefusedXMLParser
