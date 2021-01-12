@@ -716,15 +716,15 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
-## defusedxml 0.7.0.rc2
+## defusedxml 0.7.0rc2
 
-*Release date: ??-Jan-2021*
+*Release date: 12-Jan-2021*
 
   - Re-add and deprecate `defusedxml.cElementTree`
   - Use GitHub Actions instead of TravisCI
   - Restore `ElementTree` attribute of `xml.etree` module after patching
 
-## defusedxml 0.7.0.rc1
+## defusedxml 0.7.0rc1
 
 *Release date: 04-May-2020*
 
