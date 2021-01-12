@@ -722,6 +722,7 @@ See <https://www.python.org/psf/license> for licensing details.
 
   - Re-add and deprecate `defusedxml.cElementTree`
   - Use GitHub Actions instead of TravisCI
+  - Restore `ElementTree` attribute of `xml.etree` module after patching
 
 ## defusedxml 0.7.0.rc1
 
