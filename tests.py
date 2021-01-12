@@ -6,6 +6,7 @@ import sys
 import unittest
 import warnings
 
+from xml.etree import ElementTree as orig_elementtree
 from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
 from pyexpat import ExpatError
@@ -207,6 +208,11 @@ class TestDefusedElementTree(BaseTests):
         assert self.module.XMLTreeBuilder is parser
         assert self.module.XMLParser is parser
         assert self.module.XMLParse is parser
+
+    def test_import_order(self):
+        from xml.etree import ElementTree as second_elementtree
+
+        self.assertIs(orig_elementtree, second_elementtree)
 
 
 class TestDefusedcElementTree(TestDefusedElementTree):
