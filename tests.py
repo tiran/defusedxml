@@ -188,6 +188,10 @@ class TestDefusedElementTree(BaseTests):
         tree = self.module.fromstring(xmlstring, **kwargs)
         return self.module.tostring(tree)
 
+    def parseStringList(self, sequence, **kwargs):
+        tree = self.module.fromstringlist(sequence, **kwargs)
+        return self.module.tostring(tree)
+
     def iterparse(self, source, **kwargs):
         return list(self.module.iterparse(source, **kwargs))
 
@@ -202,6 +206,12 @@ class TestDefusedElementTree(BaseTests):
         assert self.module.XMLTreeBuilder is parser
         assert self.module.XMLParser is parser
         assert self.module.XMLParse is parser
+
+    def test_fromstringlist(self):
+        seq = ["<root>", '<tag id="one" />', '<tag id="two" />', "</root>"]
+        tree = self.module.fromstringlist(seq)
+        result = self.module.tostring(tree)
+        self.assertEqual(result, "".join(seq).encode("utf-8"))
 
     def test_import_order(self):
         from xml.etree import ElementTree as second_elementtree

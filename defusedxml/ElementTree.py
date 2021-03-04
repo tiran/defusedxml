@@ -160,6 +160,18 @@ def fromstring(text, forbid_dtd=False, forbid_entities=True, forbid_external=Tru
 XML = fromstring
 
 
+def fromstringlist(sequence, forbid_dtd=False, forbid_entities=True, forbid_external=True):
+    parser = DefusedXMLParser(
+        target=_TreeBuilder(),
+        forbid_dtd=forbid_dtd,
+        forbid_entities=forbid_entities,
+        forbid_external=forbid_external,
+    )
+    for text in sequence:
+        parser.feed(text)
+    return parser.close()
+
+
 __all__ = [
     "ParseError",
     "XML",
@@ -167,6 +179,7 @@ __all__ = [
     "XMLParser",
     "XMLTreeBuilder",
     "fromstring",
+    "fromstringlist",
     "iterparse",
     "parse",
     "tostring",
