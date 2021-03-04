@@ -719,6 +719,7 @@ See <https://www.python.org/psf/license> for licensing details.
 ## defusedxml 0.8.0.dev1
 
   - Drop support for Python 2.7, 3.4, and 3.5.
+  - Add `defusedxml.ElementTree.fromstringlist()`
 
 ## defusedxml 0.7.0
 
