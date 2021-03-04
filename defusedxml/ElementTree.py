@@ -16,12 +16,7 @@ from xml.etree.ElementTree import tostring
 import importlib
 
 
-from .common import (
-    DTDForbidden,
-    EntitiesForbidden,
-    ExternalReferenceForbidden,
-    _generate_etree_functions,
-)
+from .common import DTDForbidden, EntitiesForbidden, ExternalReferenceForbidden
 
 __origin__ = "xml.etree.ElementTree"
 
@@ -121,9 +116,47 @@ class DefusedXMLParser(_XMLParser):
 # XMLParse is a typo, keep it for backwards compatibility
 XMLTreeBuilder = XMLParse = XMLParser = DefusedXMLParser
 
-parse, iterparse, fromstring = _generate_etree_functions(
-    DefusedXMLParser, _TreeBuilder, _parse, _iterparse
-)
+
+def parse(source, parser=None, forbid_dtd=False, forbid_entities=True, forbid_external=True):
+    if parser is None:
+        parser = DefusedXMLParser(
+            target=_TreeBuilder(),
+            forbid_dtd=forbid_dtd,
+            forbid_entities=forbid_entities,
+            forbid_external=forbid_external,
+        )
+    return _parse(source, parser)
+
+
+def iterparse(
+    source,
+    events=None,
+    parser=None,
+    forbid_dtd=False,
+    forbid_entities=True,
+    forbid_external=True,
+):
+    if parser is None:
+        parser = DefusedXMLParser(
+            target=_TreeBuilder(),
+            forbid_dtd=forbid_dtd,
+            forbid_entities=forbid_entities,
+            forbid_external=forbid_external,
+        )
+    return _iterparse(source, events, parser)
+
+
+def fromstring(text, forbid_dtd=False, forbid_entities=True, forbid_external=True):
+    parser = DefusedXMLParser(
+        target=_TreeBuilder(),
+        forbid_dtd=forbid_dtd,
+        forbid_entities=forbid_entities,
+        forbid_external=forbid_external,
+    )
+    parser.feed(text)
+    return parser.close()
+
+
 XML = fromstring
 
 
