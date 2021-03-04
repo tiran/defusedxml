@@ -1,6 +1,14 @@
 Changelog
 =========
 
+defusedxml 0.7.0
+----------------
+
+*Release date: 4-Mar-2021*
+
+- No changes
+
+
 defusedxml 0.7.0rc2
 -------------------
 
