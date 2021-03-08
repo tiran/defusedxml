@@ -718,7 +718,7 @@ See <https://www.python.org/psf/license> for licensing details.
 
 ## defusedxml 0.7.1
 
-*Release date: ??-Mar-2021*
+*Release date: 08-Mar-2021*
 
   - Fix regression `defusedxml.ElementTree.ParseError` (\#63) The
     `ParseError` exception is now the same class object as
