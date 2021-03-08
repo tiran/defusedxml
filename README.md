@@ -716,6 +716,14 @@ See <https://www.python.org/psf/license> for licensing details.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
 # Changelog
 
+## defusedxml 0.7.1
+
+*Release date: ??-Mar-2021*
+
+  - Fix regression `defusedxml.ElementTree.ParseError` (\#63) The
+    `ParseError` exception is now the same class object as
+    `xml.etree.ElementTree.ParseError` again.
+
 ## defusedxml 0.7.0
 
 *Release date: 4-Mar-2021*

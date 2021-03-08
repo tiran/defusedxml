@@ -1,6 +1,16 @@
 Changelog
 =========
 
+defusedxml 0.7.1
+---------------------
+
+*Release date: ??-Mar-2021*
+
+- Fix regression ``defusedxml.ElementTree.ParseError`` (#63)
+  The ``ParseError`` exception is now the same class object as
+  ``xml.etree.ElementTree.ParseError`` again.
+
+
 defusedxml 0.7.0
 ----------------
 
