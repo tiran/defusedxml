@@ -214,6 +214,15 @@ class TestDefusedElementTree(BaseTests):
 
         self.assertIs(orig_elementtree, second_elementtree)
 
+    def test_orig_parseerror(self):
+        # https://github.com/tiran/defusedxml/issues/63
+        self.assertIs(self.module.ParseError, orig_elementtree.ParseError)
+        try:
+            self.parseString("invalid")
+        except Exception as e:
+            self.assertIsInstance(e, orig_elementtree.ParseError)
+            self.assertIsInstance(e, self.module.ParseError)
+
 
 class TestDefusedcElementTree(TestDefusedElementTree):
     module = cElementTree
