@@ -19,6 +19,7 @@ from .ElementTree import (
     parse,
     tostring,
     DefusedXMLParser,
+    ParseError,
 )
 
 __origin__ = "xml.etree.cElementTree"
@@ -31,6 +32,7 @@ warnings.warn(
 )
 
 __all__ = [
+    "ParseError",
     "XML",
     "XMLParse",
     "XMLParser",
