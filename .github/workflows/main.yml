@@ -1,14 +1,20 @@
 on:
   push:
-    branches: ["master"]
+    branches: 
+      - master
+      - main
+      - v*.x
   pull_request:
-    branches: ["master"]
+    branches:
+      - master
+      - main
+      - v*.x
   workflow_dispatch:
 
 jobs:
   tests:
     name: "Python ${{ matrix.python-version }}"
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-20.04"
     strategy:
       fail-fast: false
       matrix:
