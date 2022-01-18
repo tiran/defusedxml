@@ -22,7 +22,7 @@ from .common import (
 def defuse_stdlib():
     """Monkey patch and defuse all stdlib packages
 
-    :warning: The monkey patch is an EXPERIMETNAL feature.
+    :warning: The monkey patch is an EXPERIMENTAL feature.
     """
     defused = {}
 

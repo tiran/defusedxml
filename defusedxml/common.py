@@ -3,7 +3,7 @@
 # Copyright (c) 2013-2020 by Christian Heimes <christian@python.org>
 # Licensed to PSF under a Contributor Agreement.
 # See https://www.python.org/psf/license for licensing details.
-"""Common constants, exceptions and helpe functions
+"""Common constants, exceptions and helper functions
 """
 import sys
 import xml.parsers.expat
