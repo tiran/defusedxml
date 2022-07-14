@@ -45,6 +45,7 @@ setup(
     license="PSFL",
     description="XML bomb protection for Python stdlib modules",
     long_description="\n".join(long_description),
+    long_description_content_type="text/x-rst",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -57,6 +58,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Text Processing :: Markup :: XML",
     ],
     python_requires=">=3.6",

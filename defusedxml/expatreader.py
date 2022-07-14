@@ -20,7 +20,7 @@ class DefusedExpatParser(_ExpatParser):
     def __init__(
         self,
         namespaceHandling=0,
-        bufsize=2 ** 16 - 20,
+        bufsize=2**16 - 20,
         forbid_dtd=False,
         forbid_entities=True,
         forbid_external=True,
