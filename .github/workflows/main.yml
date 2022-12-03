@@ -14,7 +14,7 @@ on:
 jobs:
   tests:
     name: "Python ${{ matrix.python-version }}"
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     strategy:
       fail-fast: false
       matrix:
@@ -24,7 +24,8 @@ jobs:
           - "3.8"
           - "3.9"
           - "3.10"
-          - "3.11-dev"
+          - "3.11"
+          - "3.12-dev"
     steps:
       - uses: "actions/checkout@v3"
       - uses: "actions/setup-python@v4"
