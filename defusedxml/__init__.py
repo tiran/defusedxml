@@ -26,8 +26,8 @@ def defuse_stdlib():
     """
     defused = {}
 
-    with warnings.catch_warnings():
-        from . import cElementTree
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="defusedxml")
+    from . import cElementTree
     from . import ElementTree
     from . import minidom
     from . import pulldom
