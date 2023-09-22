@@ -204,20 +204,20 @@ Python XML Libraries
 ====================
 
 .. csv-table:: vulnerabilities and features
-   :header: "kind", "sax", "etree", "minidom", "pulldom", "xmlrpc", "lxml", "genshi"
-   :widths: 24, 7, 8, 8, 7, 8, 8, 8
+   :header: "kind", "sax", "etree", "minidom", "pulldom", "xmlrpc"
+   :widths: 24, 7, 8, 8, 7, 8
    :stub-columns: 0
 
-   "billion laughs", "**True**", "**True**", "**True**", "**True**", "**True**", "False (1)", "False (5)"
-   "quadratic blowup", "**True**", "**True**", "**True**", "**True**", "**True**", "**True**", "False (5)"
-   "external entity expansion (remote)", "**True**", "False (3)", "False (4)", "**True**", "false", "False (1)", "False (5)"
-   "external entity expansion (local file)", "**True**", "False (3)", "False (4)", "**True**", "false", "**True**", "False (5)"
-   "DTD retrieval", "**True**", "False", "False", "**True**", "false", "False (1)", "False"
-   "gzip bomb", "False", "False", "False", "False", "**True**", "**partly** (2)", "False"
-   "xpath support (7)", "False", "False", "False", "False", "False", "**True**", "False"
-   "xsl(t) support (7)", "False", "False", "False", "False", "False", "**True**", "False"
-   "xinclude support (7)", "False", "**True** (6)", "False", "False", "False", "**True** (6)", "**True**"
-   "C library", "expat", "expat", "expat", "expat", "expat", "libxml2", "expat"
+   "billion laughs", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)"
+   "quadratic blowup", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)"
+   "external entity expansion (remote)", "False (9)", "False (3)", "False (4)", "False (9)", "false"
+   "external entity expansion (local file)", "False (9)", "False (3)", "False (4)", "False (9)", "false"
+   "DTD retrieval", "False (9)", "False", "False", "False (9)", "false"
+   "gzip bomb", "False", "False", "False", "False", "**True**"
+   "xpath support (7)", "False", "False", "False", "False", "False"
+   "xsl(t) support (7)", "False", "False", "False", "False", "False"
+   "xinclude support (7)", "False", "**True** (6)", "False", "False", "False"
+   "C library", "expat", "expat", "expat", "expat", "expat"
 
 1. Lxml is protected against billion laughs attacks and doesn't do network
    lookups by default.
@@ -233,6 +233,12 @@ Python XML Libraries
    process inclusion.
 7. These are features but they may introduce exploitable holes, see
    `Other things to consider`_
+8. `expat parser`_ >= 2.4.0 has `billion laughs protection`_
+   against XML bombs (CVE-2013-0340). The parser has sensible defaults
+   for ``XML_SetBillionLaughsAttackProtectionMaximumAmplification`` and
+   ``XML_SetBillionLaughsAttackProtectionActivationThreshold``.
+9. Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and remote
+   resources with urllib, see `bpo-17239`_.
 
 
 Settings in standard library
@@ -283,6 +289,22 @@ alter code to::
 
    >>> from defusedxml.ElementTree import parse
    >>> et = parse(xmlfile)
+
+.. Note::
+
+   The defusedxml modules are not drop-in replacements of their stdlib
+   counterparts. The modules only provide functions and classes related to
+   parsing and loading of XML. For all other features, use the classes,
+   functions, and constants from the stdlib modules. For example::
+
+      >>> from defusedxml.ElementTree import fromstring
+      >>> from xml.etree.ElementTree as ET
+
+      >>> root = fromstring("<root/>")
+      >>> root.append(ET.Element("item"))
+      >>> ET.tostring(root)
+      b'<root><item /></root>'
+
 
 Additionally the package has an **untested** function to monkey patch
 all stdlib modules with ``defusedxml.defuse_stdlib()``.
@@ -393,88 +415,26 @@ RestrictedElement, GlobalParserTLS, getDefaultParser(), check_docinfo()
 defusedexpat
 ============
 
-The `defusedexpat package`_ (`defusedexpat on PyPI`_)
-comes with binary extensions and a
-`modified expat`_ library instead of the standard `expat parser`_. It's
-basically a stand-alone version of the patches for Python's standard
-library C extensions.
-
-Modifications in expat
-----------------------
-
-new definitions::
-
-  XML_BOMB_PROTECTION
-  XML_DEFAULT_MAX_ENTITY_INDIRECTIONS
-  XML_DEFAULT_MAX_ENTITY_EXPANSIONS
-  XML_DEFAULT_RESET_DTD
-
-new XML_FeatureEnum members::
-
-  XML_FEATURE_MAX_ENTITY_INDIRECTIONS
-  XML_FEATURE_MAX_ENTITY_EXPANSIONS
-  XML_FEATURE_IGNORE_DTD
-
-new XML_Error members::
-
-  XML_ERROR_ENTITY_INDIRECTIONS
-  XML_ERROR_ENTITY_EXPANSION
-
-new API functions::
-
-  int XML_GetFeature(XML_Parser parser,
-                     enum XML_FeatureEnum feature,
-                     long *value);
-  int XML_SetFeature(XML_Parser parser,
-                     enum XML_FeatureEnum feature,
-                     long value);
-  int XML_GetFeatureDefault(enum XML_FeatureEnum feature,
-                            long *value);
-  int XML_SetFeatureDefault(enum XML_FeatureEnum feature,
-                            long value);
-
-XML_FEATURE_MAX_ENTITY_INDIRECTIONS
-   Limit the amount of indirections that are allowed to occur during the
-   expansion of a nested entity. A counter starts when an entity reference
-   is encountered. It resets after the entity is fully expanded. The limit
-   protects the parser against exponential entity expansion attacks (aka
-   billion laughs attack). When the limit is exceeded the parser stops and
-   fails with `XML_ERROR_ENTITY_INDIRECTIONS`.
-   A value of 0 disables the protection.
-
-   Supported range
-     0 .. UINT_MAX
-   Default
-     40
-
-XML_FEATURE_MAX_ENTITY_EXPANSIONS
-   Limit the total length of all entity expansions throughout the entire
-   document. The lengths of all entities are accumulated in a parser variable.
-   The setting protects against quadratic blowup attacks (lots of expansions
-   of a large entity declaration). When the sum of all entities exceeds
-   the limit, the parser stops and fails with `XML_ERROR_ENTITY_EXPANSION`.
-   A value of 0 disables the protection.
-
-   Supported range
-     0 .. UINT_MAX
-   Default
-     8 MiB
-
-XML_FEATURE_RESET_DTD
-   Reset all DTD information after the <!DOCTYPE> block has been parsed. When
-   the flag is set (default: false) all DTD information after the
-   endDoctypeDeclHandler has been called. The flag can be set inside the
-   endDoctypeDeclHandler. Without DTD information any entity reference in
-   the document body leads to `XML_ERROR_UNDEFINED_ENTITY`.
-
-   Supported range
-     0, 1
-   Default
-     0
+The `defusedexpat package`_ (`defusedexpat on PyPI`_) is no longer supported.
+The `expat parser`_ 2.4.0 and newer have `billion laughs protection`_
+against XML bombs.
 
 
 How to avoid XML vulnerabilities
 ================================
+
+Update to Python 3.6.8, 3.7.1, or newer. The SAX and DOM parser do not
+load external entities from files or network resources.
+
+Update to expat to 2.4.0 or newer. It has
+`builtin protection <expat billion laughs protection>`_ with sensible
+default values to mitigate billion laughs and quadratic blowup.
+
+Offical binaries from python.org use libexpat 2.4.0 since 3.7.12, 3.8.12,
+3.9.7, and 3.10.0 (August 2021). Third party vendors may use older or
+newer versions of expat. ``pyexpat.version_info`` contains the current
+runtime version of libexpat.
+
 
 Best practices
 --------------
@@ -793,8 +753,8 @@ References
 .. _defusedxml on PyPI: https://pypi.python.org/pypi/defusedxml
 .. _defusedexpat package: https://github.com/tiran/defusedexpat
 .. _defusedexpat on PyPI: https://pypi.python.org/pypi/defusedexpat
-.. _modified expat: https://github.com/tiran/expat
-.. _expat parser: http://expat.sourceforge.net/
+.. _expat parser: https://libexpat.github.io/
+.. _billion laughs protection: https://libexpat.github.io/doc/api/latest/#billion-laughs
 .. _Attacking XML Security: https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf
 .. _Billion Laughs: https://en.wikipedia.org/wiki/Billion_laughs
 .. _XML DoS and Defenses (MSDN): https://msdn.microsoft.com/en-us/magazine/ee335713.aspx
@@ -806,3 +766,4 @@ References
 .. _Testing for XML Injection: https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008)
 .. _Xerces SecurityMananger: https://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
 .. _XML Inclusion: https://www.w3.org/TR/xinclude/#include_element
+.. _bpo-17239: https://github.com/python/cpython/issues/61441
