@@ -7,6 +7,7 @@ import unittest
 import warnings
 
 from xml.etree import ElementTree as orig_elementtree
+from xml.etree.ElementTree import Element as ElementBeforeImport
 from xml.sax.saxutils import XMLGenerator
 from xml.sax import SAXParseException
 from pyexpat import ExpatError
@@ -19,6 +20,8 @@ from defusedxml import (
     ExternalReferenceForbidden,
     NotSupportedError,
 )
+
+from xml.etree.ElementTree import Element as ElementAfterImport
 
 if sys.version_info < (3, 7):
     warnings.filterwarnings("once", category=DeprecationWarning)
@@ -47,7 +50,7 @@ except ImportError:
     lxml_warnings = None
 
 
-warnings.filterwarnings("error", category=DeprecationWarning, module=r"defusedxml\..*")
+warnings.filterwarnings("always", category=DeprecationWarning, module=r"defusedxml\..*")
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -196,10 +199,12 @@ class TestDefusedElementTree(BaseTests):
         return list(self.module.iterparse(source, **kwargs))
 
     def test_html_arg(self):
-        with self.assertRaises(DeprecationWarning):
-            ElementTree.XMLParse(html=0)
+        with warnings.catch_warnings(record=True) as w:
+            self.module.XMLParse(html=0)
+        self.assertEqual(len(w), 1)
+        self.assertIs(w[0].category, DeprecationWarning)
         with self.assertRaises(TypeError):
-            ElementTree.XMLParse(html=1)
+            self.module.XMLParse(html=1)
 
     def test_aliases(self):
         parser = self.module.DefusedXMLParser
@@ -226,6 +231,15 @@ class TestDefusedElementTree(BaseTests):
         except Exception as e:
             self.assertIsInstance(e, orig_elementtree.ParseError)
             self.assertIsInstance(e, self.module.ParseError)
+
+    def test_etree_element(self):
+        tree = tree = self.module.parse(self.xml_simple)
+        root = tree.getroot()
+        root.append(orig_elementtree.Element("module-import"))
+        root.append(ElementBeforeImport("before-import"))
+        root.append(ElementAfterImport("after-import"))
+        s = orig_elementtree.tostring(root)
+        self.assertEqual(s.count(b"import"), 3, s)
 
 
 class TestDefusedcElementTree(TestDefusedElementTree):
@@ -293,16 +307,16 @@ class TestDefusedSax(BaseTests):
     dtd_external_ref = True
 
     def parse(self, xmlfile, **kwargs):
-        result = io.StringIO()
-        handler = XMLGenerator(result)
-        self.module.parse(xmlfile, handler, **kwargs)
-        return result.getvalue()
+        with io.StringIO() as result:
+            handler = XMLGenerator(result)
+            self.module.parse(xmlfile, handler, **kwargs)
+            return result.getvalue()
 
     def parseString(self, xmlstring, **kwargs):
-        result = io.StringIO()
-        handler = XMLGenerator(result)
-        self.module.parseString(xmlstring, handler, **kwargs)
-        return result.getvalue()
+        with io.StringIO() as result:
+            handler = XMLGenerator(result)
+            self.module.parseString(xmlstring, handler, **kwargs)
+            return result.getvalue()
 
     def test_exceptions(self):
         with self.assertRaises(EntitiesForbidden) as ctx:
@@ -327,6 +341,7 @@ class TestDefusedSax(BaseTests):
         self.assertEqual(repr(ctx.exception), msg)
 
 
+@unittest.skipUnless(lxml is not None, "test requires lxml")
 class TestDefusedLxml(BaseTests):
     module = lxml
 
@@ -488,9 +503,11 @@ class TestXmlRpc(DefusedTestCase):
             xmlrpc.unmonkey_patch()
 
 
+@unittest.skipUnless(gzip is not None, "test requires gzip")
 class TestDefusedGzip(DefusedTestCase):
     def get_gzipped(self, length):
         f = io.BytesIO()
+        self.addCleanup(f.close)
         gzf = gzip.GzipFile(mode="wb", fileobj=f)
         gzf.write(b"d" * length)
         gzf.close()
@@ -542,17 +559,19 @@ class TestDefusedGzip(DefusedTestCase):
 
 def test_main():
     suite = unittest.TestSuite()
-    suite.addTests(unittest.makeSuite(TestDefusedcElementTree))
-    suite.addTests(unittest.makeSuite(TestDefusedElementTree))
-    suite.addTests(unittest.makeSuite(TestDefusedMinidom))
-    suite.addTests(unittest.makeSuite(TestDefusedMinidomWithParser))
-    suite.addTests(unittest.makeSuite(TestDefusedPulldom))
-    suite.addTests(unittest.makeSuite(TestDefusedSax))
-    suite.addTests(unittest.makeSuite(TestXmlRpc))
-    if lxml is not None:
-        suite.addTests(unittest.makeSuite(TestDefusedLxml))
-    if gzip is not None:
-        suite.addTests(unittest.makeSuite(TestDefusedGzip))
+    cls = [
+        TestDefusedElementTree,
+        TestDefusedcElementTree,
+        TestDefusedMinidom,
+        TestDefusedMinidomWithParser,
+        TestDefusedPulldom,
+        TestDefusedSax,
+        TestDefusedLxml,
+        TestXmlRpc,
+        TestDefusedGzip,
+    ]
+    for c in cls:
+        suite.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(c))
     return suite
 
 
