@@ -5,7 +5,7 @@ defusedxml 0.8.0.dev1
 ---------------------
 
 - Drop support for Python 2.7, 3.4, and 3.5.
-- Officially support Python 3.10, 3.11, 3.12. (0.7 works fine, too.)
+- Test on 3.10, 3.11, and 3.12.
 - Add ``defusedxml.ElementTree.fromstringlist()``
 - Fix regression ``defusedxml.ElementTree.ParseError`` (#63)
   The ``ParseError`` exception is now the same class object as

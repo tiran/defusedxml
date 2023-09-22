@@ -1,5 +1,5 @@
 ---
-name: Build and upload to PyPI
+name: "Build for PyPI (optionally: upload)"
 
 permissions:
   contents: read
