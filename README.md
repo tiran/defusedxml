@@ -365,8 +365,8 @@ getDefaultParser(), check_docinfo()
 
 The [defusedexpat package](https://github.com/tiran/defusedexpat)
 ([defusedexpat on PyPI](https://pypi.python.org/pypi/defusedexpat)) is
-no longer supported. The [expat parser](https://libexpat.github.io/)
-2.4.0 and newer have [billion laughs
+no longer supported. [expat parser](https://libexpat.github.io/) 2.4.0
+and newer come with [billion laughs
 protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
 against XML bombs.
 
@@ -375,9 +375,10 @@ against XML bombs.
 Update to Python 3.6.8, 3.7.1, or newer. The SAX and DOM parser do not
 load external entities from files or network resources.
 
-Update to expat to 2.4.0 or newer. It has [builtin
-protection](expat%20billion%20laughs%20protection) with sensible default
-values to mitigate billion laughs and quadratic blowup.
+Update to expat to 2.4.0 or newer. It has [billion laughs
+protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
+with sensible default limits to mitigate billion laughs and quadratic
+blowup.
 
 Offical binaries from python.org use libexpat 2.4.0 since 3.7.12,
 3.8.12, 3.9.7, and 3.10.0 (August 2021). Third party vendors may use
@@ -675,15 +676,27 @@ during working hours as part of semantics's open source initiative.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008))
 # Changelog
 
-## defusedxml 0.8.0.dev1
+## defusedxml 0.8.0rc1
+
+*Release date: 26-Sep-2023*
 
 -   Drop support for Python 2.7, 3.4, and 3.5.
--   Officially support Python 3.10, 3.11, 3.12. (0.7 works fine, too.)
+-   Test on 3.10, 3.11, and 3.12.
 -   Add `defusedxml.ElementTree.fromstringlist()`
+-   Update *vulnerabilities and features* table in README.
+-   **Pending removal** The `defusedxml.lxml` module has been
+    unmaintained and deprecated since 2019. The module will be removed
+    in the next version.
+-   **Pending removal** The `defusedxml.cElementTree` will be removed in
+    the next version. Please use `defusedxml.ElementTree` instead.
+
+## defusedxml 0.7.1
+
+*Release date: 08-Mar-2021*
+
 -   Fix regression `defusedxml.ElementTree.ParseError` (#63) The
     `ParseError` exception is now the same class object as
     `xml.etree.ElementTree.ParseError` again.
--   Update *vulnerabilities and features* table in README.
 
 ## defusedxml 0.7.0
 

@@ -1,16 +1,29 @@
 Changelog
 =========
 
-defusedxml 0.8.0.dev1
----------------------
+defusedxml 0.8.0rc1
+-------------------
+
+*Release date: 26-Sep-2023*
 
 - Drop support for Python 2.7, 3.4, and 3.5.
 - Test on 3.10, 3.11, and 3.12.
 - Add ``defusedxml.ElementTree.fromstringlist()``
+- Update *vulnerabilities and features* table in README.
+- **Pending removal** The ``defusedxml.lxml`` module has been unmaintained and
+  deprecated since 2019. The module will be removed in the next version.
+- **Pending removal** The ``defusedxml.cElementTree`` will be removed in the
+  next version. Please use ``defusedxml.ElementTree`` instead.
+
+
+defusedxml 0.7.1
+----------------
+
+*Release date: 08-Mar-2021*
+
 - Fix regression ``defusedxml.ElementTree.ParseError`` (#63)
   The ``ParseError`` exception is now the same class object as
   ``xml.etree.ElementTree.ParseError`` again.
-- Update *vulnerabilities and features* table in README.
 
 
 defusedxml 0.7.0
