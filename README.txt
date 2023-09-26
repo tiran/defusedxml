@@ -416,7 +416,7 @@ defusedexpat
 ============
 
 The `defusedexpat package`_ (`defusedexpat on PyPI`_) is no longer supported.
-The `expat parser`_ 2.4.0 and newer have `billion laughs protection`_
+`expat parser`_ 2.4.0 and newer come with `billion laughs protection`_
 against XML bombs.
 
 
@@ -426,9 +426,8 @@ How to avoid XML vulnerabilities
 Update to Python 3.6.8, 3.7.1, or newer. The SAX and DOM parser do not
 load external entities from files or network resources.
 
-Update to expat to 2.4.0 or newer. It has
-`builtin protection <expat billion laughs protection>`_ with sensible
-default values to mitigate billion laughs and quadratic blowup.
+Update to expat to 2.4.0 or newer. It has `billion laughs protection`_ with
+sensible default limits to mitigate billion laughs and quadratic blowup.
 
 Offical binaries from python.org use libexpat 2.4.0 since 3.7.12, 3.8.12,
 3.9.7, and 3.10.0 (August 2021). Third party vendors may use older or
