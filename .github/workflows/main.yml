@@ -1,3 +1,9 @@
+---
+name: CI
+
+permissions:
+  contents: read
+
 on:
   push:
     branches: 
@@ -9,23 +15,30 @@ on:
       - master
       - main
       - v*.x
+  schedule:
+    # every Monday
+    - cron: '30 4 * * 1'
   workflow_dispatch:
 
 jobs:
   tests:
-    name: "Python ${{ matrix.python-version }}"
-    runs-on: "ubuntu-22.04"
+    name: "Python ${{ matrix.python-version }} on ${{ matrix.image }}"
+    runs-on: "${{ matrix.image }}"
     strategy:
       fail-fast: false
       matrix:
         python-version:
-          - "3.6"
           - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
+        image: 
+          - "ubuntu-22.04"
+        include:
+          - python-version: "3.6"
+            image: "ubuntu-20.04"
     steps:
       - uses: "actions/checkout@v4"
       - uses: "actions/setup-python@v4"
@@ -38,4 +51,17 @@ jobs:
         run: python -m pip install --upgrade tox tox-gh-actions
       - name: "Run tox for ${{ matrix.python-version }}"
         run: "python -m tox"
-
+  lint:
+    name: "Linting"
+    runs-on: "ubuntu-22.04"
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.11"
+      - name: "Update pip"
+        run: python -m pip install --upgrade pip setuptools wheel
+      - name: "Install tox dependencies"
+        run: python -m pip install --upgrade tox
+      - name: "Run tox for lint"
+        run: "python -m tox -e black,doc,pep8py3"

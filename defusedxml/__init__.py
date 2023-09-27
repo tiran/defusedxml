@@ -22,7 +22,7 @@ from .common import (
 def defuse_stdlib():
     """Monkey patch and defuse all stdlib packages
 
-    :warning: The monkey patch is an EXPERIMETNAL feature.
+    :warning: The monkey patch is an EXPERIMENTAL feature.
     """
     defused = {}
 
@@ -56,7 +56,7 @@ def defuse_stdlib():
     return defused
 
 
-__version__ = "0.8.0.dev1"
+__version__ = "0.8.0rc1"
 
 __all__ = [
     "DefusedXmlException",

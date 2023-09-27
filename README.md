@@ -1,15 +1,12 @@
 # defusedxml -- defusing XML bombs and other exploits
-[![Latest
-Version](https://img.shields.io/pypi/v/defusedxml.svg)](https://pypi.org/project/defusedxml/)
-[![Supported Python
-versions](https://img.shields.io/pypi/pyversions/defusedxml.svg)](https://pypi.org/project/defusedxml/)
-[![Travis
-CI](https://travis-ci.org/tiran/defusedxml.svg?branch=master)](https://travis-ci.org/tiran/defusedxml)
+[![Latest Version](https://img.shields.io/pypi/v/defusedxml.svg)](https://pypi.org/project/defusedxml/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/defusedxml.svg)](https://pypi.org/project/defusedxml/)
+[![Travis CI](https://travis-ci.org/tiran/defusedxml.svg?branch=master)](https://travis-ci.org/tiran/defusedxml)
 [![codecov](https://codecov.io/github/tiran/defusedxml/coverage.svg?branch=master)](https://codecov.io/github/tiran/defusedxml?branch=master)
-[![PyPI
-downloads](https://img.shields.io/pypi/dm/defusedxml.svg)](https://pypistats.org/packages/defusedxml)
-[![Code style:
-black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![PyPI downloads](https://img.shields.io/pypi/dm/defusedxml.svg)](https://pypistats.org/packages/defusedxml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+> "It's just XML, what could probably go wrong?"
 
 Christian Heimes \<<christian@python.org>\>
 
@@ -40,7 +37,7 @@ properly implement XML specifications. Application developers must not
 rely that a library is always configured for security and potential
 harmful data by default.
 
-<div class="contents" data-depth="2">
+<div class="contents" depth="2">
 
 Table of Contents
 
@@ -110,8 +107,8 @@ Simple example of a parsed external entity:
     <root>&ee;</root>
 
 The case of parsed external entities works only for valid XML content.
-The XML standard also supports unparsed external entities with a `NData
-declaration`.
+The XML standard also supports unparsed external entities with a
+`NData declaration`.
 
 External entity expansion opens the door to plenty of exploits. An
 attacker can abuse a vulnerable XML library and application to rebound
@@ -119,19 +116,19 @@ and forward network requests with the IP address of the server. It
 highly depends on the parser and the application what kind of exploit is
 possible. For example:
 
-  - An attacker can circumvent firewalls and gain access to restricted
+-   An attacker can circumvent firewalls and gain access to restricted
     resources as all the requests are made from an internal and
     trustworthy IP address, not from the outside.
-  - An attacker can abuse a service to attack, spy on or DoS your
+-   An attacker can abuse a service to attack, spy on or DoS your
     servers but also third party services. The attack is disguised with
     the IP address of the server and the attacker is able to utilize the
     high bandwidth of a big machine.
-  - An attacker can exhaust additional resources on the machine, e.g.
+-   An attacker can exhaust additional resources on the machine, e.g.
     with requests to a service that doesn't respond or responds with
     very large files.
-  - An attacker may gain knowledge, when, how often and from which IP
+-   An attacker may gain knowledge, when, how often and from which IP
     address an XML document is accessed.
-  - An attacker could send mail from inside your network if the URL
+-   An attacker could send mail from inside your network if the URL
     handler supports `smtp://` URIs.
 
 ### external entity expansion (local file)
@@ -169,18 +166,18 @@ from the external entity case apply to this issue as well.
 
 ## Python XML Libraries
 
-| kind                                   | sax      | etree        | minidom   | pulldom  | xmlrpc   | lxml           | genshi    |
-| -------------------------------------- | -------- | ------------ | --------- | -------- | -------- | -------------- | --------- |
-| billion laughs                         | **True** | **True**     | **True**  | **True** | **True** | False (1)      | False (5) |
-| quadratic blowup                       | **True** | **True**     | **True**  | **True** | **True** | **True**       | False (5) |
-| external entity expansion (remote)     | **True** | False (3)    | False (4) | **True** | false    | False (1)      | False (5) |
-| external entity expansion (local file) | **True** | False (3)    | False (4) | **True** | false    | **True**       | False (5) |
-| DTD retrieval                          | **True** | False        | False     | **True** | false    | False (1)      | False     |
-| gzip bomb                              | False    | False        | False     | False    | **True** | **partly** (2) | False     |
-| xpath support (7)                      | False    | False        | False     | False    | False    | **True**       | False     |
-| xsl(t) support (7)                     | False    | False        | False     | False    | False    | **True**       | False     |
-| xinclude support (7)                   | False    | **True** (6) | False     | False    | False    | **True** (6)   | **True**  |
-| C library                              | expat    | expat        | expat     | expat    | expat    | libxml2        | expat     |
+| kind                                   | sax           | etree         | minidom       | pulldom       | xmlrpc        |
+|----------------------------------------|---------------|---------------|---------------|---------------|---------------|
+| billion laughs                         | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) |
+| quadratic blowup                       | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) |
+| external entity expansion (remote)     | False (9)     | False (3)     | False (4)     | False (9)     | false         |
+| external entity expansion (local file) | False (9)     | False (3)     | False (4)     | False (9)     | false         |
+| DTD retrieval                          | False (9)     | False         | False         | False (9)     | false         |
+| gzip bomb                              | False         | False         | False         | False         | **True**      |
+| xpath support (7)                      | False         | False         | False         | False         | False         |
+| xsl(t) support (7)                     | False         | False         | False         | False         | False         |
+| xinclude support (7)                   | False         | **True** (6)  | False         | False         | False         |
+| C library                              | expat         | expat         | expat         | expat         | expat         |
 
 vulnerabilities and features
 
@@ -198,32 +195,39 @@ vulnerabilities and features
     step to process inclusion.
 7.  These are features but they may introduce exploitable holes, see
     [Other things to consider](#other-things-to-consider)
+8.  [expat parser](https://libexpat.github.io/) >= 2.4.0 has [billion
+    laughs
+    protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
+    against XML bombs (CVE-2013-0340). The parser has sensible defaults
+    for `XML_SetBillionLaughsAttackProtectionMaximumAmplification` and
+    `XML_SetBillionLaughsAttackProtectionActivationThreshold`.
+9.  Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and
+    remote resources with urllib, see
+    [bpo-17239](https://github.com/python/cpython/issues/61441).
 
 ### Settings in standard library
 
 #### xml.sax.handler Features
 
-  - feature\_external\_ges
-    (<http://xml.org/sax/features/external-general-entities>)  
-    disables external entity expansion
+feature_external_ges (<http://xml.org/sax/features/external-general-entities>)  
+disables external entity expansion
 
-  - feature\_external\_pes
-    (<http://xml.org/sax/features/external-parameter-entities>)  
-    the option is ignored and doesn't modify any functionality
+feature_external_pes (<http://xml.org/sax/features/external-parameter-entities>)  
+the option is ignored and doesn't modify any functionality
 
 #### DOM xml.dom.xmlbuilder.Options
 
-  - external\_parameter\_entities  
-    ignored
+external_parameter_entities  
+ignored
 
-  - external\_general\_entities  
-    ignored
+external_general_entities  
+ignored
 
-  - external\_dtd\_subset  
-    ignored
+external_dtd_subset  
+ignored
 
-  - entities  
-    unsure
+entities  
+unsure
 
 ## defusedxml
 
@@ -246,6 +250,29 @@ alter code to:
     >>> from defusedxml.ElementTree import parse
     >>> et = parse(xmlfile)
 
+<div class="note">
+
+<div class="title">
+
+Note
+
+</div>
+
+The defusedxml modules are not drop-in replacements of their stdlib
+counterparts. The modules only provide functions and classes related to
+parsing and loading of XML. For all other features, use the classes,
+functions, and constants from the stdlib modules. For example:
+
+    >>> from defusedxml.ElementTree import fromstring
+    >>> from xml.etree.ElementTree as ET
+
+    >>> root = fromstring("<root/>")
+    >>> root.append(ET.Element("item"))
+    >>> ET.tostring(root)
+    b'<root><item /></root>'
+
+</div>
+
 Additionally the package has an **untested** function to monkey patch
 all stdlib modules with `defusedxml.defuse_stdlib()`.
 
@@ -253,25 +280,25 @@ All functions and parser classes accept three additional keyword
 arguments. They return either the same objects as the original functions
 or compatible subclasses.
 
-  - forbid\_dtd (default: False)  
-    disallow XML with a `<!DOCTYPE>` processing instruction and raise a
-    *DTDForbidden* exception when a DTD processing instruction is found.
+forbid_dtd (default: False)  
+disallow XML with a `<!DOCTYPE>` processing instruction and raise a
+*DTDForbidden* exception when a DTD processing instruction is found.
 
-  - forbid\_entities (default: True)  
-    disallow XML with `<!ENTITY>` declarations inside the DTD and raise
-    an *EntitiesForbidden* exception when an entity is declared.
+forbid_entities (default: True)  
+disallow XML with `<!ENTITY>` declarations inside the DTD and raise an
+*EntitiesForbidden* exception when an entity is declared.
 
-  - forbid\_external (default: True)  
-    disallow any access to remote or local resources in external
-    entities or DTD and raising an *ExternalReferenceForbidden*
-    exception when a DTD or entity references an external resource.
+forbid_external (default: True)  
+disallow any access to remote or local resources in external entities or
+DTD and raising an *ExternalReferenceForbidden* exception when a DTD or
+entity references an external resource.
 
 ### defusedxml (package)
 
 DefusedXmlException, DTDForbidden, EntitiesForbidden,
 ExternalReferenceForbidden, NotSupportedError
 
-defuse\_stdlib() (*experimental*)
+defuse_stdlib() (*experimental*)
 
 ### defusedxml.cElementTree
 
@@ -286,11 +313,11 @@ parse(), iterparse(), fromstring(), XMLParser
 
 ### defusedxml.expatreader
 
-create\_parser(), DefusedExpatParser
+create_parser(), DefusedExpatParser
 
 ### defusedxml.sax
 
-parse(), parseString(), make\_parser()
+parse(), parseString(), make_parser()
 
 ### defusedxml.expatbuilder
 
@@ -307,17 +334,17 @@ parse(), parseString()
 ### defusedxml.xmlrpc
 
 The fix is implemented as monkey patch for the stdlib's xmlrpc package
-(3.x) or xmlrpclib module (2.x). The function
-<span class="title-ref">monkey\_patch()</span> enables the fixes,
-<span class="title-ref">unmonkey\_patch()</span> removes the patch and
-puts the code in its former state.
+(3.x) or xmlrpclib module (2.x). The function <span
+class="title-ref">monkey_patch()</span> enables the fixes, <span
+class="title-ref">unmonkey_patch()</span> removes the patch and puts the
+code in its former state.
 
 The monkey patch protects against XML related attacks as well as
 decompression bombs and excessively large requests or responses. The
 default setting is 30 MB for requests, responses and gzip decompression.
-You can modify the default by changing the module variable
-<span class="title-ref">MAX\_DATA</span>. A value of
-<span class="title-ref">-1</span> disables the limit.
+You can modify the default by changing the module variable <span
+class="title-ref">MAX_DATA</span>. A value of <span
+class="title-ref">-1</span> disables the limit.
 
 ### defusedxml.lxml
 
@@ -327,116 +354,50 @@ release.
 The module acts as an *example* how you could protect code that uses
 lxml.etree. It implements a custom Element class that filters out Entity
 instances, a custom parser factory and a thread local storage for parser
-instances. It also has a check\_docinfo() function which inspects a tree
+instances. It also has a check_docinfo() function which inspects a tree
 for internal or external DTDs and entity declarations. In order to check
 for entities lxml \> 3.0 is required.
 
 parse(), fromstring() RestrictedElement, GlobalParserTLS,
-getDefaultParser(), check\_docinfo()
+getDefaultParser(), check_docinfo()
 
 ## defusedexpat
 
 The [defusedexpat package](https://github.com/tiran/defusedexpat)
-([defusedexpat on PyPI](https://pypi.python.org/pypi/defusedexpat))
-comes with binary extensions and a [modified
-expat](https://github.com/tiran/expat) library instead of the standard
-[expat parser](http://expat.sourceforge.net/). It's basically a
-stand-alone version of the patches for Python's standard library C
-extensions.
-
-### Modifications in expat
-
-new definitions:
-
-    XML_BOMB_PROTECTION
-    XML_DEFAULT_MAX_ENTITY_INDIRECTIONS
-    XML_DEFAULT_MAX_ENTITY_EXPANSIONS
-    XML_DEFAULT_RESET_DTD
-
-new XML\_FeatureEnum members:
-
-    XML_FEATURE_MAX_ENTITY_INDIRECTIONS
-    XML_FEATURE_MAX_ENTITY_EXPANSIONS
-    XML_FEATURE_IGNORE_DTD
-
-new XML\_Error members:
-
-    XML_ERROR_ENTITY_INDIRECTIONS
-    XML_ERROR_ENTITY_EXPANSION
-
-new API functions:
-
-    int XML_GetFeature(XML_Parser parser,
-                       enum XML_FeatureEnum feature,
-                       long *value);
-    int XML_SetFeature(XML_Parser parser,
-                       enum XML_FeatureEnum feature,
-                       long value);
-    int XML_GetFeatureDefault(enum XML_FeatureEnum feature,
-                              long *value);
-    int XML_SetFeatureDefault(enum XML_FeatureEnum feature,
-                              long value);
-
-  - XML\_FEATURE\_MAX\_ENTITY\_INDIRECTIONS  
-    Limit the amount of indirections that are allowed to occur during
-    the expansion of a nested entity. A counter starts when an entity
-    reference is encountered. It resets after the entity is fully
-    expanded. The limit protects the parser against exponential entity
-    expansion attacks (aka billion laughs attack). When the limit is
-    exceeded the parser stops and fails with
-    <span class="title-ref">XML\_ERROR\_ENTITY\_INDIRECTIONS</span>. A
-    value of 0 disables the protection.
-    
-      - Supported range  
-        0 .. UINT\_MAX
-    
-      - Default  
-        40
-
-  - XML\_FEATURE\_MAX\_ENTITY\_EXPANSIONS  
-    Limit the total length of all entity expansions throughout the
-    entire document. The lengths of all entities are accumulated in a
-    parser variable. The setting protects against quadratic blowup
-    attacks (lots of expansions of a large entity declaration). When the
-    sum of all entities exceeds the limit, the parser stops and fails
-    with <span class="title-ref">XML\_ERROR\_ENTITY\_EXPANSION</span>. A
-    value of 0 disables the protection.
-    
-      - Supported range  
-        0 .. UINT\_MAX
-    
-      - Default  
-        8 MiB
-
-  - XML\_FEATURE\_RESET\_DTD  
-    Reset all DTD information after the \<\!DOCTYPE\> block has been
-    parsed. When the flag is set (default: false) all DTD information
-    after the endDoctypeDeclHandler has been called. The flag can be set
-    inside the endDoctypeDeclHandler. Without DTD information any entity
-    reference in the document body leads to
-    <span class="title-ref">XML\_ERROR\_UNDEFINED\_ENTITY</span>.
-    
-      - Supported range  
-        0, 1
-    
-      - Default  
-        0
+([defusedexpat on PyPI](https://pypi.python.org/pypi/defusedexpat)) is
+no longer supported. [expat parser](https://libexpat.github.io/) 2.4.0
+and newer come with [billion laughs
+protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
+against XML bombs.
 
 ## How to avoid XML vulnerabilities
 
+Update to Python 3.6.8, 3.7.1, or newer. The SAX and DOM parser do not
+load external entities from files or network resources.
+
+Update to expat to 2.4.0 or newer. It has [billion laughs
+protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
+with sensible default limits to mitigate billion laughs and quadratic
+blowup.
+
+Offical binaries from python.org use libexpat 2.4.0 since 3.7.12,
+3.8.12, 3.9.7, and 3.10.0 (August 2021). Third party vendors may use
+older or newer versions of expat. `pyexpat.version_info` contains the
+current runtime version of libexpat.
+
 ### Best practices
 
-  - Don't allow DTDs
-  - Don't expand entities
-  - Don't resolve externals
-  - Limit parse depth
-  - Limit total input size
-  - Limit parse time
-  - Favor a SAX or iterparse-like parser for potential large data
-  - Validate and properly quote arguments to XSL transformations and
+-   Don't allow DTDs
+-   Don't expand entities
+-   Don't resolve externals
+-   Limit parse depth
+-   Limit total input size
+-   Limit parse time
+-   Favor a SAX or iterparse-like parser for potential large data
+-   Validate and properly quote arguments to XSL transformations and
     XPath queries
-  - Don't use XPath expression from untrusted sources
-  - Don't apply XSL transformations that come untrusted sources
+-   Don't use XPath expression from untrusted sources
+-   Don't apply XSL transformations that come untrusted sources
 
 (based on Brad Hill's [Attacking XML
 Security](https://www.isecpartners.com/media/12976/iSEC-HILL-Attacking-XML-Security-bh07.pdf))
@@ -526,7 +487,7 @@ use its xpath() method correctly:
 
     # DON'T
     >>> tree.xpath("/tag[@id='%s']" % value)
-    
+
     # instead do
     >>> tree.xpath("/tag[@id=$tagid]", tagid=name)
 
@@ -557,7 +518,7 @@ in a `xsi:schemaLocation` attribute.
 ### XSL Transformation
 
 You should keep in mind that XSLT is a Turing complete language. Never
-process XSLT code from unknown or untrusted source\! XSLT processors may
+process XSLT code from unknown or untrusted source! XSLT processors may
 allow you to interact with external resources in ways you can't even
 imagine. Some processors even support extensions that allow read/write
 access to file system, access to JRE objects or scripting with Jython.
@@ -582,13 +543,13 @@ for Xalan-J:
 
 ## Related CVEs
 
-  - CVE-2013-1664  
-    Unrestricted entity expansion induces DoS vulnerabilities in Python
-    XML libraries (XML bomb)
+CVE-2013-1664  
+Unrestricted entity expansion induces DoS vulnerabilities in Python XML
+libraries (XML bomb)
 
-  - CVE-2013-1665  
-    External entity expansion in Python XML libraries inflicts potential
-    security flaws and DoS vulnerabilities
+CVE-2013-1665  
+External entity expansion in Python XML libraries inflicts potential
+security flaws and DoS vulnerabilities
 
 ## Other languages / frameworks
 
@@ -623,7 +584,7 @@ loads entities from local and remote resources. The option
 access. `LIBXML_NOENT` seems to have no effect on entity expansion in
 PHP 5.4.6.
 
-### C\# / .NET / Mono
+### C# / .NET / Mono
 
 Information in [XML DoS and Defenses
 (MSDN)](https://msdn.microsoft.com/en-us/magazine/ee335713.aspx) suggest
@@ -661,11 +622,11 @@ Java specialists suggest to have a custom builder factory:
 
 ## TODO
 
-  - DOM: Use xml.dom.xmlbuilder options for entity handling
-  - SAX: take feature\_external\_ges and feature\_external\_pes (?) into
+-   DOM: Use xml.dom.xmlbuilder options for entity handling
+-   SAX: take feature_external_ges and feature_external_pes (?) into
     account
-  - test experimental monkey patching of stdlib modules
-  - improve documentation
+-   test experimental monkey patching of stdlib modules
+-   improve documentation
 
 ## License
 
@@ -677,50 +638,63 @@ See <https://www.python.org/psf/license> for licensing details.
 
 ## Acknowledgements
 
-  - Brett Cannon (Python Core developer)  
-    review and code cleanup
+Brett Cannon (Python Core developer)  
+review and code cleanup
 
-  - Antoine Pitrou (Python Core developer)  
-    code review
+Antoine Pitrou (Python Core developer)  
+code review
 
-  - Aaron Patterson, Ben Murphy and Michael Koziarski (Ruby community)  
-    Many thanks to Aaron, Ben and Michael from the Ruby community for
-    their report and assistance.
+Aaron Patterson, Ben Murphy and Michael Koziarski (Ruby community)  
+Many thanks to Aaron, Ben and Michael from the Ruby community for their
+report and assistance.
 
-  - Thierry Carrez (OpenStack)  
-    Many thanks to Thierry for his report to the Python Security
-    Response Team on behalf of the OpenStack security team.
+Thierry Carrez (OpenStack)  
+Many thanks to Thierry for his report to the Python Security Response
+Team on behalf of the OpenStack security team.
 
-  - Carl Meyer (Django)  
-    Many thanks to Carl for his report to PSRT on behalf of the Django
-    security team.
+Carl Meyer (Django)  
+Many thanks to Carl for his report to PSRT on behalf of the Django
+security team.
 
-  - Daniel Veillard (libxml2)  
-    Many thanks to Daniel for his insight and assistance with libxml2.
+Daniel Veillard (libxml2)  
+Many thanks to Daniel for his insight and assistance with libxml2.
 
-  - semantics GmbH (<https://www.semantics.de/>)  
-    Many thanks to my employer semantics for letting me work on the
-    issue during working hours as part of semantics's open source
-    initiative.
+semantics GmbH (<https://www.semantics.de/>)  
+Many thanks to my employer semantics for letting me work on the issue
+during working hours as part of semantics's open source initiative.
 
 ## References
 
-  - [XML DoS and Defenses
+-   [XML DoS and Defenses
     (MSDN)](https://msdn.microsoft.com/en-us/magazine/ee335713.aspx)
-  - [Billion Laughs](https://en.wikipedia.org/wiki/Billion_laughs) on
+-   [Billion Laughs](https://en.wikipedia.org/wiki/Billion_laughs) on
     Wikipedia
-  - [ZIP bomb](https://en.wikipedia.org/wiki/Zip_bomb) on Wikipedia
-  - [Configure SAX parsers for secure
+-   [ZIP bomb](https://en.wikipedia.org/wiki/Zip_bomb) on Wikipedia
+-   [Configure SAX parsers for secure
     processing](http://www.ibm.com/developerworks/xml/library/x-tipcfsx/index.html)
-  - [Testing for XML
-    Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_\(OWASP-DV-008\))
+-   [Testing for XML
+    Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008))
 # Changelog
 
-## defusedxml 0.8.0.dev1
+## defusedxml 0.8.0rc1
 
-  - Drop support for Python 2.7, 3.4, and 3.5.
-  - Add `defusedxml.ElementTree.fromstringlist()`
-  - Fix regression `defusedxml.ElementTree.ParseError` (\#63) The
+*Release date: 26-Sep-2023*
+
+-   Drop support for Python 2.7, 3.4, and 3.5.
+-   Test on 3.10, 3.11, and 3.12.
+-   Add `defusedxml.ElementTree.fromstringlist()`
+-   Update *vulnerabilities and features* table in README.
+-   **Pending removal** The `defusedxml.lxml` module has been
+    unmaintained and deprecated since 2019. The module will be removed
+    in the next version.
+-   **Pending removal** The `defusedxml.cElementTree` will be removed in
+    the next version. Please use `defusedxml.ElementTree` instead.
+
+## defusedxml 0.7.1
+
+*Release date: 08-Mar-2021*
+
+-   Fix regression `defusedxml.ElementTree.ParseError` (#63) The
     `ParseError` exception is now the same class object as
     `xml.etree.ElementTree.ParseError` again.
 
@@ -728,47 +702,47 @@ See <https://www.python.org/psf/license> for licensing details.
 
 *Release date: 4-Mar-2021*
 
-  - No changes
+-   No changes
 
 ## defusedxml 0.7.0rc2
 
 *Release date: 12-Jan-2021*
 
-  - Re-add and deprecate `defusedxml.cElementTree`
-  - Use GitHub Actions instead of TravisCI
-  - Restore `ElementTree` attribute of `xml.etree` module after patching
+-   Re-add and deprecate `defusedxml.cElementTree`
+-   Use GitHub Actions instead of TravisCI
+-   Restore `ElementTree` attribute of `xml.etree` module after patching
 
 ## defusedxml 0.7.0rc1
 
 *Release date: 04-May-2020*
 
-  - Add support for Python 3.9
-  - `defusedxml.cElementTree` is not available with Python 3.9.
-  - Python 2 is deprecate. Support for Python 2 will be removed in
+-   Add support for Python 3.9
+-   `defusedxml.cElementTree` is not available with Python 3.9.
+-   Python 2 is deprecate. Support for Python 2 will be removed in
     0.8.0.
 
 ## defusedxml 0.6.0
 
 *Release date: 17-Apr-2019*
 
-  - Increase test coverage.
-  - Add badges to README.
+-   Increase test coverage.
+-   Add badges to README.
 
 ## defusedxml 0.6.0rc1
 
 *Release date: 14-Apr-2019*
 
-  - Test on Python 3.7 stable and 3.8-dev
-  - Drop support for Python 3.4
-  - No longer pass *html* argument to XMLParse. It has been deprecated
+-   Test on Python 3.7 stable and 3.8-dev
+-   Drop support for Python 3.4
+-   No longer pass *html* argument to XMLParse. It has been deprecated
     and ignored for a long time. The DefusedXMLParser still takes a html
     argument. A deprecation warning is issued when the argument is False
     and a TypeError when it's True.
-  - defusedxml now fails early when pyexpat stdlib module is not
+-   defusedxml now fails early when pyexpat stdlib module is not
     available or broken.
-  - defusedxml.ElementTree.\_\_all\_\_ now lists ParseError as public
+-   defusedxml.ElementTree.\_\_all\_\_ now lists ParseError as public
     attribute.
-  - The defusedxml.ElementTree and defusedxml.cElementTree modules had a
+-   The defusedxml.ElementTree and defusedxml.cElementTree modules had a
     typo and used XMLParse instead of XMLParser as an alias for
     DefusedXMLParser. Both the old and fixed name are now available.
 
@@ -776,59 +750,59 @@ See <https://www.python.org/psf/license> for licensing details.
 
 *Release date: 07-Feb-2017*
 
-  - No changes
+-   No changes
 
 ## defusedxml 0.5.0.rc1
 
 *Release date: 28-Jan-2017*
 
-  - Add compatibility with Python 3.6
-  - Drop support for Python 2.6, 3.1, 3.2, 3.3
-  - Fix lxml tests (XMLSyntaxError: Detected an entity reference loop)
+-   Add compatibility with Python 3.6
+-   Drop support for Python 2.6, 3.1, 3.2, 3.3
+-   Fix lxml tests (XMLSyntaxError: Detected an entity reference loop)
 
 ## defusedxml 0.4.1
 
 *Release date: 28-Mar-2013*
 
-  - Add more demo exploits, e.g. python\_external.py and Xalan XSLT
+-   Add more demo exploits, e.g. python_external.py and Xalan XSLT
     demos.
-  - Improved documentation.
+-   Improved documentation.
 
 ## defusedxml 0.4
 
 *Release date: 25-Feb-2013*
 
-  - As per <http://seclists.org/oss-sec/2013/q1/340> please REJECT
+-   As per <http://seclists.org/oss-sec/2013/q1/340> please REJECT
     CVE-2013-0278, CVE-2013-0279 and CVE-2013-0280 and use
     CVE-2013-1664, CVE-2013-1665 for OpenStack/etc.
-  - Add missing parser\_list argument to sax.make\_parser(). The
-    argument is ignored, though. (thanks to Florian Apolloner)
-  - Add demo exploit for external entity attack on Python's SAX parser,
+-   Add missing parser_list argument to sax.make_parser(). The argument
+    is ignored, though. (thanks to Florian Apolloner)
+-   Add demo exploit for external entity attack on Python's SAX parser,
     XML-RPC and WebDAV.
 
 ## defusedxml 0.3
 
 *Release date: 19-Feb-2013*
 
-  - Improve documentation
+-   Improve documentation
 
 ## defusedxml 0.2
 
 *Release date: 15-Feb-2013*
 
-  - Rename ExternalEntitiesForbidden to ExternalReferenceForbidden
-  - Rename defusedxml.lxml.check\_dtd() to check\_docinfo()
-  - Unify argument names in callbacks
-  - Add arguments and formatted representation to exceptions
-  - Add forbid\_external argument to all functions and classes
-  - More tests
-  - LOTS of documentation
-  - Add example code for other languages (Ruby, Perl, PHP) and parsers
+-   Rename ExternalEntitiesForbidden to ExternalReferenceForbidden
+-   Rename defusedxml.lxml.check_dtd() to check_docinfo()
+-   Unify argument names in callbacks
+-   Add arguments and formatted representation to exceptions
+-   Add forbid_external argument to all functions and classes
+-   More tests
+-   LOTS of documentation
+-   Add example code for other languages (Ruby, Perl, PHP) and parsers
     (Genshi)
-  - Add protection against XML and gzip attacks to xmlrpclib
+-   Add protection against XML and gzip attacks to xmlrpclib
 
 ## defusedxml 0.1
 
 *Release date: 08-Feb-2013*
 
-  - Initial and internal release for PSRT review
+-   Initial and internal release for PSRT review
