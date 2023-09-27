@@ -35,7 +35,7 @@ class RestrictedElement(_etree.ElementBase):
 
     __slots__ = ()
     # blacklist = (etree._Entity, etree._ProcessingInstruction, etree._Comment)
-    blacklist = _etree._Entity
+    blacklist = _etree._Entity  # noqa: SLF001
 
     def _filter(self, iterator):
         blacklist = self.blacklist
@@ -119,7 +119,7 @@ def check_docinfo(elementtree, forbid_dtd=False, forbid_entities=True):
             raise DTDForbidden(docinfo.doctype, docinfo.system_url, docinfo.public_id)
         if forbid_entities and not LXML3:
             # lxml < 3 has no iterentities()
-            raise NotSupportedError("Unable to check for entity declarations " "in lxml 2.x")
+            raise NotSupportedError("Unable to check for entity declarations in lxml 2.x")
 
     if forbid_entities:
         for dtd in docinfo.internalDTD, docinfo.externalDTD:

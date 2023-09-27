@@ -380,7 +380,7 @@ protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
 with sensible default limits to mitigate billion laughs and quadratic
 blowup.
 
-Offical binaries from python.org use libexpat 2.4.0 since 3.7.12,
+Official binaries from python.org use libexpat 2.4.0 since 3.7.12,
 3.8.12, 3.9.7, and 3.10.0 (August 2021). Third party vendors may use
 older or newer versions of expat. `pyexpat.version_info` contains the
 current runtime version of libexpat.

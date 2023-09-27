@@ -1,3 +1,78 @@
 [tool.black]
 line-length = 98
 target-version = ['py36', 'py37', 'py38']
+
+[tool.codespell]
+ignore-words-list = "clen"
+
+[tool.ruff]
+ignore = ["PLR6301", "RUF012"]
+line-length = 98
+target-version = "py37"
+select = [
+  "AIR",    # Airflow
+  "ASYNC",  # flake8-async
+  "BLE",    # flake8-blind-except
+  "C4",     # flake8-comprehensions
+  "C90",    # McCabe cyclomatic complexity
+  "DJ",     # flake8-django
+  "DTZ",    # flake8-datetimez
+  "E",      # pycodestyle
+  "F",      # Pyflakes
+  "FA",     # flake8-future-annotations
+  "FIX",    # flake8-fixme
+  "FLY",    # flynt
+  "FURB",   # refurb
+  "G",      # flake8-logging-format
+  "ICN",    # flake8-import-conventions
+  "INT",    # flake8-gettext
+  "ISC",    # flake8-implicit-str-concat
+  "LOG",    # flake8-logging
+  "NPY",    # NumPy-specific rules
+  "PD",     # pandas-vet
+  "PERF",   # Perflint
+  "PGH",    # pygrep-hooks
+  "PIE",    # flake8-pie
+  "PL",     # Pylint
+  "PYI",    # flake8-pyi
+  "Q",      # flake8-quotes
+  "RSE",    # flake8-raise
+  "RUF",    # Ruff-specific rules
+  "SLF",    # flake8-self
+  "SLOT",   # flake8-slots
+  "T10",    # flake8-debugger
+  "TCH",    # flake8-type-checking
+  "TID",    # flake8-tidy-imports
+  "W",      # pycodestyle
+  "YTT",    # flake8-2020
+  # "A",    # flake8-builtins
+  # "ANN",  # flake8-annotations
+  # "ARG",  # flake8-unused-arguments
+  # "B",    # flake8-bugbear
+  # "COM",  # flake8-commas
+  # "CPY",  # flake8-copyright
+  # "D",    # pydocstyle
+  # "EM",   # flake8-errmsg
+  # "ERA",  # eradicate
+  # "EXE",  # flake8-executable
+  # "FBT",  # flake8-boolean-trap
+  # "I",    # isort
+  # "INP",  # flake8-no-pep420
+  # "N",    # pep8-naming
+  # "PT",   # flake8-pytest-style
+  # "PTH",  # flake8-use-pathlib
+  # "RET",  # flake8-return
+  # "S",    # flake8-bandit
+  # "SIM",  # flake8-simplify
+  # "T20",  # flake8-print
+  # "TD",   # flake8-todos
+  # "TRY",  # tryceratops
+  # "UP",   # pyupgrade
+]
+
+[tool.ruff.per-file-ignores]
+"tests.py" =  ["FIX002"]
+
+[tool.ruff.pylint]
+allow-magic-value-types = ["int", "str"]
+max-args = 8    # Default: 5

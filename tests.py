@@ -78,8 +78,7 @@ class DefusedTestCase(unittest.TestCase):
     def get_content(self, xmlfile):
         mode = "rb" if self.content_binary else "r"
         with io.open(xmlfile, mode) as f:
-            data = f.read()
-        return data
+            return f.read()
 
 
 class BaseTests(DefusedTestCase):
@@ -228,7 +227,7 @@ class TestDefusedElementTree(BaseTests):
         self.assertIs(self.module.ParseError, orig_elementtree.ParseError)
         try:
             self.parseString("invalid")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             self.assertIsInstance(e, orig_elementtree.ParseError)
             self.assertIsInstance(e, self.module.ParseError)
 
