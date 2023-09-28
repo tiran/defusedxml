@@ -31,8 +31,8 @@ on:
       - v*.x
 
 jobs:
-  pypi:
-    name: Build and upload to PyPI
+  pypi-build:
+    name: Build distribution
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,14 +51,50 @@ jobs:
         run: "python -m build"
       - name: "Run twine check"
         run: "python -m twine check dist/*"
-      - name: Publish distribution to Test PyPI
-        uses: pypa/gh-action-pypi-publish@master
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
         with:
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-        if: inputs.testpypi || false
+          name: defusedxml
+          path: dist/
+
+  publish-to-pypi:
+    name: Publish to PyPI
+    if: inputs.pypi || false
+    needs:
+      - pypi-build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/defusedxml
+    permissions:
+      id-token: write
+    steps:
+      - name: Download distribution
+        uses: actions/download-artifact@v3
+        with:
+          name: defusedxml
+          path: dist/
       - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-to-test-pypi:
+    name: Publish to Test PyPI
+    if: inputs.testpypi || false
+    needs:
+      - pypi-build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/defusedxml
+    permissions:
+      id-token: write
+    steps:
+      - name: Download distribution
+        uses: actions/download-artifact@v3
         with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-        if: inputs.pypi || false
+          name: defusedxml
+          path: dist/
+      - name: Publish distribution to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
