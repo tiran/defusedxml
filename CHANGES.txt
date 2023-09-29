@@ -4,6 +4,8 @@ Changelog
 defusedxml 0.8.0rc2
 -------------------
 
+*Release date: 29-Sep-2023*
+
 - Silence deprecation warning in `defuse_stdlib`.
 - Update lxml safety information
 

@@ -717,6 +717,8 @@ during working hours as part of semantics's open source initiative.
 
 ## defusedxml 0.8.0rc2
 
+*Release date: 29-Sep-2023*
+
 -   Silence deprecation warning in <span
     class="title-ref">defuse_stdlib</span>.
 -   Update lxml safety information
