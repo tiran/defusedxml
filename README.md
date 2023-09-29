@@ -361,11 +361,18 @@ class="title-ref">-1</span> disables the limit.
 **DEPRECATED** The module is deprecated and will be removed in a future
 release.
 
-lxml is safe against most attack scenarios. [lxml
+lxml is safe against most attack scenarios. lxml uses `libxml2` for
+parsing XML. The library has builtin mitigations against billion laughs
+and quadratic blowup attacks. The parser allows a limit amount of entity
+expansions, then fails. lxml also disables network access by default.
+libxml2 [lxml
 FAQ](https://lxml.de/FAQ.html#how-do-i-use-lxml-safely-as-a-web-service-endpoint)
 lists additional recommendations for safe parsing, for example counter
-measures against compression bombs. The default parser resolves
-entities. To disable entities, you can use a custom parser object:
+measures against compression bombs.
+
+The default parser resolves entities and protects against huge trees and
+deeply nested entities. To disable entities expansion, use a custom
+parser object:
 
     from lxml import etree
 

@@ -403,10 +403,16 @@ defusedxml.lxml
 **DEPRECATED** The module is deprecated and will be removed in a future
 release.
 
-lxml is safe against most attack scenarios. `lxml FAQ`_ lists additional
-recommendations for safe parsing, for example counter measures against
-compression bombs. The default parser resolves entities. To disable
-entities, you can use a custom parser object::
+lxml is safe against most attack scenarios. lxml uses ``libxml2`` for
+parsing XML. The library has builtin mitigations against billion laughs and
+quadratic blowup attacks. The parser allows a limit amount of entity
+expansions, then fails. lxml also disables network access by default.
+libxml2 `lxml FAQ`_ lists additional recommendations for safe parsing,
+for example counter measures against compression bombs.
+
+The default parser resolves entities and protects against huge trees and
+deeply nested entities. To disable entities expansion, use a custom parser
+object::
 
    from lxml import etree
 
