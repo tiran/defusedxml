@@ -5,6 +5,7 @@ import os
 import sys
 import unittest
 import warnings
+from unittest import mock
 
 from xml.etree import ElementTree as orig_elementtree
 from xml.etree.ElementTree import Element as ElementBeforeImport
@@ -40,12 +41,12 @@ except ImportError:
 try:
     with warnings.catch_warnings(record=True) as lxml_warnings:
         from defusedxml import lxml
-    from lxml.etree import XMLSyntaxError
+    from lxml import etree as lxml_etree
 
     LXML3 = lxml.LXML3
 except ImportError:
     lxml = None
-    XMLSyntaxError = None
+    lxml_etree = None
     LXML3 = False
     lxml_warnings = None
 
@@ -74,6 +75,8 @@ class DefusedTestCase(unittest.TestCase):
     xml_bomb = os.path.join(HERE, "xmltestdata", "xmlbomb.xml")
     xml_bomb2 = os.path.join(HERE, "xmltestdata", "xmlbomb2.xml")
     xml_cyclic = os.path.join(HERE, "xmltestdata", "cyclic.xml")
+    xml_dtd_element = os.path.join(HERE, "xmltestdata", "dtd_element.xml")
+    xml_schema_include = os.path.join(HERE, "xmltestdata", "schema-include.xsd")
 
     def get_content(self, xmlfile):
         mode = "rb" if self.content_binary else "r"
@@ -173,6 +176,9 @@ class BaseTests(DefusedTestCase):
     def test_allow_expansion(self):
         self.parse(self.xml_bomb2, forbid_entities=False)
         self.parseString(self.get_content(self.xml_bomb2), forbid_entities=False)
+
+    def test_dtd_element(self):
+        self.parse(self.xml_dtd_element)
 
 
 class TestDefusedElementTree(BaseTests):
@@ -345,21 +351,21 @@ class TestDefusedSax(BaseTests):
 class TestDefusedLxml(BaseTests):
     module = lxml
 
-    cyclic_error = XMLSyntaxError
+    cyclic_error = lxml_etree.XMLSyntaxError
 
     content_binary = True
 
     def parse(self, xmlfile, **kwargs):
         try:
             tree = self.module.parse(xmlfile, **kwargs)
-        except XMLSyntaxError:
+        except lxml_etree.XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         return self.module.tostring(tree)
 
     def parseString(self, xmlstring, **kwargs):
         try:
             tree = self.module.fromstring(xmlstring, **kwargs)
-        except XMLSyntaxError:
+        except lxml_etree.XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         return self.module.tostring(tree)
 
@@ -380,7 +386,7 @@ class TestDefusedLxml(BaseTests):
     def test_restricted_element1(self):
         try:
             tree = self.module.parse(self.xml_bomb, forbid_dtd=False, forbid_entities=False)
-        except XMLSyntaxError:
+        except lxml_etree.XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         root = tree.getroot()
         self.assertEqual(root.text, None)
@@ -397,7 +403,7 @@ class TestDefusedLxml(BaseTests):
     def test_restricted_element2(self):
         try:
             tree = self.module.parse(self.xml_bomb2, forbid_dtd=False, forbid_entities=False)
-        except XMLSyntaxError:
+        except lxml_etree.XMLSyntaxError:
             self.skipTest("lxml detects entityt reference loop")
         root = tree.getroot()
         bomb, tag = root
@@ -445,6 +451,22 @@ class TestDefusedLxml(BaseTests):
         self.assertTrue(lxml_warnings)
         self.assertEqual(lxml_warnings[0].category, DeprecationWarning)
         self.assertIn("tests.py", lxml_warnings[0].filename)
+
+    def test_lxml_schema_include(self):
+        # attempt to trigger network ops and error
+        with mock.patch.dict(os.environ):
+            os.environ.pop("no_proxy", None)
+            os.environ["http_proxy"] = "http://proxy.invalid:3128"
+            os.environ["https_proxy"] = "http://proxy.invalid:3128"
+
+            doc = self.module.fromstring("<root>true</root>")
+
+            schema = lxml_etree.XMLSchema(file=self.xml_schema_include)
+            schema.validate(doc)
+
+            schema_etree = self.module.parse(self.xml_schema_include)
+            lxml_etree.XMLSchema(etree=schema_etree)
+            schema.validate(doc)
 
 
 class XmlRpcTarget(object):
