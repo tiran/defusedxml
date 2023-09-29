@@ -139,6 +139,8 @@ deserves extra attention. Some XML libraries such as lxml disable
 network access by default but still allow entity expansion with local
 file access by default. Local files are either referenced with a
 `file://` URL or by a file path (either relative or absolute).
+Additionally, lxml's `libxml2` has catalog support. XML catalogs like
+`/etc/xml/catalog` are XML files, which map schema URIs to local files.
 
 An attacker may be able to access and download all files that can be
 read by the application process. This may include critical configuration
@@ -168,42 +170,36 @@ from the external entity case apply to this issue as well.
 
 | kind                                   | sax           | etree         | minidom       | pulldom       | xmlrpc        |
 |----------------------------------------|---------------|---------------|---------------|---------------|---------------|
-| billion laughs                         | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) |
-| quadratic blowup                       | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) | **Maybe** (8) |
-| external entity expansion (remote)     | False (9)     | False (3)     | False (4)     | False (9)     | false         |
-| external entity expansion (local file) | False (9)     | False (3)     | False (4)     | False (9)     | false         |
-| DTD retrieval                          | False (9)     | False         | False         | False (9)     | false         |
+| billion laughs                         | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) |
+| quadratic blowup                       | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) | **Maybe** (1) |
+| external entity expansion (remote)     | False (2)     | False (3)     | False (4)     | False (2)     | false         |
+| external entity expansion (local file) | False (2)     | False (3)     | False (4)     | False (2)     | false         |
+| DTD retrieval                          | False (2)     | False         | False         | False (2)     | false         |
 | gzip bomb                              | False         | False         | False         | False         | **True**      |
-| xpath support (7)                      | False         | False         | False         | False         | False         |
-| xsl(t) support (7)                     | False         | False         | False         | False         | False         |
-| xinclude support (7)                   | False         | **True** (6)  | False         | False         | False         |
+| xpath support (6)                      | False         | False         | False         | False         | False         |
+| xsl(t) support (6)                     | False         | False         | False         | False         | False         |
+| xinclude support (6)                   | False         | **True** (5)  | False         | False         | False         |
 | C library                              | expat         | expat         | expat         | expat         | expat         |
 
 vulnerabilities and features
 
-1.  Lxml is protected against billion laughs attacks and doesn't do
-    network lookups by default.
-2.  libxml2 and lxml are not directly vulnerable to gzip decompression
-    bombs but they don't protect you against them either.
-3.  xml.etree doesn't expand entities and raises a ParserError when an
-    entity occurs.
-4.  minidom doesn't expand entities and simply returns the unexpanded
-    entity verbatim.
-5.  genshi.input of genshi 0.6 doesn't support entity expansion and
-    raises a ParserError when an entity occurs.
-6.  Library has (limited) XInclude support but requires an additional
-    step to process inclusion.
-7.  These are features but they may introduce exploitable holes, see
-    [Other things to consider](#other-things-to-consider)
-8.  [expat parser](https://libexpat.github.io/) >= 2.4.0 has [billion
+1.  [expat parser](https://libexpat.github.io/) >= 2.4.0 has [billion
     laughs
     protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
     against XML bombs (CVE-2013-0340). The parser has sensible defaults
     for `XML_SetBillionLaughsAttackProtectionMaximumAmplification` and
     `XML_SetBillionLaughsAttackProtectionActivationThreshold`.
-9.  Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and
+2.  Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and
     remote resources with urllib, see
     [bpo-17239](https://github.com/python/cpython/issues/61441).
+3.  xml.etree doesn't expand entities and raises a ParserError when an
+    entity occurs.
+4.  minidom doesn't expand entities and simply returns the unexpanded
+    entity verbatim.
+5.  Library has (limited) XInclude support but requires an additional
+    step to process inclusion.
+6.  These are features but they may introduce exploitable holes, see
+    [Other things to consider](#other-things-to-consider)
 
 ### Settings in standard library
 
@@ -263,10 +259,10 @@ counterparts. The modules only provide functions and classes related to
 parsing and loading of XML. For all other features, use the classes,
 functions, and constants from the stdlib modules. For example:
 
-    >>> from defusedxml.ElementTree import fromstring
+    >>> from defusedxml import ElementTree as DET
     >>> from xml.etree.ElementTree as ET
 
-    >>> root = fromstring("<root/>")
+    >>> root = DET.fromstring("<root/>")
     >>> root.append(ET.Element("item"))
     >>> ET.tostring(root)
     b'<root><item /></root>'
@@ -275,6 +271,20 @@ functions, and constants from the stdlib modules. For example:
 
 Additionally the package has an **untested** function to monkey patch
 all stdlib modules with `defusedxml.defuse_stdlib()`.
+
+<div class="warning">
+
+<div class="title">
+
+Warning
+
+</div>
+
+`defuse_stdlib()` should be avoided. It can break third party package or
+cause surprising side effects. Instead you should use the parsing
+features of defusedxml explicitly.
+
+</div>
 
 All functions and parser classes accept three additional keyword
 arguments. They return either the same objects as the original functions
@@ -351,6 +361,17 @@ class="title-ref">-1</span> disables the limit.
 **DEPRECATED** The module is deprecated and will be removed in a future
 release.
 
+lxml is safe against most attack scenarios. [lxml
+FAQ](https://lxml.de/FAQ.html#how-do-i-use-lxml-safely-as-a-web-service-endpoint)
+lists additional recommendations for safe parsing, for example counter
+measures against compression bombs. The default parser resolves
+entities. To disable entities, you can use a custom parser object:
+
+    from lxml import etree
+
+    parser = etree.XMLParser(resolve_entities=False)
+    root = etree.fromstring("<example/>", parser=parser)
+
 The module acts as an *example* how you could protect code that uses
 lxml.etree. It implements a custom Element class that filters out Entity
 instances, a custom parser factory and a thread local storage for parser
@@ -380,10 +401,21 @@ protection](https://libexpat.github.io/doc/api/latest/#billion-laughs)
 with sensible default limits to mitigate billion laughs and quadratic
 blowup.
 
-Offical binaries from python.org use libexpat 2.4.0 since 3.7.12,
+Official binaries from python.org use libexpat 2.4.0 since 3.7.12,
 3.8.12, 3.9.7, and 3.10.0 (August 2021). Third party vendors may use
 older or newer versions of expat. `pyexpat.version_info` contains the
-current runtime version of libexpat.
+current runtime version of libexpat. Vendors may have backported fixes
+to older versions without bumping the version number.
+
+Example:
+
+    import sys
+    import pyexpat
+
+    has_mitigations = (
+        sys.version_info >= (3, 7, 1) and
+        pyexpat.version_info >= (2, 4, 0)
+    )
 
 ### Best practices
 
@@ -630,7 +662,7 @@ Java specialists suggest to have a custom builder factory:
 
 ## License
 
-Copyright (c) 2013-2017 by Christian Heimes \<<christian@python.org>\>
+Copyright (c) 2013-2023 by Christian Heimes \<<christian@python.org>\>
 
 Licensed to PSF under a Contributor Agreement.
 
@@ -675,6 +707,12 @@ during working hours as part of semantics's open source initiative.
 -   [Testing for XML
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008))
 # Changelog
+
+## defusedxml 0.8.0rc2
+
+-   Silence deprecation warning in <span
+    class="title-ref">defuse_stdlib</span>.
+-   Update lxml safety information
 
 ## defusedxml 0.8.0rc1
 

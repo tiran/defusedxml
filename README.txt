@@ -168,7 +168,9 @@ entity expansion. It's listed as an extra attack because it deserves extra
 attention. Some XML libraries such as lxml disable network access by default
 but still allow entity expansion with local file access by default. Local
 files are either referenced with a ``file://`` URL or by a file path (either
-relative or absolute).
+relative or absolute). Additionally, lxml's ``libxml2`` has catalog support.
+XML catalogs like ``/etc/xml/catalog`` are XML files, which map schema URIs
+to local files.
 
 An attacker may be able to access and download all files that can be read by
 the application process. This may include critical configuration files, too.
@@ -208,37 +210,31 @@ Python XML Libraries
    :widths: 24, 7, 8, 8, 7, 8
    :stub-columns: 0
 
-   "billion laughs", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)"
-   "quadratic blowup", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)", "**Maybe** (8)"
-   "external entity expansion (remote)", "False (9)", "False (3)", "False (4)", "False (9)", "false"
-   "external entity expansion (local file)", "False (9)", "False (3)", "False (4)", "False (9)", "false"
-   "DTD retrieval", "False (9)", "False", "False", "False (9)", "false"
+   "billion laughs", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)"
+   "quadratic blowup", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)", "**Maybe** (1)"
+   "external entity expansion (remote)", "False (2)", "False (3)", "False (4)", "False (2)", "false"
+   "external entity expansion (local file)", "False (2)", "False (3)", "False (4)", "False (2)", "false"
+   "DTD retrieval", "False (2)", "False", "False", "False (2)", "false"
    "gzip bomb", "False", "False", "False", "False", "**True**"
-   "xpath support (7)", "False", "False", "False", "False", "False"
-   "xsl(t) support (7)", "False", "False", "False", "False", "False"
-   "xinclude support (7)", "False", "**True** (6)", "False", "False", "False"
+   "xpath support (6)", "False", "False", "False", "False", "False"
+   "xsl(t) support (6)", "False", "False", "False", "False", "False"
+   "xinclude support (6)", "False", "**True** (5)", "False", "False", "False"
    "C library", "expat", "expat", "expat", "expat", "expat"
 
-1. Lxml is protected against billion laughs attacks and doesn't do network
-   lookups by default.
-2. libxml2 and lxml are not directly vulnerable to gzip decompression bombs
-   but they don't protect you against them either.
+1. `expat parser`_ >= 2.4.0 has `billion laughs protection`_
+   against XML bombs (CVE-2013-0340). The parser has sensible defaults
+   for ``XML_SetBillionLaughsAttackProtectionMaximumAmplification`` and
+   ``XML_SetBillionLaughsAttackProtectionActivationThreshold``.
+2. Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and remote
+   resources with urllib, see `bpo-17239`_.
 3. xml.etree doesn't expand entities and raises a ParserError when an entity
    occurs.
 4. minidom doesn't expand entities and simply returns the unexpanded entity
    verbatim.
-5. genshi.input of genshi 0.6 doesn't support entity expansion and raises a
-   ParserError when an entity occurs.
-6. Library has (limited) XInclude support but requires an additional step to
+5. Library has (limited) XInclude support but requires an additional step to
    process inclusion.
-7. These are features but they may introduce exploitable holes, see
+6. These are features but they may introduce exploitable holes, see
    `Other things to consider`_
-8. `expat parser`_ >= 2.4.0 has `billion laughs protection`_
-   against XML bombs (CVE-2013-0340). The parser has sensible defaults
-   for ``XML_SetBillionLaughsAttackProtectionMaximumAmplification`` and
-   ``XML_SetBillionLaughsAttackProtectionActivationThreshold``.
-9. Python >= 3.6.8, >= 3.7.1, and >= 3.8 no longer retrieve local and remote
-   resources with urllib, see `bpo-17239`_.
 
 
 Settings in standard library
@@ -297,10 +293,10 @@ alter code to::
    parsing and loading of XML. For all other features, use the classes,
    functions, and constants from the stdlib modules. For example::
 
-      >>> from defusedxml.ElementTree import fromstring
+      >>> from defusedxml import ElementTree as DET
       >>> from xml.etree.ElementTree as ET
 
-      >>> root = fromstring("<root/>")
+      >>> root = DET.fromstring("<root/>")
       >>> root.append(ET.Element("item"))
       >>> ET.tostring(root)
       b'<root><item /></root>'
@@ -308,6 +304,12 @@ alter code to::
 
 Additionally the package has an **untested** function to monkey patch
 all stdlib modules with ``defusedxml.defuse_stdlib()``.
+
+.. Warning::
+
+   ``defuse_stdlib()`` should be avoided. It can break third party package or
+   cause surprising side effects. Instead you should use the parsing features
+   of defusedxml explicitly.
 
 All functions and parser classes accept three additional keyword arguments.
 They return either the same objects as the original functions or compatible
@@ -401,6 +403,17 @@ defusedxml.lxml
 **DEPRECATED** The module is deprecated and will be removed in a future
 release.
 
+lxml is safe against most attack scenarios. `lxml FAQ`_ lists additional
+recommendations for safe parsing, for example counter measures against
+compression bombs. The default parser resolves entities. To disable
+entities, you can use a custom parser object::
+
+   from lxml import etree
+
+   parser = etree.XMLParser(resolve_entities=False)
+   root = etree.fromstring("<example/>", parser=parser)
+
+
 The module acts as an *example* how you could protect code that uses
 lxml.etree. It implements a custom Element class that filters out
 Entity instances, a custom parser factory and a thread local storage for
@@ -429,10 +442,21 @@ load external entities from files or network resources.
 Update to expat to 2.4.0 or newer. It has `billion laughs protection`_ with
 sensible default limits to mitigate billion laughs and quadratic blowup.
 
-Offical binaries from python.org use libexpat 2.4.0 since 3.7.12, 3.8.12,
+Official binaries from python.org use libexpat 2.4.0 since 3.7.12, 3.8.12,
 3.9.7, and 3.10.0 (August 2021). Third party vendors may use older or
 newer versions of expat. ``pyexpat.version_info`` contains the current
-runtime version of libexpat.
+runtime version of libexpat. Vendors may have backported fixes to older
+versions without bumping the version number.
+
+Example::
+
+   import sys
+   import pyexpat
+
+   has_mitigations = (
+       sys.version_info >= (3, 7, 1) and
+       pyexpat.version_info >= (2, 4, 0)
+   )
 
 
 Best practices
@@ -703,7 +727,7 @@ TODO
 License
 =======
 
-Copyright (c) 2013-2017 by Christian Heimes <christian@python.org>
+Copyright (c) 2013-2023 by Christian Heimes <christian@python.org>
 
 Licensed to PSF under a Contributor Agreement.
 
@@ -766,3 +790,4 @@ References
 .. _Xerces SecurityMananger: https://xerces.apache.org/xerces2-j/javadocs/xerces2/org/apache/xerces/util/SecurityManager.html
 .. _XML Inclusion: https://www.w3.org/TR/xinclude/#include_element
 .. _bpo-17239: https://github.com/python/cpython/issues/61441
+.. _lxml FAQ: https://lxml.de/FAQ.html#how-do-i-use-lxml-safely-as-a-web-service-endpoint
