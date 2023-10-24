@@ -351,7 +351,7 @@ class TestDefusedSax(BaseTests):
 class TestDefusedLxml(BaseTests):
     module = lxml
 
-    cyclic_error = lxml_etree.XMLSyntaxError
+    cyclic_error = getattr(lxml_etree, "XMLSyntaxError", None)
 
     content_binary = True
 
@@ -359,14 +359,14 @@ class TestDefusedLxml(BaseTests):
         try:
             tree = self.module.parse(xmlfile, **kwargs)
         except lxml_etree.XMLSyntaxError:
-            self.skipTest("lxml detects entityt reference loop")
+            self.skipTest("lxml detects entity reference loop")
         return self.module.tostring(tree)
 
     def parseString(self, xmlstring, **kwargs):
         try:
             tree = self.module.fromstring(xmlstring, **kwargs)
         except lxml_etree.XMLSyntaxError:
-            self.skipTest("lxml detects entityt reference loop")
+            self.skipTest("lxml detects entity reference loop")
         return self.module.tostring(tree)
 
     if not LXML3:
