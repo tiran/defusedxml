@@ -715,6 +715,13 @@ during working hours as part of semantics's open source initiative.
     Injection](https://www.owasp.org/index.php/Testing_for_XML_Injection_(OWASP-DV-008))
 # Changelog
 
+## defusedxml 0.8.0
+
+*Release date: 2023*
+
+-   Fix testing without lxml
+-   Test on 3.13-dev and PyPy 3.9
+
 ## defusedxml 0.8.0rc2
 
 *Release date: 29-Sep-2023*

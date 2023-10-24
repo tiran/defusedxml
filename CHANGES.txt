@@ -1,6 +1,15 @@
 Changelog
 =========
 
+defusedxml 0.8.0
+----------------
+
+*Release date: 2023*
+
+- Fix testing without lxml
+- Test on 3.13-dev and PyPy 3.9
+
+
 defusedxml 0.8.0rc2
 -------------------
 
@@ -8,6 +17,7 @@ defusedxml 0.8.0rc2
 
 - Silence deprecation warning in `defuse_stdlib`.
 - Update lxml safety information
+
 
 defusedxml 0.8.0rc1
 -------------------
