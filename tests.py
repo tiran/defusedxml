@@ -579,6 +579,26 @@ class TestDefusedGzip(DefusedTestCase):
             self.decode_response(response, 4095, 8192)
 
 
+def get_std_module(defused_module):
+    name = defused_module.__origin__
+    obj = __import__(name, globals(), locals(), [], 0)
+    for part in name.split('.')[1:]:
+        obj = getattr(obj, part)
+    return obj
+
+
+class TestStdElementTree(TestDefusedElementTree):
+    module = get_std_module(ElementTree)
+
+
+class TestStdMinidom(TestDefusedMinidom):
+    module = get_std_module(minidom)
+
+
+class TestStdPulldom(TestDefusedPulldom):
+    module = get_std_module(pulldom)
+
+
 def test_main():
     suite = unittest.TestSuite()
     cls = [
@@ -597,9 +617,18 @@ def test_main():
     return suite
 
 
+def test_origin():
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(TestStdElementTree))
+    suite.addTests(unittest.makeSuite(TestStdMinidom))
+    return suite
+
+
 if __name__ == "__main__":
     suite = test_main()
     result = unittest.TextTestRunner(verbosity=1).run(suite)
-    # TODO: test that it actually works
     defuse_stdlib()
-    sys.exit(not result.wasSuccessful())
+    suite = test_origin()
+    result_std = unittest.TextTestRunner(verbosity=1).run(suite)
+    success = result.wasSuccessful() and result_std.wasSuccessful()
+    sys.exit(not success)
