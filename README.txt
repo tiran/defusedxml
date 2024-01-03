@@ -733,7 +733,7 @@ TODO
 License
 =======
 
-Copyright (c) 2013-2023 by Christian Heimes <christian@python.org>
+Copyright (c) 2013-2024 by Christian Heimes <christian@python.org>
 
 Licensed to PSF under a Contributor Agreement.
 
