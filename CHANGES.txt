@@ -4,7 +4,7 @@ Changelog
 defusedxml 0.8.0
 ----------------
 
-*Release date: 2023*
+*Release date: 2024*
 
 - Fix testing without lxml
 - Test on 3.13-dev and PyPy 3.9

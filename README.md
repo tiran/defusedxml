@@ -669,7 +669,7 @@ Java specialists suggest to have a custom builder factory:
 
 ## License
 
-Copyright (c) 2013-2023 by Christian Heimes \<<christian@python.org>\>
+Copyright (c) 2013-2024 by Christian Heimes \<<christian@python.org>\>
 
 Licensed to PSF under a Contributor Agreement.
 
@@ -717,7 +717,7 @@ during working hours as part of semantics's open source initiative.
 
 ## defusedxml 0.8.0
 
-*Release date: 2023*
+*Release date: 2024*
 
 -   Fix testing without lxml
 -   Test on 3.13-dev and PyPy 3.9
