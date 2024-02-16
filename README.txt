@@ -564,7 +564,7 @@ document that makes certain XPath queries costly or resource hungry.
 XPath injection attacks
 -----------------------
 
-XPath injeciton attacks pretty much work like SQL injection attacks.
+XPath injection attacks pretty much work like SQL injection attacks.
 Arguments to XPath queries must be quoted and validated properly, especially
 when they are taken from the user. The page `Avoid the dangers of XPath injection`_
 list some ramifications of XPath injections.
