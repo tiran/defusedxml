@@ -80,10 +80,14 @@ class DefusedGzipDecodedResponse(gzip.GzipFile if gzip else object):
         self.stringio = io.BytesIO(data)
         super().__init__(mode="rb", fileobj=self.stringio)
 
-    def read(self, n):
+    def read(self, n=-1):
         if self.limit >= 0:
             left = self.limit - self.readlength
-            n = min(n, left + 1)
+            if n is None or n < 0:
+                # read until the end of the stream, like gzip.GzipFile.read()
+                n = left + 1
+            else:
+                n = min(n, left + 1)
             data = gzip.GzipFile.read(self, n)
             self.readlength += len(data)
             if self.readlength > self.limit:
