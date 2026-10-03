@@ -546,6 +546,10 @@ class TestDefusedGzip(DefusedTestCase):
             acc.append(data)
         return b"".join(acc)
 
+    def read_response(self, response, limit=None, size=-1):
+        dec = xmlrpc.DefusedGzipDecodedResponse(response, limit)
+        return dec.read(size)
+
     def test_defused_gzip_decode(self):
         data = self.get_gzipped(4096).getvalue()
         result = xmlrpc.defused_gzip_decode(data)
@@ -577,6 +581,26 @@ class TestDefusedGzip(DefusedTestCase):
         with self.assertRaises(ValueError):
             response = self.get_gzipped(4096)
             self.decode_response(response, 4095, 8192)
+
+    def test_defused_gzip_response_read(self):
+        # read() without size reads until the end of the stream, as the
+        # gzip.GzipFile.read() it overrides does.
+        response = self.get_gzipped(4096)
+        self.assertEqual(self.read_response(response), b"d" * 4096)
+
+        response = self.get_gzipped(4096)
+        self.assertEqual(self.read_response(response, size=None), b"d" * 4096)
+
+        response = self.get_gzipped(4096)
+        self.assertEqual(self.read_response(response, size=-1), b"d" * 4096)
+
+        # an explicit size still limits the amount of data
+        response = self.get_gzipped(4096)
+        self.assertEqual(self.read_response(response, size=1024), b"d" * 1024)
+
+        with self.assertRaises(ValueError):
+            response = self.get_gzipped(4096)
+            self.read_response(response, 4095)
 
 
 def test_main():
